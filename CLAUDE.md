@@ -136,3 +136,26 @@ re-check before relying on any figure.
 
 **Not changed:** no app code. Waiting on John for Q2 (after reading the table),
 Q3 (the sites to allow and his Fuel Finder registration), Q9 and Q10.
+
+### 2026-10-24 — Q2 and Q10 answered; the official sources read (branch `stage-0-spec`)
+
+**John:** yes to the house way (Q2); nearest first with the cheapest price marked
+(Q10); sites allowed. A reorder-by-price button is not in the first version.
+
+**What the allowed sites gave:** `www.gov.uk` and `www.legislation.gov.uk` load
+from here. `www.fuel-finder.service.gov.uk` answers 403 (the server itself; the
+API needs a token, so expected). **The developer portal is still blocked:** its
+real address is `www.developer.fuel-finder.service.gov.uk` (with `www.`), but John
+allowed `developer.fuel-finder.service.gov.uk` (no `www.`), which doesn't exist.
+Asked him to add the `www.` form. The web-fetch tool can't resolve any of these
+hosts; the shell (through the proxy) can.
+
+**Checked (details in SPEC §2):** GOV.UK's guidance page and SI 2025/1356. UK-wide
+coverage; prices published within 30 minutes of a change; CSV twice a day; API with
+OAuth 2.0; the price API updated within 5 minutes of a trader's report; and
+regulation 13(5)-(6), under which the aggregator sets "standards" for use of the
+data and can withhold access. **Nothing official says Open Government Licence**,
+so the handover's licence claim and credit sentence are unconfirmed until the
+portal's terms are read.
+
+**Not changed:** no app code. Still waiting for the portal terms (Q3) and Q9.

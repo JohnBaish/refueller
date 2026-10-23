@@ -22,8 +22,8 @@ calculator; this file has what is proposed.
 
 **Status, 23 October 2026.** John's first answers are recorded in §11. Anything
 not yet confirmed is **Proposed**: Claude's draft for John to confirm, change
-or turn down. Still open: how it is built (Q2), the data terms (Q3), order and
-marking (Q10) and how often to refresh (Q9). Nothing is built.
+or turn down. Still open: the data terms (Q3) and how often to refresh (Q9).
+Nothing is built.
 
 **What has and hasn't been checked.** This container can't reach the Fuel
 Finder developer site, GOV.UK or postcodes.io (the session's network policy
@@ -77,18 +77,42 @@ From the handover, not yet checked against the official documents:
   stale; the API has outages (often a 503 from the token endpoint) and no
   status page; no price history is kept.
 
-**Licence: needs reading before anything is stored or shown (Q3).** The
-handover says Open Government Licence v3.0 with this credit: "Contains public
-sector information from the Fuel Finder scheme, licensed under the Open
-Government Licence v3.0." A web search turned up a community thread arguing
-the scheme is *not* plain open data, quoting a requirement to register as an
-"Information Recipient" and a "Fair Use" policy. That is third-hand and
-unconfirmed, but it is exactly the kind of term that decides whether we may
-keep our own copy of the data and serve it to every browser. The handover's
-usage terms (present prices without bias, don't selectively show data to
-favour suppliers, don't alter timestamps; sorting by distance or price is
-fine) also need checking in the original. Showing only open stations nearest
-first looks fine on that reading, but the wording should be checked.
+**Checked on 23 October from the official pages (GOV.UK and the regulations,
+now reachable; the developer portal is not yet):**
+
+- GOV.UK's guidance page (published 2 February 2026, Department for Energy
+  Security and Net Zero) confirms: the data covers retail fuel prices "across
+  the UK", with forecourt details (address, operator, brand), amenities, opening
+  hours and update timestamps; "prices are published within 30 minutes of any
+  change"; three ways in (a CSV "updated twice a day", the same by email, or the
+  API); the API follows REST and supports OAuth 2.0 client credentials; you need a
+  GOV.UK One Login. Help: the Fuel Finder team at VE3 Global (an email address
+  and a phone line on GOV.UK's help page).
+- The law behind it is SI 2025/1356, the Motor Fuel Price (Open Data) Regulations
+  2025 (made 17 December 2025; the sharing parts in force from 2 February
+  2026). Regulation 13: the price API is updated within 5 minutes of a trader
+  reporting a change, and the flat file is provided twice a day. Anyone who
+  registers to get the data is an "information recipient" (regulation 12).
+  **Regulation 13(5) and (6): the aggregator "may specify standards relating to
+  the use by information recipients of the price API, the flat file and the price
+  information", and may withhold the data from anyone who doesn't comply.** The
+  regulations say nothing about the Open Government Licence or attribution.
+  Schedule 1 lists what stations report: trading name, brand, address, latitude
+  and longitude, usual trading hours, amenities, grades of fuel offered, the
+  price of each, and whether temporarily closed.
+
+**So the Open Government Licence claim in the handover is not confirmed, and the
+real terms are the aggregator's "standards", which sit on the developer portal
+and in the registration process.** The community thread that mentioned an
+"Information Recipient" registration and a "Fair Use" policy now looks right
+about the registration (it is in law) and probably about a fair-use policy;
+neither has been read. The handover's credit ("Contains public sector information
+from the Fuel Finder scheme, licensed under the Open Government Licence v3.0.")
+and its usage terms (present prices without bias, don't filter selectively to
+favour suppliers, don't alter timestamps; sorting by distance or price is fine)
+still need checking in the original. The question they decide is whether we may
+keep our own copy and pass the trimmed data on to every browser (Q3); showing
+only open stations, nearest first, looks fine on that reading.
 
 ## 3. Fuels (Proposed)
 
@@ -293,7 +317,8 @@ Q10 (order and marking) unanswered**; John to say if the mapping is wrong.
 
 - **Q1** Yes, except the repo is **public**, not private. His aim: every
   baish.net site stays free to run, and no cookies if avoidable.
-- **Q2** John wants the consequences of both set out first (§10, "Keeping it free").
+- **Q2** The consequences were set out (§10, "Keeping it free"); John then said
+  **yes to the house way** (24 October).
 - **Q3** "Whatever works best." Claude's choice: both are needed (§11, Q3).
 - **Q4** **A**, district centres, for now. (Consequence for the mock-ups: the
   eight nearest are ranked from the middle of the postcode district, so the
@@ -304,7 +329,9 @@ Q10 (order and marking) unanswered**; John to say if the mapping is wrong.
   seven days, treat prices outside 100p to 300p as errors.
 - **Q8** Yes to the definition of "open" as drafted.
 - **Q9** Probably four times a day, but it depends on Q2 and the free limits.
-- **Q10** Not answered.
+- **Q10** **Nearest first, with the cheapest price marked** (24 October; John's
+  apology for the misnumbering noted, none needed). Whether to add a button to
+  reorder by price is not yet decided; it is left out of the first version.
 - **Q11** Great Britain, excluding Northern Ireland, to start.
 - **Q12** Yes to the credit lines as on Hindcaster.
 - **Q13** Yes: remember the last postcode on the visitor's device.
