@@ -52,7 +52,9 @@ Needs John's yes to Q2 and Q3 first.
    (`design/fuel-finder-developer-guidelines-2026-10-24.md`). The public API is read-only,
    so the probe and the collector can both use the **live** credentials (the
    portal says read-only calls may be tested against live or test): one pair of
-   secrets, one request at a time, a new access token each run (they last an hour), 429 and errors
+   secrets, one request at a time, one access token per run, reused for every request in it and never requested per
+   call (the portal asks for tokens to be reused until close to expiry; they last an
+   hour), 429 and errors
    handled with a backoff, nothing from the API or the secrets ever printed to a
    public Actions log, and no raw response committed.
 4. Scaffold `package.json` and `tsconfig` to match Hindcaster (Node runs `.ts`

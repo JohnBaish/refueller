@@ -26,7 +26,8 @@ Read these first, in this order:
    "Don't redistribute raw API data"). Read before any work on the API.
    Also `design/fuel-finder-developer-docs-overview-2026-10-24.md`: the portal's
    overview and API Testing pages (authentication, environments).
-   And `design/fuel-finder-public-api-intro-2026-10-24.md`: the Public API intro.
+   And `design/fuel-finder-public-api-intro-2026-10-24.md` (the Public API intro) and
+   `design/fuel-finder-api-documentation-index-2026-10-24.md` (the API index).
 
 Key points from the house style, repeated because they matter most:
 
@@ -222,3 +223,15 @@ traders' reporting duty; the API itself is updated within 5 minutes of their rep
 per regulation 13), forecourt details, amenities and opening hours, a timestamp on
 each price and site, GOV.UK One Login, OAuth 2.0 client credentials. Still no endpoint
 list, field names, terms, licence or attribution wording.
+
+### 2026-10-24 — API documentation index from John
+
+Saved unchanged in `design/fuel-finder-api-documentation-index-2026-10-24.md`. It
+lists two pages, "Information Recipient API's" (`/fuel-finder/apis-ifr/info-recipent`:
+fetch prices and station information, "including incremental updates") and "OAuth
+Access Token Generation API" (`/fuel-finder/apis-ifr/access-token`), which should hold the
+real endpoints and fields; they have not been seen. **New rule from the token page:**
+access and refresh tokens must be reused until close to expiry, not requested before
+every call. The collector gets one token per run and reuses it for every request in
+that run (and refreshes it if a run outlasts the hour); the plan's "new token each run"
+is within that. Asked John for those two pages next.
