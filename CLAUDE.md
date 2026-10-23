@@ -47,7 +47,11 @@ Refueller-specific points:
   `.gitignore` (only `.env.example` may be committed).
 - **Show prices without bias and never alter timestamps** (the scheme's terms
   as the handover reports them; to be checked against the original).
-- Vercel's free plan is non-commercial only: no adverts or affiliate links.
+- **Everything must stay free to run** (John, 23 October). The repo is
+  **public**, so commit only what may be published (the trimmed data the page
+  needs, never raw API responses, never secrets). Vercel's free plan is
+  non-commercial only: no adverts or affiliate links. Watch the free limits in
+  SPEC §10. No cookies if avoidable.
 - "Less than", never "under"; "more than", never "over" for amounts. Times as
   "9.30am". Temperatures, if ever shown, as "20°C" (HOUSE-STYLE §15).
 - **This container can't reach** the Fuel Finder developer site and API,
@@ -108,3 +112,27 @@ whole-UK station list is.
 **Left alone:** no app code, no scaffold, no workflow. `organic.css`,
 `global.css` and the other files in HOUSE-STYLE §1 are copied when Stage 5
 starts.
+
+### 2026-10-23 — John's first answers; keeping it free (branch `stage-0-spec`)
+
+**John answered** (his list ran 1 to 12; Claude mapped his 10, 11 and 12 to Q11,
+Q12 and Q13, which leaves **Q10 unanswered**): public repo (all sites must stay
+free to run; no cookies if avoidable); explore the consequences of building it
+the house way or the handover way; Q3 "whatever works best"; district centres
+for postcodes for now (Q4 A); straight-line miles, one decimal for less than five
+miles; unleaded and diesel only; the gap rules; "open" as drafted; probably four
+updates a day; Great Britain only; credit lines; remember the last postcode.
+He is also open to a different approach to personal data for this tool if it
+keeps it free. All recorded in SPEC §11, with the new "Keeping it free" part of
+§10 (the table of consequences and a recommendation: house way, public repo).
+
+**Checked:** free-plan limits, by web search (the pages themselves couldn't be
+opened): GitHub standard runners free in public repos, 2,000 minutes a month for
+private; Vercel Hobby 100 deployments a day, cron at most once a day,
+non-commercial only, Web Analytics 50,000 events a month then paused (no charge).
+The two Vercel pages quoted disagree on the number of cron jobs, and one says a
+Hobby overage means waiting 30 days where another says 7 for analytics, so
+re-check before relying on any figure.
+
+**Not changed:** no app code. Waiting on John for Q2 (after reading the table),
+Q3 (the sites to allow and his Fuel Finder registration), Q9 and Q10.

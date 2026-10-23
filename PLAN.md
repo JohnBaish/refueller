@@ -4,8 +4,9 @@ Staged so John can see and approve each stage before the next begins. Each
 stage is built on its own branch and merged to `main` only when John says so
 (HOUSE-STYLE §10; notes and documents may be merged without asking, with a
 word afterwards). Read `SPEC.md` and `HOUSE-STYLE.md` before starting any
-stage. **Nothing past Stage 0 starts until John has answered SPEC §11 and
-agreed the next stage.**
+stage. **Nothing past Stage 0 starts until John has answered SPEC §11 (his first
+answers are recorded there) and agreed the next stage.** The repo is public
+(John, 23 October: every site must stay free to run).
 
 At the end of every stage:
 
