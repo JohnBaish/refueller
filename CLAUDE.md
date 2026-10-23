@@ -29,7 +29,8 @@ Read these first, in this order:
    And `design/fuel-finder-public-api-intro-2026-10-24.md` (the Public API intro) and
    `design/fuel-finder-api-documentation-index-2026-10-24.md` (the API index) and
    `design/fuel-finder-api-fields-guide-2026-10-24.md` (the real field names) and
-   `design/fuel-finder-information-recipient-api-2026-10-24.md` (the four endpoints).
+   `design/fuel-finder-information-recipient-api-2026-10-24.md` (the four endpoints) and
+   `design/fuel-finder-oauth-token-api-2026-10-24.md` (the two token endpoints).
 
 Key points from the house style, repeated because they matter most:
 
@@ -261,3 +262,11 @@ information; fetch incremental PFS information). No addresses or parameters in t
 "Don't redistribute raw API data" only if the registration terms leave it unclear.
 Still not seen: each endpoint's address, parameters and paging; the OAuth token page;
 terms, licence, Fair Use and attribution wording.
+
+### 2026-10-24 — the two token endpoints (names only) from John
+
+Saved in `design/fuel-finder-oauth-token-api-2026-10-24.md`: a POST to generate an access
+token, and a POST to regenerate one from a refresh token. The same token-reuse guidance as
+before; no addresses or parameters in the paste; the version field is empty. So the
+collector's token handling is: one POST at the start of a run, reuse it, and use the refresh
+call (not a fresh login) if a run outlasts the token. Still needed: each endpoint's own page.
