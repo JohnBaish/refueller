@@ -26,6 +26,7 @@ Read these first, in this order:
    "Don't redistribute raw API data"). Read before any work on the API.
    Also `design/fuel-finder-developer-docs-overview-2026-10-24.md`: the portal's
    overview and API Testing pages (authentication, environments).
+   And `design/fuel-finder-public-api-intro-2026-10-24.md`: the Public API intro.
 
 Key points from the house style, repeated because they matter most:
 
@@ -211,3 +212,13 @@ paste. **Conflict to settle by the probe:** the portal's examples use
 `api.fuelfinder.service.gov.uk/v1/...` and `fuel_type=unleaded`, the handover has
 `www.fuel-finder.service.gov.uk/api/v1/pfs?batch-number=N` and `E10`/`B7_STANDARD`.
 John is sending more sections; still no terms, licence, Fair Use or attribution text.
+
+### 2026-10-24 — Public API introduction from John
+
+Saved unchanged in `design/fuel-finder-public-api-intro-2026-10-24.md` (its first
+paragraph is cut off in the paste). Nothing new beyond what GOV.UK and the
+regulations already said: UK-wide, updated within 30 minutes of a change (the
+traders' reporting duty; the API itself is updated within 5 minutes of their report,
+per regulation 13), forecourt details, amenities and opening hours, a timestamp on
+each price and site, GOV.UK One Login, OAuth 2.0 client credentials. Still no endpoint
+list, field names, terms, licence or attribution wording.
