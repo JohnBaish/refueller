@@ -48,14 +48,20 @@ Needs John's yes to Q2 and Q3 first.
    into a chat). Write the secrets' expiry dates here once known.
 2. **John allows the sites** in SPEC Q3 in the environment's network settings
    (and removes any that were needed only once, later).
-3. Scaffold `package.json` and `tsconfig` to match Hindcaster (Node runs `.ts`
+3. **Read the portal's Developer Guidelines**
+   (`design/fuel-finder-developer-guidelines-2026-10-24.md`). The probe uses the
+   **test environment** first, with its own credentials, then live: two pairs of
+   secrets (names agreed in Stage 1), one request at a time, 429 and errors
+   handled with a backoff, nothing from the API or the secrets ever printed to a
+   public Actions log, and no raw response committed.
+4. Scaffold `package.json` and `tsconfig` to match Hindcaster (Node runs `.ts`
    scripts directly), `.env.example`, and a "Probe Fuel Finder" workflow (Run
    workflow only).
-4. `scripts/probe.ts`: gets a token, fetches one batch of stations and one of
+5. `scripts/probe.ts`: gets a token, fetches one batch of stations and one of
    prices, and records **shapes only** (field names, types, counts, batch
    sizes, status codes, timings, response headers about limits), never the
    token or secrets. Writes `design/probe-<date>.md`.
-5. From the real answers, correct SPEC §2–§5 (endpoints, fields, fuel codes,
+6. From the real answers, correct SPEC §2–§5 (endpoints, fields, fuel codes,
    opening-times format, closure flags, price ranges, how many stations, the
    size of the trimmed list, rate limits, outage behaviour) and list what
    changed.
@@ -151,7 +157,8 @@ worked example (net 38p, break-even about 2p a litre).
 
 ## Dates to remember
 
-None yet. Write here: the Fuel Finder secret's expiry, the cron-job.org
+None yet. The portal says to rotate client secrets regularly. Write here: the Fuel Finder
+secrets' expiry and rotation dates, the cron-job.org
 GitHub token's expiry, and the GitHub API version cut-off, as soon as each is
 known.
 

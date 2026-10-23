@@ -21,6 +21,9 @@ Read these first, in this order:
    there) and the calculator formula. Where it differs from the house style
    (it defaults to Next.js, a database and server-side search), SPEC §6 says
    how and why.
+5. `design/fuel-finder-developer-guidelines-2026-10-24.md`: the Fuel Finder
+   portal's Developer Guidelines, pasted by John (rate limits, secrets, caching,
+   "Don't redistribute raw API data"). Read before any work on the API.
 
 Key points from the house style, repeated because they matter most:
 
@@ -182,3 +185,16 @@ does name "fuel price comparison and navigational apps and websites" as the
 intended recipients (paragraph 11). The only source for "OGL plus Fair Use policy"
 is the forum post, so Q3 is still open. John says the portal's access page had
 "very little" on it; the terms are probably shown during registration.
+
+### 2026-10-24 — the portal's Developer Guidelines (branch `stage-0-spec`)
+
+John pasted the portal's "Developer Guidelines" page (saved unchanged in `design/`).
+Not seen before. **Findings (SPEC §2):** 100 requests a minute and one at a time per
+client, test and live environments with separate credentials; caching advice (stations
+1 hour, prices 15 minutes); never expose secrets in public repos or client code (our
+collector uses Actions secrets, which is fine, but a public repo's logs are public,
+so print nothing sensitive); **"Don't redistribute raw API data"**; "attribute data
+sources appropriately". Still not seen: the terms of service, licence, Fair Use policy
+and attribution wording. **Open risk:** whether a trimmed public data file counts as
+raw redistribution. Proposed: ask VE3 in writing before Stage 2. Q9 (refresh rate)
+isn't constrained by the API.

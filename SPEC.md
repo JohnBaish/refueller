@@ -134,6 +134,41 @@ container even from a real browser, so it may block requests from outside the UK
 or from cloud addresses; the same could apply to the API from GitHub Actions
 (Stage 1's probe will show).
 
+**The portal's "Developer Guidelines" (pasted by John, 24 October; saved
+unchanged in `design/fuel-finder-developer-guidelines-2026-10-24.md`).** The first
+official text from the portal itself:
+
+- **Rate limits:** 100 requests a minute per client and **one request at a time**;
+  going over returns HTTP 429. Separate test and live environments, with separate
+  credentials for each. A full refresh of about 40 requests (the handover's
+  estimate, unverified), sent one after another, is far inside that.
+- **Caching advice:** stations 1 hour, prices 15 minutes. Collecting four times a
+  day is much lighter than that.
+- **Secrets:** "Never expose client secrets or access tokens in client-side code or
+  public repositories"; run OAuth on the backend only; rotate secrets regularly;
+  never log tokens. A GitHub Actions secret on a public repo meets this (the
+  secret isn't in the repo), provided no log ever prints it. Public repos show
+  their Actions logs to everyone, so the collector must print no secret, token or
+  raw response.
+- **Errors:** check status codes, retry with exponential backoff, tidy messages
+  for users, validate every field before use.
+- **Compliance:** respect rate limits; use data responsibly; respect privacy;
+  **"Don't redistribute raw API data"**; "Attribute data sources appropriately".
+  The terms of service they refer to, the licence, the Fair Use policy and the
+  attribution wording are still not seen.
+
+**The sticking point is "Don't redistribute raw API data".** Every design in which
+the browser does the search has to send the browser the prices, and a public repo
+shows them to everyone. Whether a trimmed, cleaned file of two fuels' prices counts
+as "raw" is a judgement the supplier makes, not us. Safeguards that cost little:
+never commit or publish raw responses; publish only a derived file (merged
+stations and prices, two fuels, fields renamed and cut down, bad prices removed,
+prices rounded for display); credit the source; link to "Report a discrepancy" if
+the terms ask. **The safe step is to ask the Fuel Finder team in writing** (their
+address is on GOV.UK's help page, `fuel.finder@ve3.global`) whether a site like
+this may publish such a derived file (Q3). Draft email in the notes, for John to
+send or change.
+
 The question they decide is whether we may
 keep our own copy and pass the trimmed data on to every browser (Q3); showing
 only open stations, nearest first, looks fine on that reading.
@@ -180,7 +215,9 @@ only open stations, nearest first, looks fine on that reading.
 - The page says when its data was last collected ("Prices collected at
   2.40pm"), and when the collection last failed it keeps the last good copy
   and says how old it is.
-- Collection frequency and how it is published are Q9.
+- Collection frequency and how it is published are Q9. The API's own limits
+  (100 requests a minute, one at a time) don't constrain it; Vercel's 100
+  deployments a day does.
 
 ## 6. How it is built (Proposed; departs from the handover, Q2)
 
@@ -353,6 +390,8 @@ Q10 (order and marking) unanswered**; John to say if the mapping is wrong.
   seven days, treat prices outside 100p to 300p as errors.
 - **Q8** Yes to the definition of "open" as drafted.
 - **Q9** Probably four times a day, but it depends on Q2 and the free limits.
+  Q2 is settled (house way); the API limits are generous (§2), so four a day
+  stands unless John wants fresher prices.
 - **Q10** **Nearest first, with the cheapest price marked** (24 October; John's
   apology for the misnumbering noted, none needed). Whether to add a button to
   reorder by price is not yet decided; it is left out of the first version.
