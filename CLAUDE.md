@@ -24,6 +24,8 @@ Read these first, in this order:
 5. `design/fuel-finder-developer-guidelines-2026-10-24.md`: the Fuel Finder
    portal's Developer Guidelines, pasted by John (rate limits, secrets, caching,
    "Don't redistribute raw API data"). Read before any work on the API.
+   Also `design/fuel-finder-developer-docs-overview-2026-10-24.md`: the portal's
+   overview and API Testing pages (authentication, environments).
 
 Key points from the house style, repeated because they matter most:
 
@@ -198,3 +200,14 @@ sources appropriately". Still not seen: the terms of service, licence, Fair Use 
 and attribution wording. **Open risk:** whether a trimmed public data file counts as
 raw redistribution. Proposed: ask VE3 in writing before Stage 2. Q9 (refresh rate)
 isn't constrained by the API.
+
+### 2026-10-24 — more portal text from John: overview and API Testing
+
+Saved unchanged in `design/fuel-finder-developer-docs-overview-2026-10-24.md`.
+**New:** read-only calls can be tested against live, so **one pair of live secrets
+is enough** (corrects the plan's "two pairs"); token request details (form POST,
+`scope=fuelfinder.read`, one-hour tokens), but the token address is blank in the
+paste. **Conflict to settle by the probe:** the portal's examples use
+`api.fuelfinder.service.gov.uk/v1/...` and `fuel_type=unleaded`, the handover has
+`www.fuel-finder.service.gov.uk/api/v1/pfs?batch-number=N` and `E10`/`B7_STANDARD`.
+John is sending more sections; still no terms, licence, Fair Use or attribution text.

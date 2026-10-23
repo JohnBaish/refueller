@@ -157,6 +157,26 @@ official text from the portal itself:
   The terms of service they refer to, the licence, the Fair Use policy and the
   attribution wording are still not seen.
 
+**The portal's overview and "API Testing" pages (pasted by John, 24 October; saved
+unchanged in `design/fuel-finder-developer-docs-overview-2026-10-24.md`):**
+
+- The service is for "authorised information recipients" (so registration may
+  include an approval step). The public API is read-only: GET requests with a
+  Bearer token, JSON responses, OAuth 2.0 client credentials.
+- Token request: a form-encoded POST with `grant_type=client_credentials`,
+  `client_id`, `client_secret` and `scope=fuelfinder.read`; the example reply has
+  `expires_in: 3600` (one hour). The token endpoint's address is **blank in the
+  pasted text**. A new token each run is enough.
+- **The addresses and names conflict with the handover.** The portal's examples
+  use `https://api.fuelfinder.service.gov.uk/v1/prices/...` and
+  `/v1/prices?fuel_type=unleaded`; the handover has `www.fuel-finder.service.gov.uk`
+  `/api/v1/pfs?batch-number=N` and fuel codes `E10`, `B7_STANDARD`. The portal's
+  examples are plainly illustrative (an invented forecourt ID, "Joe Bloggs"), so
+  **neither set is confirmed**; the probe (Stage 1) settles it.
+- **Test credentials are not needed for us.** "Because they are read only, you can
+  test public data APIs against live or test environment." So one pair of live
+  secrets does for the probe and the collector. (This corrects the plan's two pairs.)
+
 **The sticking point is "Don't redistribute raw API data".** Every design in which
 the browser does the search has to send the browser the prices, and a public repo
 shows them to everyone. Whether a trimmed, cleaned file of two fuels' prices counts
