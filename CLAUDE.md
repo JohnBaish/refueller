@@ -392,3 +392,15 @@ C, ask VE3. Recommended: A if the CSV can be fetched automatically. Also require
 Discrepancy" link (`.../motorist/price-report`); three filters to disclose (price range,
 position check, two fuels). Not changed: no app code. Next: John registers and finds how the
 CSV is downloaded, its columns and the API host.
+
+### 2026-10-24 — UNPARKED: John has registered
+
+John reports that registration gave **only a client ID and a client secret** (no CSV link or API
+host mentioned). Neither value has been pasted into the chat or seen by Claude. Next: John adds
+them as the GitHub Actions secrets `FUEL_FINDER_CLIENT_ID` and `FUEL_FINDER_CLIENT_SECRET` on
+`JohnBaish/refueller` (steps given in the thread), then Stage 1 (the probe) once he agrees it.
+The probe must find the API host itself, trying only government hosts (handover:
+`www.fuel-finder.service.gov.uk`; overview example: `api.fuelfinder.service.gov.uk`), so that a
+secret is never sent to anywhere else. The public repo's Actions logs and any committed report
+must hold counts and field names only, never raw data or secrets. Q9 (CSV or five-minute API)
+is still open; the probe does not depend on it. Whether the secret has an expiry date: ask John.

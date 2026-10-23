@@ -35,7 +35,13 @@ Branch: `stage-0-spec`
 `SEO-HANDOVER.md` and `.claude/skills/fresh-look/` copied from clockwheel
 (`36378ed`). John answers SPEC §11.
 
-## PARKED (24 October 2026) — waiting for John to register
+## UNPARKED (24 October 2026): John has registered and holds a client ID and secret
+
+John's next step is to add them to GitHub as secrets (step 4 below). He has not seen a CSV link or
+an API host in registration, only the credentials; the probe (Stage 1) will have to find the host.
+The original parking note follows.
+
+### Original parking note: waiting for John to register
 
 Everything is paused until John registers for Fuel Finder. **When he does**, he should:
 
