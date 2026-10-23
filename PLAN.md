@@ -41,10 +41,11 @@ Everything is paused until John registers for Fuel Finder. **When he does**, he 
 
 1. Start at `https://www.developer.fuel-finder.service.gov.uk/access-latest-fuelprices`
    and sign in with GOV.UK One Login.
-2. Read the terms shown during registration, and paste the text into a new thread:
-   the licence, the Fair Use policy, anything on credits or attribution, "Report a
-   discrepancy", limits on storing or passing on the data. (John thinks the terms are
-   part of the registration.)
+2. ~~Read and paste the terms~~ **Done 24 October** (SPEC §2a): the Open Government
+   Licence plus the Fair Use policy, which requires the latest CSV or API calls at least
+   every five minutes on average. **Instead, look for how the CSV is downloaded** (a
+   fixed web address? a login? the emailed link?), its column names, and how often it
+   appears, and paste what you find (SPEC §2a, Q9).
 3. Note the **host** (the base web address of the API) if registration shows it. The
    paths are known (`/api/v1/...`); the host is not, and the handover's guess is
    `www.fuel-finder.service.gov.uk`.
@@ -55,6 +56,9 @@ Everything is paused until John registers for Fuel Finder. **When he does**, he 
    terms leave the question open (SPEC §2, Q3).
 
 Then Stage 1 (below) starts, in a new thread on `main`.
+**The collector's design now depends on Q9** (CSV or five-minute API; SPEC §2a): the CSV
+route collects twice a day; the API route needs about 288 runs a day and a data host that
+doesn't rebuild the site (Vercel allows 100 deployments a day).
 
 ## Stage 1 — find out what the source really gives
 

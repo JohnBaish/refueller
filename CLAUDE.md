@@ -33,6 +33,7 @@ Read these first, in this order:
    `design/fuel-finder-oauth-token-api-2026-10-24.md` (the two token endpoints).
    And `design/fuel-finder-oauth-generate-token-2026-10-24.md` (the token call, from a screenshot).
    And `design/fuel-finder-data-endpoints-2026-10-24.md` (the station and price calls: paths, batches, parameters).
+   And `design/fuel-finder-terms-of-access-2026-10-24.md` (the registration terms: OGL and the Fair Use policy), plus the field samples `design/fuel-finder-prices-sample-2026-10-24.md` and `design/fuel-finder-stations-sample-2026-10-24.md`.
 
 Key points from the house style, repeated because they matter most:
 
@@ -57,8 +58,9 @@ Refueller-specific points:
   in GitHub Actions secrets. Never write one into a file, a log, a commit or a
   message, and never ask John to paste one into a chat. `.env*` is in
   `.gitignore` (only `.env.example` may be committed).
-- **Show prices without bias and never alter timestamps** (the scheme's terms
-  as the handover reports them; to be checked against the original).
+- **Fair Use policy (SPEC §2a):** show prices without bias, hide or alter nothing to favour or hinder a trader,
+  never alter timestamps, link to "Report a Discrepancy", and keep the data fresh: the latest CSV, or the API
+  at least every five minutes on average. Breach can mean suspension.
 - **Everything must stay free to run** (John, 23 October). The repo is
   **public**, so commit only what may be published (the trimmed data the page
   needs, never raw API responses, never secrets). Vercel's free plan is
@@ -375,3 +377,18 @@ may refuse GitHub's runners too; the probe will show.
 allow-list now includes the Fuel Finder sites and `assets.publishing.service.gov.uk`;
 `www.gov.uk` and `www.legislation.gov.uk` were used. Remove any that are no longer needed
 when the work resumes or ends.
+
+### 2026-10-24 — the registration terms (John pasted them); the refresh rule changes the plan
+
+Saved unchanged in `design/fuel-finder-terms-of-access-2026-10-24.md`; summarised in SPEC §2a.
+**Settled:** the licence is the Open Government Licence plus the aggregator's Fair Use policy,
+so a public repo and a trimmed public data file are fine in principle. **Changes the plan:**
+users promoting fuel retail to motorists "must" use the most up-to-date CSV or call the API on
+average at least every five minutes. **Four updates a day does not comply, and my earlier
+"four a day is likely" was wrong (Correction).** Options (SPEC §2a, Q9): A, the CSV (published
+twice a day) when it appears; B, the API every five minutes (about 288 runs a day, and the
+data must be published without a site rebuild, because Vercel allows 100 deployments a day);
+C, ask VE3. Recommended: A if the CSV can be fetched automatically. Also required: a "Report a
+Discrepancy" link (`.../motorist/price-report`); three filters to disclose (price range,
+position check, two fuels). Not changed: no app code. Next: John registers and finds how the
+CSV is downloaded, its columns and the API host.

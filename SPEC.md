@@ -22,7 +22,8 @@ calculator; this file has what is proposed.
 
 **Status, 23 October 2026.** John's first answers are recorded in §11. Anything
 not yet confirmed is **Proposed**: Claude's draft for John to confirm, change
-or turn down. Still open: the data terms (Q3) and how often to refresh (Q9).
+or turn down. Q3 (the terms) is answered (§2a); still open: how often to refresh (Q9, now
+constrained by the Fair Use policy) and Q14.
 Nothing is built.
 
 **What has and hasn't been checked.** This container can't reach the Fuel
@@ -54,6 +55,64 @@ price, how old the price is, how far away it is and when it closes.
 - A calculator, "is it worth driving further?", comes later (§9).
 
 ## 2. Data source: the government Fuel Finder scheme (Proposed; unverified)
+
+### 2a. Terms of access, read 24 October (these override the "unconfirmed" statements below)
+
+John pasted the registration text, "Terms and conditions of access", saved unchanged in
+`design/fuel-finder-terms-of-access-2026-10-24.md`. In short:
+
+1. **Licence (settled).** Registering means agreeing to "the terms and conditions of the
+   Open Government Licence as well as the Fair Use policy of the Aggregator". The version
+   isn't stated (v3.0 is the current one; to check on the National Archives page). The OGL
+   lets the data be copied, published and distributed with attribution, so **a public repo
+   and a trimmed public data file are allowed in principle**, which greatly eases the
+   "Don't redistribute raw API data" worry (§2 below); the safeguards still stand (no raw
+   responses, no secrets). Credit wording to be agreed (the usual OGL line is "Contains
+   public sector information licensed under the Open Government Licence v3.0.", from
+   memory, to check).
+2. **The freshness rule (this changes the plan).** Anyone using the data "for any purpose
+   that promotes fuel retail opportunities to the motoring public" **must "utilise the most
+   up to date CSV, or call the API with a frequency that on average in a single day is not
+   more than 5 minutes"**, so the page doesn't differ materially from the database.
+   **Collecting four times a day does not meet this.** Options, for John (new Q9):
+   - **A. Use the CSV, always the latest.** The CSV is updated twice a day, so use each one
+     when it appears. Compliant on the policy's own words; two rebuilds a day; simplest and
+     cheapest. Prices can be up to about half a day old between files, so each price shows
+     its age. **Unknown:** how to fetch the CSV automatically (the portal download may need a
+     login; the email route sends a link) and what its columns are.
+   - **B. Call the API at least every five minutes on average.** About 288 runs a day, each
+     fetching all prices (about one request per 500 stations, one at a time). Far fresher.
+     But **288 site rebuilds a day exceeds Vercel's 100 deployments a day**, so the data would
+     have to be published somewhere that doesn't rebuild the site (for example a separate
+     static host that the page fetches from). More parts, more to break, and the aggregator
+     monitors usage and can throttle or suspend.
+   - **C. Ask the Fuel Finder team** whether twice-a-day API use, with each price's age shown,
+     satisfies the rule. The wording says "must", so don't assume.
+   Recommendation: A if the CSV can be fetched automatically, otherwise B. Decide after
+   registration shows the CSV route.
+3. **"Report a Discrepancy" link (required).** Either link to
+   `https://www.fuel-finder.service.gov.uk/motorist/price-report` or pass on complaints about
+   prices to the aggregator. A link is simplest. (That address also suggests
+   `www.fuel-finder.service.gov.uk` is the API's host.)
+4. **Presentation rules.** Don't amend or hide prices to favour or hinder a trader or "present
+   a false image"; present prices unbiasedly; "not manipulate, filter, or selectively display
+   data to favour certain suppliers"; price comparisons on "objective criteria"; no changes
+   "that could mislead"; no altered timestamps or metadata. Nearest-first by distance and
+   marking the cheapest are objective. **Three judgement calls for John, each objective but a
+   form of filtering, so each is to be disclosed in "About these figures":** leaving out
+   prices outside 100p to 300p (Q7), leaving out stations whose position disagrees with their
+   postcode (SPEC §4), and showing only unleaded and diesel (Q6).
+5. **Outages.** Not a breach if caused by things outside our control (outages, power cuts,
+   force majeure), while taking reasonable steps. The plan to keep the last good copy and show
+   its age is the right behaviour.
+6. **Enforcement.** The aggregator may monitor use, ask for evidence, throttle, suspend or
+   terminate access, and report breaches to regulators. So compliance needs to be reliable,
+   not approximate.
+
+**Corrections to my earlier notes:** "Collecting four times a day is much lighter than
+[the caching advice]" and "four a day likely" ignored this Fair Use rule, and the earlier
+"licence not confirmed" and "ask in writing about raw data" points are now largely answered
+by the OGL (a short email to confirm the freshness reading is still worthwhile, Q9).
 
 From the handover, not yet checked against the official documents:
 
@@ -504,7 +563,8 @@ Q10 (order and marking) unanswered**; John to say if the mapping is wrong.
   baish.net site stays free to run, and no cookies if avoidable.
 - **Q2** The consequences were set out (§10, "Keeping it free"); John then said
   **yes to the house way** (24 October).
-- **Q3** "Whatever works best." Claude's choice: both are needed (§11, Q3).
+- **Q3** Answered: the terms were pasted by John on 24 October (§2a): Open
+  Government Licence plus the aggregator's Fair Use policy. A public repo is fine.
 - **Q4** **A**, district centres, for now. (Consequence for the mock-ups: the
   eight nearest are ranked from the middle of the postcode district, so the
   order can be slightly out in a big town. The page should say "approximate".)
@@ -515,7 +575,8 @@ Q10 (order and marking) unanswered**; John to say if the mapping is wrong.
 - **Q8** Yes to the definition of "open" as drafted. *Amended by Claude, for John
   to confirm:* the data does include bank-holiday hours (my earlier note that it
   didn't was wrong), so they are used.
-- **Q9** Probably four times a day, but it depends on Q2 and the free limits.
+- **Q9** *Reopened by the terms (§2a): four a day does not meet the Fair Use policy.*
+  Earlier: probably four times a day, but it depends on Q2 and the free limits.
   Q2 is settled (house way); the API limits are generous (§2), so four a day
   stands unless John wants fresher prices.
 - **Q10** **Nearest first, with the cheapest price marked** (24 October; John's
