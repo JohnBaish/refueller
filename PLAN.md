@@ -68,7 +68,23 @@ doesn't rebuild the site (Vercel allows 100 deployments a day).
 
 ## Stage 1 — find out what the source really gives
 
-**Status, 24 October:** built on `stage-1-probe`; checked here against a fake server (17 checks, four deliberate breakages each caught). Waiting for John to say merge, because the "Run workflow" button only exists once the workflow is on `main`, and it touches the secrets. Then John presses Run workflow and Claude reads the run's log.
+**Status, 24 October (evening):** the probe is on `main` and was run once by John. Result: **the host is
+`www.fuel-finder.service.gov.uk` but it answers the token request with an empty HTTP 403 to GitHub's
+servers** (SPEC §2). Branch `stage-1b-diagnose` adds honest diagnostics (a plain user agent, safe response
+headers, three no-credential requests and a control page) so the next run says *who* is refusing and why.
+
+**If the API is closed to GitHub's servers** (decide after the next run; nothing here is chosen yet):
+- **A. Ask the Fuel Finder team** (`fuel.finder@ve3.global`): is the API limited by country or network, can it
+  be opened to GitHub's runners, and where does the CSV download automatically? Draft email in CLAUDE.md.
+- **B. The CSV route** (SPEC §2a, Q9 option A), if the CSV is served from somewhere that isn't blocked.
+  John to look in the portal for a CSV link (not a signed address).
+- **C. Run the collector from a UK address.** Candidates, all unverified: John's own computer or a
+  Raspberry Pi as a GitHub "self-hosted runner" (free, must stay on, and a self-hosted runner on a public repo
+  needs care); a free cloud machine in London (for example Oracle's Always Free tier, or AWS Lambda in
+  London); or a Cloudflare Worker. Each may still be refused if the block is on cloud networks, not on
+  countries, and each is more to look after than GitHub.
+- **Not an option:** hiding where requests come from (a VPN or proxy to look British). The Fair Use terms
+  forbid circumventing security measures, and a suspended account would end the project.
 
 Branch: `stage-1-probe`
 

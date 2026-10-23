@@ -193,6 +193,15 @@ container even from a real browser, so it may block requests from outside the UK
 or from cloud addresses; the same could apply to the API from GitHub Actions
 (Stage 1's probe will show).
 
+**First real probe run (24 October, GitHub Actions run 1).** The checks passed on GitHub and no
+secret appeared in the log. **The API host is `www.fuel-finder.service.gov.uk`** (the handover was
+right; `api.fuelfinder.service.gov.uk` and `api.fuel-finder.service.gov.uk` don't exist in DNS). But
+**the token request got HTTP 403 with an empty body**, not the documented 401 for bad credentials:
+the same blank 403 this session's container gets from the developer portal and from the site's own
+pages. So the service seems to refuse requests from GitHub's servers (and cloud addresses like it)
+before it reads them, probably by location or network. That is a guess until the next run, which
+records harmless diagnostics (see PLAN, Stage 1).
+
 **The portal's "Developer Guidelines" (pasted by John, 24 October; saved
 unchanged in `design/fuel-finder-developer-guidelines-2026-10-24.md`).** The first
 official text from the portal itself:

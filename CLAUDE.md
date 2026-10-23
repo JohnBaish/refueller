@@ -438,3 +438,34 @@ check fail** (following redirects; printing the token past `redact`; ignoring a 
 **Couldn't be checked:** anything against the real API (this container is blocked; Q: will GitHub's servers
 be accepted?), the workflow on GitHub itself, and the real host and data. **Not merged:** John to say
 merge (the workflow touches the secrets, and the Run workflow button needs it on `main`).
+
+### 2026-10-24 — first real probe run: red, and informative (branch `stage-1b-diagnose`)
+
+John merged Stage 1 and pressed Run workflow (run 40011176944, 15 seconds). **Read from the Actions log
+through GitHub's API:** the 17 checks passed on GitHub's Node 24; the secrets printed as `***`; nothing leaked.
+**Token requests:** `www.fuel-finder.service.gov.uk` -> HTTP 403 with an empty body;
+`api.fuelfinder.service.gov.uk` and `api.fuel-finder.service.gov.uk` -> no answer (`ENOTFOUND`, so those hosts do
+not exist). **So the host is `www.fuel-finder.service.gov.uk`, and it refuses GitHub's servers with a blank 403**
+(the docs promise 401 for bad credentials), as it does this session's container. Probably location or network
+filtering; unproven.
+
+**Built on `stage-1b-diagnose` (not merged):** the probe now sends an honest `User-Agent` ("Refueller-probe/0.1",
+no disguise, because the terms forbid circumventing security); keeps safe response headers of a refused sign-in
+(server, via, x-cache, edge location, content-length, www-authenticate; never cookies); and, only when sign-in
+fails for a reason other than bad credentials, makes three plain requests with **no credentials** (site home, the
+API without a token, the public Report a Discrepancy page) plus a control request to www.gov.uk. 19 checks; three
+more deliberate breakages each caught (keeping cookie headers, sending the secret on a diagnostic request, dropping
+the honest user agent). One earlier check correctly failed when the diagnostics were added, and the rule was changed so
+a 400 or 401 (service reached, credentials refused) is not diagnosed. `npm run lint` and `typecheck` clean.
+
+**Needs John:** merge (the probe touches the secrets), run it again; look in the portal for a CSV download and
+how it is fetched; and decide whether to email the Fuel Finder team now (draft below).
+
+*Draft email, for John to send or change (no credentials in it):* Subject: Fuel Finder API returns 403 to requests
+from GitHub Actions servers. "Hello. I registered as an Information Recipient on 24 October 2026 for a free,
+non-commercial website showing nearby petrol stations. A request to
+https://www.fuel-finder.service.gov.uk/api/v1/oauth/generate_access_token from a GitHub Actions server (a US
+datacentre address) gets HTTP 403 with an empty body, and the same site also returns an empty 403 to ordinary page
+requests from that kind of address. Is the API restricted by country or by network? If so, what do you recommend for a
+small site that fetches data on a schedule and must meet the Fair Use rule of using the latest CSV or calling the API
+at least every five minutes on average? Also, where can the CSV be downloaded automatically? Thank you. John Baish"

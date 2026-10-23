@@ -32,6 +32,24 @@ export function hostAllowed(url: string, allowLocal = false): boolean {
   return CANDIDATE_HOSTS.some((h) => new URL(h).hostname === u.hostname);
 }
 
+// Said honestly on every request, so the service can see who is asking. (It is not a disguise:
+// the terms forbid circumventing security measures, so nothing here pretends to be a browser.)
+export const USER_AGENT = 'Refueller-probe/0.1 (+https://github.com/JohnBaish/refueller)';
+
+// Response headers that are safe to print and help to tell WHO refused a request (a content
+// network, a firewall or the service itself). Never anything that could carry a credential.
+const SAFE_HEADERS = ['server', 'via', 'x-cache', 'x-amz-cf-pop', 'content-type', 'content-length', 'www-authenticate', 'x-amzn-errortype', 'cache-control', 'retry-after', 'access-control-allow-origin'];
+export function safeHeaders(h: Headers): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const name of SAFE_HEADERS) {
+    const v = h.get(name);
+    if (v !== null) out[name] = v.slice(0, 120);
+  }
+  const loc = h.get('location');
+  if (loc !== null) out.location = hostAllowed(loc) ? loc.slice(0, 160) : '(another host)';
+  return out;
+}
+
 // Last line of defence for anything about to be printed.
 export function redact(text: string, secrets: string[]): string {
   let out = text;

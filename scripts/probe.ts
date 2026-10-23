@@ -15,6 +15,8 @@ import {
   hostAllowed,
   isObj,
   redact,
+  safeHeaders,
+  USER_AGENT,
   summarisePrices,
   summariseStations,
   trimmedSizeEstimate,
@@ -32,6 +34,8 @@ export type ProbeOptions = {
   maxRequests?: number;
   now?: number;
   stepSummaryPath?: string;
+  controlUrl?: string; // a harmless public page, to see whether this machine can reach the internet at all
+  diagnose?: boolean;
   log: (line: string) => void;
 };
 
@@ -112,17 +116,18 @@ export async function runProbe(opts: ProbeOptions) {
   let token = '';
   let refresh = '';
   const tokenInfo: Record<string, unknown> = {};
+  let credentialsRejected = false;
 
   for (const host of hosts) {
     const url = `${host}/api/v1/oauth/generate_access_token`;
     const reply = await call(
       url,
-      { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ client_id: clientId, client_secret: clientSecret }) },
+      { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json', 'user-agent': USER_AGENT }, body: JSON.stringify({ client_id: clientId, client_secret: clientSecret }) },
       1,
       false,
     );
     const result = reply.status === 0 ? `no answer (${reply.error})` : `HTTP ${reply.status}${reply.text === '' ? ' (empty body)' : ''}`;
-    attempts.push({ host: new URL(host).hostname, result });
+    attempts.push({ host: new URL(host).hostname, result, ...(reply.status !== 200 && reply.status !== 0 ? { headers: safeHeaders(reply.headers) } : {}) });
     log(`token request to ${new URL(host).hostname}: ${result}`);
     if (reply.status === 200) {
       const json = parse(reply.text);
@@ -148,8 +153,33 @@ export async function runProbe(opts: ProbeOptions) {
     }
     if (reply.status === 401 || reply.status === 400) {
       log('the host answered but did not accept the credentials: stopping');
+      credentialsRejected = true;
       break;
     }
+  }
+
+  // Why was the sign-in refused? Plain requests with NO credentials at all, to the hosts that
+  // answered, plus one harmless public page as a control. Only statuses and safe headers are kept.
+  async function diagnose(answering: string[]) {
+    const out: Record<string, unknown> = {};
+    const probes: [string, string][] = [['siteHome', '/'], ['apiWithoutToken', '/api/v1/pfs?batch-number=1'], ['motoristPage', '/motorist/price-report']];
+    for (const hostname of answering) {
+      const host = hosts.find((h) => new URL(h).hostname === hostname);
+      if (!host) continue;
+      const results: Record<string, unknown> = {};
+      for (const [label, path] of probes) {
+        const reply = await call(`${host}${path}`, { method: 'GET', headers: { 'user-agent': USER_AGENT } }, 0, false);
+        results[label] = { status: reply.status || reply.error, bodyLength: reply.text.length, headers: safeHeaders(reply.headers) };
+      }
+      out[hostname] = results;
+    }
+    try {
+      const res = await fetch(opts.controlUrl ?? 'https://www.gov.uk/', { method: 'GET', redirect: 'manual', headers: { 'user-agent': USER_AGENT }, signal: AbortSignal.timeout(15_000) });
+      out.controlPublicPage = { status: res.status };
+    } catch (e) {
+      out.controlPublicPage = { status: errCode(e) };
+    }
+    return out;
   }
 
   const summary: Record<string, unknown> = {
@@ -173,17 +203,19 @@ export async function runProbe(opts: ProbeOptions) {
 
   if (token === '') {
     log('no access token obtained');
+    // A 400 or 401 means the service itself was reached and said no: nothing to diagnose.
+    if ((opts.diagnose ?? true) && !credentialsRejected) summary.diagnostics = await diagnose(attempts.filter((a) => !a.result.startsWith('no answer')).map((a) => a.host));
     return finish(false);
   }
 
   // --- 2. Data calls, one at a time, with the token --------------------------------------------
-  const authInit = (): RequestInit => ({ method: 'GET', headers: { authorization: `Bearer ${token}`, accept: 'application/json' } });
+  const authInit = (): RequestInit => ({ method: 'GET', headers: { authorization: `Bearer ${token}`, accept: 'application/json', 'user-agent': USER_AGENT } });
 
   async function refreshToken(): Promise<boolean> {
     if (refresh === '') return false;
     const reply = await call(
       `${base}/api/v1/oauth/regenerate_access_token`,
-      { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ client_id: clientId, refresh_token: refresh }) },
+      { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json', 'user-agent': USER_AGENT }, body: JSON.stringify({ client_id: clientId, refresh_token: refresh }) },
       1,
       false,
     );

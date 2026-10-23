@@ -176,12 +176,12 @@ const REFRESH = 'ref-good-0123456789';
 type Behaviour = { tokenStatus?: number; rateLimitOnce?: boolean; expireOldToken?: boolean; wrapPrices?: boolean };
 
 async function listen(handler: (req: IncomingMessage, res: ServerResponse, body: string) => void) {
-  const seen: { method: string; url: string; auth: string | undefined; body: string }[] = [];
+  const seen: { method: string; url: string; auth: string | undefined; ua: string | undefined; body: string }[] = [];
   const server = createServer((req, res) => {
     let body = '';
     req.on('data', (c) => (body += c));
     req.on('end', () => {
-      seen.push({ method: req.method ?? '', url: req.url ?? '', auth: req.headers.authorization, body });
+      seen.push({ method: req.method ?? '', url: req.url ?? '', auth: req.headers.authorization, ua: req.headers['user-agent'], body });
       handler(req, res, body);
     });
   });
@@ -256,6 +256,8 @@ await check('probe: a full run against the fake server', async () => {
     assert.equal(s.regenerate.ok, true);
     assert.equal(s.estimatedPageFile.stationsInFile, 3);
     assert.ok(s.requestsMade > 8);
+    // every request says honestly who is asking
+    assert.ok(api.seen.every((x) => x.ua?.startsWith('Refueller-probe/')), 'a request without the honest user agent');
     // every data request carried the token, and nothing else was asked for
     assert.ok(api.seen.filter((x) => x.method === 'GET').every((x) => x.auth === `Bearer ${GOOD}` || x.auth === `Bearer ${NEW}`));
   } finally {
@@ -327,6 +329,38 @@ await check('probe: an expired token is renewed from the refresh token, once', a
     assert.equal((r.summary.regenerate as { ok: boolean }).ok, true);
   } finally {
     await api.close();
+  }
+});
+
+await check('probe: a blocked front door is diagnosed without credentials and without leaking', async () => {
+  const hits: { method: string; url: string; auth: string | undefined; body: string }[] = [];
+  const blocked = await listen((req, res) => {
+    hits.push({ method: req.method ?? '', url: req.url ?? '', auth: req.headers.authorization, body: '' });
+    res.writeHead(403, { server: 'CloudFront', 'x-cache': 'Error from cloudfront', 'x-amz-cf-pop': 'IAD61-P12', 'content-length': '0', 'set-cookie': 'session=abcdef123456' });
+    res.end();
+  });
+  const control = await listen((_req, res) => json(res, 200, {}));
+  try {
+    const r = await probe([blocked.url], { controlUrl: control.url });
+    assert.equal(r.ok, false);
+    const s = r.summary as Record<string, any>;
+    const attempt = s.tokenAttempts[0];
+    assert.equal(attempt.result, 'HTTP 403 (empty body)');
+    assert.equal(attempt.headers.server, 'CloudFront');
+    assert.equal(attempt.headers['x-amz-cf-pop'], 'IAD61-P12');
+    assert.equal('set-cookie' in attempt.headers, false, 'a cookie header was kept');
+    const d = s.diagnostics[new URL(blocked.url).hostname];
+    assert.equal(d.siteHome.status, 403);
+    assert.equal(d.apiWithoutToken.status, 403);
+    assert.equal(d.motoristPage.status, 403);
+    assert.equal(s.diagnostics.controlPublicPage.status, 200);
+    // the diagnostic requests carry no credentials: only the one sign-in request had a body
+    const withSecret = hits.filter((h) => h.method === 'POST');
+    assert.equal(withSecret.length, 1);
+    assert.ok(hits.filter((h) => h.method === 'GET').every((h) => h.auth === undefined));
+    for (const secret of [ID, SECRET]) assert.equal(r.text.includes(secret), false);
+  } finally {
+    await Promise.all([blocked.close(), control.close()]);
   }
 });
 
