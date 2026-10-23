@@ -171,3 +171,14 @@ unknown; possibly non-UK or cloud addresses). The CMA guidance PDF
 aggregator's Fair Use policy. **Risk to check in Stage 1:** the API itself may
 refuse GitHub Actions runners. Asked John to read the portal's terms pages in his
 own browser and paste the text (not a secret) or allow the CMA host.
+
+### 2026-10-24 — CMA guidance read; a search-snippet claim corrected (branch `stage-0-spec`)
+
+**Correction:** the previous entry and SPEC §2 said a snippet showed the CMA's
+guidance saying the fuel data is reusable under the Open Government Licence. Having
+read the whole PDF (`assets.publishing.service.gov.uk`, now allowed), that line is
+only its own Crown copyright notice. Nothing in it covers the data's licence. It
+does name "fuel price comparison and navigational apps and websites" as the
+intended recipients (paragraph 11). The only source for "OGL plus Fair Use policy"
+is the forum post, so Q3 is still open. John says the portal's access page had
+"very little" on it; the terms are probably shown during registration.

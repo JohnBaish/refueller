@@ -117,13 +117,18 @@ post says registration binds the user to the Open Government Licence and the
 aggregator's Fair Use policy; that the policy bars altering or hiding prices to
 distort the market, and requires prices to be presented without bias and not
 modified in misleading ways; and that recipients must link to a "Report a
-Discrepancy" feature or pass on complaints about the price data. A snippet of the
-CMA's published guidance on its enforcement functions (18 December 2025) says the
-information may be reused free of charge under the Open Government Licence,
-excluding logos. If both are right, a public repo and a trimmed public data file
-are fine, and Refueller would need a credit line, a not-endorsed line and a
-"Report a discrepancy" link. **Unconfirmed until the portal's terms and that CMA
-document are read.** The portal (`www.developer.fuel-finder.service.gov.uk`) is
+Discrepancy" feature or pass on complaints about the price data. **Correction (24 October):** a search snippet suggested the CMA's guidance on its
+enforcement functions (18 December 2025) says the fuel data may be reused under
+the Open Government Licence. Now that the PDF has been read in full, that
+sentence is only the document's own Crown copyright notice, so it says nothing
+about the data. The guidance is about enforcement against fuel traders; it does
+describe the intended users of the data as "fuel price comparison and
+navigational apps and websites which would make this information available to
+consumers" (paragraph 11), which is what Refueller is. **Whether the data is under the Open
+Government Licence therefore rests only on the forum post, until the portal's
+terms are read.** If the forum post is right, a public repo and a trimmed public
+data file are fine, and Refueller would need a credit line, a not-endorsed line
+and a "Report a discrepancy" link. The portal (`www.developer.fuel-finder.service.gov.uk`) is
 reachable by the proxy now, but its CloudFront layer answers an empty 403 to this
 container even from a real browser, so it may block requests from outside the UK
 or from cloud addresses; the same could apply to the API from GitHub Actions
