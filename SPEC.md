@@ -20,9 +20,10 @@ The source is John's handover from a Claude.ai chat, kept unchanged in
 `design/handover-2026-10-22.md`. It has the detail on the data source and the
 calculator; this file has what is proposed.
 
-**Status, 23 October 2026. Nothing here is agreed yet.** Everything is marked
-**Proposed**: Claude's draft for John to confirm, change or turn down. §11
-lists the numbered questions. Nothing is built.
+**Status, 23 October 2026.** John's first answers are recorded in §11. Anything
+not yet confirmed is **Proposed**: Claude's draft for John to confirm, change
+or turn down. Still open: how it is built (Q2), the data terms (Q3), order and
+marking (Q10) and how often to refresh (Q9). Nothing is built.
 
 **What has and hasn't been checked.** This container can't reach the Fuel
 Finder developer site, GOV.UK or postcodes.io (the session's network policy
@@ -159,8 +160,8 @@ OpenRouteService), which is the opposite of the house value:
   three or four), and how large the repository grows if a snapshot is
   committed several times a day.
 - Vercel's free (Hobby) plan is for non-commercial use only, so no adverts or
-  affiliate links (handover). The repository is private, in John's own
-  account.
+  affiliate links (handover). The repository is **public**, in John's own
+  account (John, 23 October: all his sites must stay free to run; see §10).
 - Keys: `FUEL_FINDER_CLIENT_ID` and `FUEL_FINDER_CLIENT_SECRET`, as GitHub
   Actions secrets. The handover's `ORS_API_KEY` and `CRON_SECRET` are only
   needed if John chooses road distances or a Vercel cron. `.env*` is in
@@ -221,19 +222,100 @@ From the handover, with the arithmetic checked by code:
   own sat nav, or accepts a rounded-up estimate labelled "about". This is the
   main reason Q5 matters. Calculator questions come in a later batch.
 
-## 10. Hosting (Proposed)
+## 10. Hosting and keeping it free (Proposed)
 
-GitHub (private, `JohnBaish/refueller`) → Vercel, deploying `main`, at
+GitHub (**public**, `JohnBaish/refueller`) → Vercel, deploying `main`, at
 `refueller.baish.net`. John creates the Vercel project, adds the domain and
 switches on Web Analytics himself (HOUSE-STYLE §9); the baish.net landing
 page card comes last.
+
+### Keeping it free (John, 23 October)
+
+**Limits found, from search results quoting the providers' own pages (not
+opened directly, and they change, so re-check before relying on a number):**
+
+- GitHub Actions: standard runners are free in a **public** repo; a private
+  repo gets 2,000 minutes a month on the free plan. A public Refueller therefore
+  adds nothing to the allowance Hindcaster uses.
+- Vercel Hobby (free): 100 deployments a day; a cron job at most once a day;
+  non-commercial use only; Web Analytics 50,000 events a month, after which
+  collection pauses (no charge); other usage overages mean waiting until the
+  allowance resets rather than paying. The cron and deployment figures are from
+  Vercel's limits page as quoted in search results (its own cron page and limits
+  page disagree on the number of cron jobs).
+
+**The two ways of building it, and what each risks costing:**
+
+| | House way (static site + collector) | Handover way (Next.js + database + server search) |
+|---|---|---|
+| Per-search cost | None: the search runs in the visitor's browser | A server call on every search; popularity uses up the free allowance |
+| Scheduler | GitHub Actions (free, public repo) started by cron-job.org | Vercel cron is once a day on the free plan, so an outside scheduler is needed anyway |
+| Storage | Committed files, no database | A database from Vercel's marketplace, with its own free caps |
+| Limit that could bite | 100 deployments a day (we would use 4 to 8); repo size if snapshots pile up | Function, database and routing-service caps, any of which can stop the site or ask for payment |
+| Postcode privacy | Never leaves the browser | Reaches our server (and, in the handover, two other services) |
+| Cookies | None | None needed either |
+
+**Recommendation: the house way, public repo.** A site that runs entirely in
+the browser can't be overwhelmed by popularity, which is the usual way a free
+plan turns into a bill. The handover way would need a decision each time a
+free cap was hit.
+
+**What a public repo changes:**
+
+- Everything committed is public, history included. The site already publishes
+  whatever data the page needs, so the Fuel Finder terms (Q3) matter either way,
+  but a public repo adds a second copy and its history. So: commit only the
+  trimmed file the page needs, never raw API responses.
+- To stop the history growing with every snapshot, the collector can publish the
+  data file to a separate `data` branch that is overwritten each time (history
+  squashed), or the data can live outside the repo's main history. Decide in
+  Stage 2 once the file's real size is known.
+- If the Fuel Finder terms turned out to forbid passing the data on, a public
+  repo would not be allowed, and neither would serving the file to browsers. At
+  that point the question is bigger than public or private.
+
+**If John later accepts sending something onward** (for example road distances
+through a routing service, or exact postcodes from a lookup site): that needs a
+small server function to keep any key secret, which uses Vercel's function
+allowance and the service's own free cap. Both can be kept to a trickle by only
+calling them when a visitor asks for that extra, but it is the first place a
+free limit could be hit. Not needed now.
 
 ## 11. Questions for John
 
 Each has Claude's recommendation first. Answer by number.
 
+### John's answers, 23 October
+
+John's list ran 1 to 12. His tenth answer is plainly about coverage (Q11), so
+Claude has mapped his 10 to Q11, his 11 to Q12 and his 12 to Q13. **That leaves
+Q10 (order and marking) unanswered**; John to say if the mapping is wrong.
+
+- **Q1** Yes, except the repo is **public**, not private. His aim: every
+  baish.net site stays free to run, and no cookies if avoidable.
+- **Q2** John wants the consequences of both set out first (§10, "Keeping it free").
+- **Q3** "Whatever works best." Claude's choice: both are needed (§11, Q3).
+- **Q4** **A**, district centres, for now. (Consequence for the mock-ups: the
+  eight nearest are ranked from the middle of the postcode district, so the
+  order can be slightly out in a big town. The page should say "approximate".)
+- **Q5** Straight-line miles; one decimal place for less than five miles.
+- **Q6** Yes: unleaded (`E10`) and standard diesel (`B7_STANDARD`) only.
+- **Q7** Yes to all three: keep a station with one fuel, flag prices older than
+  seven days, treat prices outside 100p to 300p as errors.
+- **Q8** Yes to the definition of "open" as drafted.
+- **Q9** Probably four times a day, but it depends on Q2 and the free limits.
+- **Q10** Not answered.
+- **Q11** Great Britain, excluding Northern Ireland, to start.
+- **Q12** Yes to the credit lines as on Hindcaster.
+- **Q13** Yes: remember the last postcode on the visitor's device.
+
+John also said this tool may take a **different approach to personal data** from
+the others if that is what keeps it free, so long as it is clear what is
+collected or sent on, and with no cookies if avoidable. Nothing so far needs
+it (Q4 is A), but it matters for road distances and exact postcodes later.
+
 1. **Name and address.** Refueller at `refueller.baish.net`, with the draft
-   tagline above, repo private, no adverts? Or another name or tagline?
+   tagline above, repo public, no adverts? Or another name or tagline?
 2. **How it is built.** The house way (Vite + React, no server, a GitHub
    Actions collector, search done in the browser) rather than the handover's
    Next.js with a database and server functions? Recommended: house way, so
@@ -245,7 +327,7 @@ Each has Claude's recommendation first. Answer by number.
    `www.fuel-finder.service.gov.uk` (the API; I can test it only from GitHub
    Actions, as with the Met Office), `www.gov.uk` (the scheme's guidance).
    The answer decides whether we may keep and serve our own copy of the data
-   and so whether the repo can stay private.
+   and so whether the repo can be public.
 4. **Postcode to position.** A: district centres only (small, but a mile or
    more out in a town). B: ask postcodes.io from the browser (accurate, but
    your visitor's postcode goes to a third party). C: full-postcode positions
