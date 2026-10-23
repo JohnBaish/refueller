@@ -341,3 +341,37 @@ whole address in line 1. **Checked by code:** two of the three sample positions 
 and 260 km from their own postcodes (by my approximate town positions); the third is right.
 **New question for John (Q14):** what `00:00 to 00:00, not 24 hours` means. Not changed: no
 app code. Still not seen: the registration terms, the host, the "all prices" page's text.
+
+### 2026-10-24 — PARKED (John will register later)
+
+**State:** Stage 0 is complete and merged to `main` as documents (spec, plan, notes, house
+style copies, and nine saved pieces of the Fuel Finder documentation in `design/`). Nothing
+is built; no scaffold, no workflow. A new thread should start on `main`, read the list at the
+top, then SPEC §11 and the "PARKED" box at the top of PLAN.md.
+
+**Decided (SPEC §11):** Refueller at `refueller.baish.net`; public repo; the house way
+(static site, GitHub Actions collector, search in the browser, no cookies); district-centre
+postcodes for now; straight-line miles (one decimal for less than five miles); unleaded
+(`E10`) and standard diesel (`B7_STANDARD`) only; flag prices older than seven days, keep
+stations with one fuel, drop prices outside 100p to 300p; "open" as drafted (now using
+bank-holiday hours too, for John to confirm); nearest first with the cheapest marked;
+Great Britain only; credit lines as Hindcaster; remember the last postcode; probably four
+updates a day.
+
+**Open:** Q3 the data terms (licence, Fair Use, attribution, "don't redistribute raw API data"),
+which John says come with registration; Q9 final refresh rate (four a day likely); Q14 hours
+shown as 00:00 to 00:00; John to confirm the Q8 bank-holiday amendment; later questions
+(dark mode, calculator, favicon, search wording).
+
+**Known about the API** (SPEC §2): token and data paths, 500 stations a batch, field names and
+shapes, rate limits (100 a minute, one at a time), token lifetimes. **Not known:** the host,
+the licence and attribution wording, how many stations there are, the real spellings and
+data quality (the samples are test records with some wrong positions).
+
+**Risk to check first in Stage 1:** the portal returns 403 to this container, so the API
+may refuse GitHub's runners too; the probe will show.
+
+**Housekeeping for John:** nothing running or scheduled; no secrets exist yet. The network
+allow-list now includes the Fuel Finder sites and `assets.publishing.service.gov.uk`;
+`www.gov.uk` and `www.legislation.gov.uk` were used. Remove any that are no longer needed
+when the work resumes or ends.

@@ -35,6 +35,27 @@ Branch: `stage-0-spec`
 `SEO-HANDOVER.md` and `.claude/skills/fresh-look/` copied from clockwheel
 (`36378ed`). John answers SPEC §11.
 
+## PARKED (24 October 2026) — waiting for John to register
+
+Everything is paused until John registers for Fuel Finder. **When he does**, he should:
+
+1. Start at `https://www.developer.fuel-finder.service.gov.uk/access-latest-fuelprices`
+   and sign in with GOV.UK One Login.
+2. Read the terms shown during registration, and paste the text into a new thread:
+   the licence, the Fair Use policy, anything on credits or attribution, "Report a
+   discrepancy", limits on storing or passing on the data. (John thinks the terms are
+   part of the registration.)
+3. Note the **host** (the base web address of the API) if registration shows it. The
+   paths are known (`/api/v1/...`); the host is not, and the handover's guess is
+   `www.fuel-finder.service.gov.uk`.
+4. Put the client ID and client secret **straight into GitHub** as repository secrets
+   `FUEL_FINDER_CLIENT_ID` and `FUEL_FINDER_CLIENT_SECRET` (Claude gives the steps
+   when the time comes). Never paste either into a chat or a screenshot.
+5. Email `fuel.finder@ve3.global` about "Don't redistribute raw API data" only if the
+   terms leave the question open (SPEC §2, Q3).
+
+Then Stage 1 (below) starts, in a new thread on `main`.
+
 ## Stage 1 — find out what the source really gives
 
 Branch: `stage-1-probe`
