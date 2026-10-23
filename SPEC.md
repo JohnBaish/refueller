@@ -199,8 +199,15 @@ right; `api.fuelfinder.service.gov.uk` and `api.fuel-finder.service.gov.uk` don'
 **the token request got HTTP 403 with an empty body**, not the documented 401 for bad credentials:
 the same blank 403 this session's container gets from the developer portal and from the site's own
 pages. So the service seems to refuse requests from GitHub's servers (and cloud addresses like it)
-before it reads them, probably by location or network. That is a guess until the next run, which
-records harmless diagnostics (see PLAN, Stage 1).
+before it reads them, probably by location or network. **Second run (same evening), with diagnostics, settles the nature of the block:** *every* request to
+`www.fuel-finder.service.gov.uk` from GitHub's server got the same empty HTTP 403 from CloudFront, with
+`x-cache: Error from cloudfront` and the edge location `IAD61` (Washington DC area): the site's home page, the
+API with no token, and even the public "Report a Discrepancy" page meant for motorists. A control request to
+www.gov.uk from the same machine got 200. So **the whole site is closed to that address at the content network,
+long before any API or credential check; the credentials are not involved.** Two unrelated networks (this
+session's container and GitHub's) are refused in the same way. Still unproven whether the rule is by country or
+by type of network (cloud and datacentre addresses); a request from an ordinary UK home connection is the
+test, and John can make it by opening the Report a Discrepancy page in his own browser.
 
 **The portal's "Developer Guidelines" (pasted by John, 24 October; saved
 unchanged in `design/fuel-finder-developer-guidelines-2026-10-24.md`).** The first

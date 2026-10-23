@@ -469,3 +469,33 @@ datacentre address) gets HTTP 403 with an empty body, and the same site also ret
 requests from that kind of address. Is the API restricted by country or by network? If so, what do you recommend for a
 small site that fetches data on a schedule and must meet the Fair Use rule of using the latest CSV or calling the API
 at least every five minutes on average? Also, where can the CSV be downloaded automatically? Thank you. John Baish"
+
+### 2026-10-24 — second probe run: the whole site is closed to GitHub's servers (on `main`)
+
+John merged the diagnostics and ran the probe again (run 40011760477). Read from the log: the checks passed;
+secrets showed as `***`; the token request to `www.fuel-finder.service.gov.uk` got HTTP 403, empty body,
+`server: CloudFront`, `x-cache: Error from cloudfront`, edge `IAD61-P12`. **The three no-credential requests
+(site home, the API without a token, the public `/motorist/price-report` page) all got exactly the same
+403.** The control request to www.gov.uk got 200. **Conclusion:** the whole site refuses that address at the
+content network; credentials are irrelevant and no sign-in has actually been tried. Same result as from this
+session's container (another network). By country or by type of network is not yet known. John is **inclined to
+email the Fuel Finder team on Monday** and cannot find a CSV link in the portal (he doesn't know where to look;
+the regulations call it the "flat file").
+
+**Asked of John:** open `https://www.fuel-finder.service.gov.uk/motorist/price-report` in his own browser (UK home
+connection) and say whether it loads; add to the email the new evidence below; and, if he logs in to the portal
+again, look for the words "CSV", "flat file" or "download".
+
+*Revised draft email (replaces the earlier one; no credentials in it):* Subject: Fuel Finder site and API return 403
+to requests from cloud servers. "Hello. I registered as an Information Recipient on 24 October 2026 for a free,
+non-commercial website showing nearby petrol stations. Every request to www.fuel-finder.service.gov.uk from a
+GitHub Actions server (a US datacentre address) gets HTTP 403 with an empty body from CloudFront, including your
+public Report a Discrepancy page, so I can't get as far as signing in. Is the service restricted by country or by
+type of network? If so, what do you recommend for a small site that fetches data on a schedule and must meet the
+Fair Use rule of using the latest CSV, or calling the API at least every five minutes on average? Can the CSV be
+fetched automatically from a fixed address, and can the API be opened to my server? Thank you. John Baish"
+
+**Not an option, again:** disguising where requests come from (VPN or proxy). The Fair Use terms forbid
+circumventing security measures. Possible, but unverified and more to look after: a collector on John's own
+computer or Raspberry Pi as a GitHub self-hosted runner, or a free machine in a London cloud region (only if the
+block is by country, not by cloud network). Decide after the Fuel Finder team answer.

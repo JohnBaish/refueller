@@ -68,10 +68,12 @@ doesn't rebuild the site (Vercel allows 100 deployments a day).
 
 ## Stage 1 — find out what the source really gives
 
-**Status, 24 October (evening):** the probe is on `main` and was run once by John. Result: **the host is
-`www.fuel-finder.service.gov.uk` but it answers the token request with an empty HTTP 403 to GitHub's
-servers** (SPEC §2). Branch `stage-1b-diagnose` adds honest diagnostics (a plain user agent, safe response
-headers, three no-credential requests and a control page) so the next run says *who* is refusing and why.
+**Status, 24 October (night):** the probe is on `main` with diagnostics and has been run twice by John. **Result: the
+whole of `www.fuel-finder.service.gov.uk` answers GitHub's servers with an empty HTTP 403 from CloudFront
+(Washington edge), including the public Report a Discrepancy page and the API with no token** (SPEC §2). The control
+page at www.gov.uk answered 200. So no sign-in has been attempted at all, and the credentials are not the problem.
+**Blocked on the Fuel Finder team** (John plans to email on Monday 26 October) and on John's one-click test below.
+Nothing more can be learned from GitHub's servers.
 
 **If the API is closed to GitHub's servers** (decide after the next run; nothing here is chosen yet):
 - **A. Ask the Fuel Finder team** (`fuel.finder@ve3.global`): is the API limited by country or network, can it
