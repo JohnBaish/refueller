@@ -83,6 +83,10 @@ Branch: `stage-2-collector`
    its own postcode district is left out; unusable opening hours are kept but marked
    "hours not listed". The collector also fetches GOV.UK's bank-holidays feed and
    writes the dates for England and Wales and for Scotland into the data file.
+   From the station sample: opening times are `HH:MM:SS` (ignore seconds), the
+   24-hour flag beats the times, 00:00 to 00:00 with the flag false is ambiguous (SPEC
+   Q14), `bank_holiday` is one object, `country` and names come in capitals, `county`
+   may be null, `fuel_types` is a list of codes. Tidy names for display (BP, ESSO etc.).
 2. `scripts/collect.ts`: fetch (one retry at most, polite to the API's limits),
    clean, write the data file, keep the last good copy when a run fails, and
    log each run (counts, newest price time, failures) in `data/runs/`.

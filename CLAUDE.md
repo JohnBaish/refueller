@@ -330,3 +330,14 @@ no location in the prices call (join on `node_id`), and **a station lists only t
 sells** (the samples show one without E10 and one without diesel). Diesel is `B7_STANDARD`
 here and `B7_Standard` in the fields guide: match case-insensitively. Still not seen: the
 expanded `location`, `opening_times`, `fuel_types` and `amenities` of the station call.
+
+### 2026-10-24 — full station sample from John
+
+Saved unchanged in `design/fuel-finder-stations-sample-2026-10-24.md` (checked to parse as
+JSON). **Resolves:** `fuel_types` is a list of codes; opening times are `HH:MM:SS` (can be a
+second out); `bank_holiday` is a single object (not `bank_holidays` as in the guide) with a
+`type` of "bank holiday" or "standard"; `location` fields can be null, upper case, or the
+whole address in line 1. **Checked by code:** two of the three sample positions are 335 km
+and 260 km from their own postcodes (by my approximate town positions); the third is right.
+**New question for John (Q14):** what `00:00 to 00:00, not 24 hours` means. Not changed: no
+app code. Still not seen: the registration terms, the host, the "all prices" page's text.

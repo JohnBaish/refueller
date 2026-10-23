@@ -239,12 +239,37 @@ adds these, which shape the design:
   matching without regard to case is needed. **A station lists only the fuels it sells**:
   one sample has E5 and diesel but no E10, another E5 and E10 but no diesel, which is
   the "one fuel only" case from Q7.
-- **A mismatch for the probe to settle:** the fields guide describes `fuel_types` as
-  true/false flags per code, but the sample response shows `fuel_types` as an *array*;
-  `permanent_closure` is `false` in one sample and `null` in another. The code must
-  accept both shapes and treat `null` as "not closed". The documentation samples include
-  obvious test records ("TEST", "Test 12"); real data may too, so a station with a test-like
-  name is worth looking at before it is shown.
+- **A full station sample (pasted by John, 24 October; saved in
+  `design/fuel-finder-stations-sample-2026-10-24.md`) settles the earlier mismatches:**
+  - `fuel_types` is a **list of codes** the station sells (for example `["E10", "E5",
+    "HVO", "B10"]`), not true/false flags, and diesel is `B7_STANDARD` (and `B7_PREMIUM`).
+    The prices call is the better guide to what has a price; the list agrees with it.
+  - Opening times are `"HH:MM:SS"`, not `"HH:MM"`, and can be a second out (`06:00:01`,
+    `23:00:01`). Parse to minutes and ignore seconds. **The bank-holiday entry is one
+    object called `bank_holiday`** (the guide said `bank_holidays`), with a `type` of
+    `"bank holiday"` or `"standard"`, `open_time`, `close_time` and `is_24_hours`. The
+    meaning of `type` isn't explained: the "standard" sample has its own hours
+    (08:00 to 20:00) that differ from the weekday hours, so it is read as "this
+    station's hours on bank holidays", not "same as usual".
+  - **A 24-hour day is given two ways:** 00:00 to 23:59 with `is_24_hours: true` (this
+    sample), and 00:00 to 00:00 with the flag true (the guide). Use the flag.
+  - **00:00 to 00:00 with the flag false is ambiguous:** it probably means closed that day
+    (or hours not entered). One sample shows it for six days with the seventh 24 hours.
+    This is a new question for John (Q14).
+  - `location`: `address_line_1` can hold the **whole address**, `address_line_2` and
+    `county` can be `null` or empty, `country` is `"England"` or `"ENGLAND"`, names and
+    towns come in capitals (so they need tidying for display, with care for BP, ESSO and
+    the like), phone numbers come with or without a space, and `permanent_closure` is
+    `false` or `null`.
+  - **Positions can be badly wrong.** Two of the three sample stations' coordinates are
+    far from their own postcodes: a Brough (East Yorkshire) postcode with a position in
+    Somerset (about 335 km out), and a Loughborough postcode with a position in Dorset
+    (about 260 km out), by my approximate town positions. The third (Taplow, SL6 0AA) is
+    right. These are test records, but they justify the position check against the
+    postcode district. The Taplow record is a boatyard ("water_filling"): real data may
+    include marinas, so a station with only `E10`/`E5` at a boatyard may need a look.
+  - The samples include obvious test records ("TEST", "Test 12"); real data may too, so a
+    station with a test-like name is worth looking at before it is shown.
 - **What this does to the load:** stations change rarely (the portal says cache for an
   hour), so they can be fetched once a day, and only the prices each run: about one
   request per 500 stations, sent one at a time. Incremental fetches save little
@@ -556,6 +581,13 @@ it (Q4 is A), but it matters for road distances and exact postcodes later.
     I'll draft the exact words once the terms are read.
 13. **Remember the last postcode** on the visitor's own device, as Hindcaster
     does (with the footer line saying so)?
+
+14. **A station whose hours say 00:00 to 00:00 on a day, not 24 hours** (raised by the
+    sample data, 24 October). It probably means closed that day, or that nobody entered
+    hours. Recommended: decide once the probe shows how many real stations are like this.
+    Until then: treat it as *closed that day* if other days have real hours, and as
+    "Opening hours not listed" (shown, not counted as open for the eight) if every day is
+    like that. Your call, whenever the real numbers are in.
 
 Not asked yet, by design: dark mode (asked late in the design, HOUSE-STYLE
 §16), the calculator's details, the favicon and link-preview image, and the
