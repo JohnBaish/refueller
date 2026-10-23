@@ -499,3 +499,12 @@ fetched automatically from a fixed address, and can the API be opened to my serv
 circumventing security measures. Possible, but unverified and more to look after: a collector on John's own
 computer or Raspberry Pi as a GitHub self-hosted runner, or a free machine in a London cloud region (only if the
 block is by country, not by cloud network). Decide after the Fuel Finder team answer.
+
+### 2026-10-24 — John's one-click test: the public page loads from a UK home connection
+
+John opened `https://www.fuel-finder.service.gov.uk/motorist/price-report` in his own browser and it **loads**. Together
+with the two runs, this means the site is open to an ordinary UK home connection and closed to both this session's
+container and GitHub's US datacentre address, so the rule is by country or by type of network (cloud and
+datacentre addresses); which of the two is still not known. This is worth adding to the email: *"The same page loads
+normally from my UK home broadband."* Nothing else changed; still waiting on the Fuel Finder team (John plans to email
+on Monday 26 October).

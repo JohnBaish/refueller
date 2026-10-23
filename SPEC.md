@@ -207,7 +207,8 @@ www.gov.uk from the same machine got 200. So **the whole site is closed to that 
 long before any API or credential check; the credentials are not involved.** Two unrelated networks (this
 session's container and GitHub's) are refused in the same way. Still unproven whether the rule is by country or
 by type of network (cloud and datacentre addresses); a request from an ordinary UK home connection is the
-test, and John can make it by opening the Report a Discrepancy page in his own browser.
+test, and John made it: **the Report a Discrepancy page loads from his UK home connection** (24 October). So the
+rule is by country or by type of network; which one is still not known.
 
 **The portal's "Developer Guidelines" (pasted by John, 24 October; saved
 unchanged in `design/fuel-finder-developer-guidelines-2026-10-24.md`).** The first
