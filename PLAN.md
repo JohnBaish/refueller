@@ -35,6 +35,13 @@ Branch: `stage-0-spec`
 `SEO-HANDOVER.md` and `.claude/skills/fresh-look/` copied from clockwheel
 (`36378ed`). John answers SPEC §11.
 
+## PAUSED (24 October 2026) until the Fuel Finder team reply
+
+John will send `design/email-fuel-finder-team-2026-10-24.md` on Monday 26 October. **To resume:** start a new thread on
+`main`, paste their reply, and say "resuming Refueller". Nothing is running or scheduled; the two secrets exist in GitHub;
+the "Probe Fuel Finder" workflow runs only when John presses Run workflow. Their answer decides how the collector runs
+(SPEC §2a Q9, PLAN Stage 1 options A to C).
+
 ## UNPARKED (24 October 2026): John has registered and holds a client ID and secret
 
 John's next step is to add them to GitHub as secrets (step 4 below). He has not seen a CSV link or

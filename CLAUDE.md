@@ -508,3 +508,13 @@ container and GitHub's US datacentre address, so the rule is by country or by ty
 datacentre addresses); which of the two is still not known. This is worth adding to the email: *"The same page loads
 normally from my UK home broadband."* Nothing else changed; still waiting on the Fuel Finder team (John plans to email
 on Monday 26 October).
+
+### 2026-10-24 — PAUSED until the Fuel Finder team reply
+
+John will email the team on **Monday 26 October**; the final wording is saved in
+`design/email-fuel-finder-team-2026-10-24.md` (it adds that the public page loads from his UK home broadband, and asks four
+numbered questions: restricted by country or network? recommended route for a scheduled site under the Fair Use rule? can the
+CSV be fetched automatically, and from where? can the API be opened to a specific server?). **State:** everything is on `main`
+(the probe with diagnostics, the notes, the saved documentation); nothing is running or scheduled; the two GitHub secrets
+exist; no app, no page. **To resume:** a new thread on `main`, with their reply pasted in. Housekeeping for John: the network
+allow-list still includes the Fuel Finder hosts and `assets.publishing.service.gov.uk`, and can be trimmed while paused.
