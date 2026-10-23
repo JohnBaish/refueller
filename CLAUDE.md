@@ -311,3 +311,13 @@ sample shows an array; `permanent_closure` is `false` or `null`. The samples inc
 records. **Plan:** stations once a day, prices each run, one request at a time. Still not
 seen: the host, the incremental station page, the "all prices" page's own text, the expanded
 samples, and any terms or licence wording.
+
+### 2026-10-24 — incremental station page (screenshots) from John
+
+Added to `design/fuel-finder-data-endpoints-2026-10-24.md`: `GET
+/api/v1/pfs?batch-number=1&effective-start-timestamp=YYYY-MM-DD` (the same two parameters
+as the incremental prices call). The sample records are documentation tests ("TEST",
+"Yono", "csvprice"); one has an empty `amenities` list and a true supermarket flag. The
+folded groups (`location`, `opening_times`, `fuel_types`, `fuel_prices`) are still not
+expanded in any screenshot. All station and price endpoints are now seen except the "all
+prices" page's own text.

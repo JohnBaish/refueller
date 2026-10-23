@@ -58,8 +58,29 @@ timestamp."
 Responses: 200 Incremental fuel prices fetched successfully; 400 Bad Request; 403
 Forbidden; 429; 500; 502; 503; 504.
 
-## Not seen
+## Fetch incremental PFS information (second batch of screenshots, 24 October)
 
-The "Fetch incremental PFS information" page; the "Fetch all PFS fuel prices" page's own
-text; the expanded `location`, `amenities`, `opening_times`, `fuel_types` and
+`GET /api/v1/pfs?batch-number=1&effective-start-timestamp=…`
+
+"API used to fetch PFS information incrementally based on the provided effective start
+timestamp."
+
+| Query parameter | Type | |
+|---|---|---|
+| effective-start-timestamp | string, date | required. Example `effective-start-timestamp=2025-09-05`. "Start date in YYYY-MM-DD format" |
+| batch-number | integer | required. Example `batch-number=1`. (Described, as on the other pages, as "Batch number of fuel prices to fetch".) |
+
+Responses: 200 Incremental PFS info fetched successfully; 400 Bad Request; 403 Forbidden;
+429 Too Many Requests; 500 Internal server error; 502 Bad gateway; 503 Service temporarily
+unavailable; 504 Gateway timeout.
+
+Sample 200 body: the same station records as "Fetch PFS information". The records visible
+across the screenshots have names such as "TEST", "Yono" and "csvprice"; one has
+`is_supermarket_service_station: true` and an **empty** `amenities: [ ]`; several have
+`permanent_closure: false`, others `null`. The folded `location`, `amenities`,
+`opening_times` and `fuel_types` groups were not expanded in any screenshot.
+
+## Still not seen
+
+The "Fetch all PFS fuel prices" page's own text; the expanded `location`, `amenities`, `opening_times`, `fuel_types` and
 `fuel_prices` samples; the host.
