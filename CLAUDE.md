@@ -32,6 +32,7 @@ Read these first, in this order:
    `design/fuel-finder-information-recipient-api-2026-10-24.md` (the four endpoints) and
    `design/fuel-finder-oauth-token-api-2026-10-24.md` (the two token endpoints).
    And `design/fuel-finder-oauth-generate-token-2026-10-24.md` (the token call, from a screenshot).
+   And `design/fuel-finder-data-endpoints-2026-10-24.md` (the station and price calls: paths, batches, parameters).
 
 Key points from the house style, repeated because they matter most:
 
@@ -298,3 +299,15 @@ Added to the same transcription: the regenerate call takes `client_id` and
 `refresh_token` (no secret) and returns `data.access_token` with an hour's expiry, and
 no new refresh token in the visible sample. This completes the token side. Four data
 endpoint pages still to come.
+
+### 2026-10-24 — the data endpoints (screenshots) from John
+
+Transcribed in `design/fuel-finder-data-endpoints-2026-10-24.md` (the first of the five
+images repeated an earlier token screenshot). **Confirmed:** `GET /api/v1/pfs?batch-number=N`
+and `GET /api/v1/pfs/fuel-prices?batch-number=N`, up to 500 forecourts a batch; incremental
+forms add `effective-start-timestamp=YYYY-MM-DD` (a date, not a time). All match the
+handover's paths. **Mismatches:** the fields guide says `fuel_types` is true/false flags, the
+sample shows an array; `permanent_closure` is `false` or `null`. The samples include test
+records. **Plan:** stations once a day, prices each run, one request at a time. Still not
+seen: the host, the incremental station page, the "all prices" page's own text, the expanded
+samples, and any terms or licence wording.

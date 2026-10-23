@@ -220,9 +220,26 @@ adds these, which shape the design:
 - **Other flags:** `is_motorway_service_station`, `is_supermarket_service_station`
   (unreliable, per the handover), `amenities` (a list including
   `twenty_four_hour_fuel`), a phone number if public.
-- **Not in the guide:** how many stations, how the results are paged or batched
-  (the handover says `batch-number`), what "Incremental" asks for (the handover says
-  `effective-start-timestamp`), and the real endpoint addresses. Still for the probe.
+- **Endpoints and paging, now seen in screenshots (24 October; transcribed in
+  `design/fuel-finder-data-endpoints-2026-10-24.md`):** `GET /api/v1/pfs?batch-number=N`
+  (stations) and `GET /api/v1/pfs/fuel-prices?batch-number=N` (prices), both with
+  **up to 500 forecourts a batch**, so the whole UK is a few dozen requests at most
+  (the handover's 15-plus batches each). The incremental forms add
+  `effective-start-timestamp=YYYY-MM-DD`, **a date, not a time**, so "changed since"
+  works by day only. These agree with the handover, which makes its host
+  (`www.fuel-finder.service.gov.uk`) the likelier; no screenshot shows the host. Replies
+  are plain JSON arrays; errors 400, 403, 429, 500, 502, 503, 504.
+- **A mismatch for the probe to settle:** the fields guide describes `fuel_types` as
+  true/false flags per code, but the sample response shows `fuel_types` as an *array*;
+  `permanent_closure` is `false` in one sample and `null` in another. The code must
+  accept both shapes and treat `null` as "not closed". The documentation samples include
+  obvious test records ("TEST", "Test 12"); real data may too, so a station with a test-like
+  name is worth looking at before it is shown.
+- **What this does to the load:** stations change rarely (the portal says cache for an
+  hour), so they can be fetched once a day, and only the prices each run: about one
+  request per 500 stations, sent one at a time. Incremental fetches save little
+  at four runs a day, since they only filter by date. Still for the probe: the real
+  number of stations, the host, and the pages not yet seen.
 
 **The sticking point is "Don't redistribute raw API data".** Every design in which
 the browser does the search has to send the browser the prices, and a public repo
