@@ -28,7 +28,8 @@ Read these first, in this order:
    overview and API Testing pages (authentication, environments).
    And `design/fuel-finder-public-api-intro-2026-10-24.md` (the Public API intro) and
    `design/fuel-finder-api-documentation-index-2026-10-24.md` (the API index) and
-   `design/fuel-finder-api-fields-guide-2026-10-24.md` (the real field names).
+   `design/fuel-finder-api-fields-guide-2026-10-24.md` (the real field names) and
+   `design/fuel-finder-information-recipient-api-2026-10-24.md` (the four endpoints).
 
 Key points from the house style, repeated because they matter most:
 
@@ -250,3 +251,13 @@ a sanity check. **Checked:** GOV.UK's `bank-holidays.json` loads from here and c
 2019 to 2028 for England and Wales, Scotland and Northern Ireland. Still not seen: the
 two API pages themselves (addresses, paging, what "Incremental" asks for), and any
 terms, licence or attribution wording.
+
+### 2026-10-24 — the four endpoints (names only) from John
+
+Saved in `design/fuel-finder-information-recipient-api-2026-10-24.md`: API version 1,
+four GET calls (fetch all PFS fuel prices; fetch incremental PFS fuel prices; fetch PFS
+information; fetch incremental PFS information). No addresses or parameters in the paste
+(each row probably opens its own page). John will register first and email VE3 about
+"Don't redistribute raw API data" only if the registration terms leave it unclear.
+Still not seen: each endpoint's address, parameters and paging; the OAuth token page;
+terms, licence, Fair Use and attribution wording.
