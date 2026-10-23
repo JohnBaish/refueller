@@ -1,0 +1,57 @@
+<!doctype html>
+<!--
+  The fresh-look report as a PDF (SKILL.md §6). Copy this file to the
+  scratchpad, fill in the report, and run make-pdf.mjs. {{REPO}} is replaced
+  with the repo's path so the brand fonts load from its node_modules.
+  The look matches the Flowcharter report John approved (2026-10-17): A5,
+  Caprasimo headings, Figtree text, a cream note box, sizes and priorities in
+  terracotta after each item's heading.
+-->
+<html lang="en-GB"><head><meta charset="utf-8"><title>PROJECT: fresh look</title>
+<style>
+@font-face{font-family:Caprasimo;src:url('file://{{REPO}}/node_modules/@fontsource/caprasimo/files/caprasimo-latin-400-normal.woff2')}
+@font-face{font-family:Figtree;font-weight:400;src:url('file://{{REPO}}/node_modules/@fontsource/figtree/files/figtree-latin-400-normal.woff2')}
+@font-face{font-family:Figtree;font-weight:600;src:url('file://{{REPO}}/node_modules/@fontsource/figtree/files/figtree-latin-600-normal.woff2')}
+@font-face{font-family:Figtree;font-weight:700;src:url('file://{{REPO}}/node_modules/@fontsource/figtree/files/figtree-latin-700-normal.woff2')}
+@page{size:A5;margin:14mm 12mm 16mm}
+body{font:400 10.5pt/1.5 Figtree,sans-serif;color:#201e1d;margin:0}
+h1{font:400 22pt/1.1 Caprasimo,serif;margin:0 0 4pt}
+.sub{color:#5b5550;margin:0 0 10pt;font-size:9.5pt}
+h2{font:400 14pt/1.2 Caprasimo,serif;margin:16pt 0 6pt;border-top:1px solid #d9cbb3;padding-top:9pt;break-after:avoid}
+h3{font:700 10.5pt/1.3 Figtree,sans-serif;margin:11pt 0 3pt;break-after:avoid}
+.tag{font-weight:600;color:#a8582a}
+p{margin:0 0 5pt} ul,ol{margin:0 0 5pt;padding-left:15pt} li{margin:0 0 3pt}
+.item{break-inside:avoid}
+.note{background:#ebddc5;border-radius:8pt;padding:7pt 9pt;margin:6pt 0 4pt}
+.coverage{margin-top:8pt;font-size:9.5pt;color:#5b5550}
+</style></head><body>
+<h1>PROJECT: fresh look</h1>
+<p class="sub">Review of the live site (main, commit XXXXXXX), DATE. Checked at 1200px (computer) and 390px with touch (phone) in Chromium.</p>
+<div class="note"><strong>Nothing has been changed.</strong> No code, no branches, no commits. Sizes: <em>small / medium / larger</em>. Priorities: <em>worth doing / optional / leave</em>.</div>
+
+<h2>1. Overall verdict</h2>
+<p>1.1 …</p>
+
+<h2>2. AREA</h2>
+<div class="item"><h3>2.1 HEADING <span class="tag">small · worth doing</span></h3>
+<p><strong>What happens:</strong> …</p>
+<p><strong>Recommendation:</strong> …</p></div>
+
+<!-- … one section per area, then: -->
+<!-- Every point numbered, never bullets, so John can reply by number. -->
+<h2>N. Looked at and would leave alone</h2>
+<p>N.1 <strong>…</strong> Reason.</p>
+<p>N.2 <strong>…</strong> Reason.</p>
+
+<h2>N+1. What I couldn't check</h2>
+<p>N+1.1 …</p>
+
+<h2>N+2. Suggested order, if you'd like to go ahead</h2>
+<ol>
+<li><strong>Quick fixes, in one branch:</strong> …</li>
+<li><strong>Decide on …:</strong> …</li>
+<li><strong>Optional, separately:</strong> …</li>
+<li><strong>Left alone for now:</strong> … and N.1–N.x.</li>
+</ol>
+<p class="coverage">Every item in sections 2–N now appears in this list: 2.1–…, …, N.1–N.x.</p>
+</body></html>
