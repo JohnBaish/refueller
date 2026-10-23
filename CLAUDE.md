@@ -27,7 +27,8 @@ Read these first, in this order:
    Also `design/fuel-finder-developer-docs-overview-2026-10-24.md`: the portal's
    overview and API Testing pages (authentication, environments).
    And `design/fuel-finder-public-api-intro-2026-10-24.md` (the Public API intro) and
-   `design/fuel-finder-api-documentation-index-2026-10-24.md` (the API index).
+   `design/fuel-finder-api-documentation-index-2026-10-24.md` (the API index) and
+   `design/fuel-finder-api-fields-guide-2026-10-24.md` (the real field names).
 
 Key points from the house style, repeated because they matter most:
 
@@ -235,3 +236,17 @@ access and refresh tokens must be reused until close to expiry, not requested be
 every call. The collector gets one token per run and reuses it for every request in
 that run (and refreshes it if a run outlasts the hour); the plan's "new token each run"
 is within that. Asked John for those two pages next.
+
+### 2026-10-24 — the API fields guide from John
+
+Saved in `design/fuel-finder-api-fields-guide-2026-10-24.md` (tab-separated paste laid
+out as tables, words and samples unchanged). Summarised in SPEC §2. **Corrections to
+my earlier notes:** the data *does* contain bank-holiday opening hours (I had said it
+didn't), so SPEC §4 and Q8 now use them, flagged for John to confirm; diesel is spelt
+`B7_Standard` there, not `B7_STANDARD`. **New cautions:** hours are "usual" only;
+`temporary_closure` only covers three days or more; a permanent closure can be in the
+future; the sample longitude is wrong (positive for Leicestershire), so positions get
+a sanity check. **Checked:** GOV.UK's `bank-holidays.json` loads from here and covers
+2019 to 2028 for England and Wales, Scotland and Northern Ireland. Still not seen: the
+two API pages themselves (addresses, paging, what "Incremental" asks for), and any
+terms, licence or attribution wording.

@@ -177,6 +177,39 @@ unchanged in `design/fuel-finder-developer-docs-overview-2026-10-24.md`):**
   test public data APIs against live or test environment." So one pair of live
   secrets does for the probe and the collector. (This corrects the plan's two pairs.)
 
+**The portal's "API fields guide" (pasted by John, 24 October; saved in
+`design/fuel-finder-api-fields-guide-2026-10-24.md`).** Two read-only calls, each
+with an "All" and an "Incremental" form: station information and fuel prices,
+joined on `node_id` (a 64-character code). It confirms the handover's fields and
+adds these, which shape the design:
+
+- **Fuel codes:** `E10`, `E5`, `B7_Standard`, `B7_Premium`, `B10`, `HVO`. The guide
+  spells diesel `B7_Standard` (the handover had `B7_STANDARD`), so the code must
+  match without regard to case, and the probe will show the real spelling.
+- **Prices:** `price` in pence per litre to one decimal (sample 123.9);
+  `price_last_updated` and `price_change_effective_timestamp` in UTC with a
+  trailing Z. Shown to the visitor in UK time ("9.30am"), never altered.
+- **Opening hours** are *usual* hours only: for each weekday `open`, `close` and
+  `is_24_hours` (a 24-hour day is given as 00:00 to 00:00 with the flag true), and
+  **a bank-holiday entry** (`open_time`, `close_time`, `is_24_hours`). Special
+  one-off hours aren't in the data, so "open" can only mean "usually open".
+- **Closures:** `temporary_closure` means closed "for a period of three days or
+  more", so a shorter closure won't show. `permanent_closure_date` is "the date/time
+  the forecourt was/will be closed", so a station flagged permanently closed with a
+  *future* date is still open until then.
+- **Place:** `country` ("England" in the sample), `county`, `postcode`, `latitude`,
+  `longitude`. The sample longitude for a Loughborough station is `1.82469`, which
+  is east of Greenwich and so wrong for Leicestershire (the real figure is negative,
+  about -1.2). It's only sample data, but it shows coordinates can be wrong, so the
+  collector should check each station's position against its own postcode district
+  and leave out any that disagree badly.
+- **Other flags:** `is_motorway_service_station`, `is_supermarket_service_station`
+  (unreliable, per the handover), `amenities` (a list including
+  `twenty_four_hour_fuel`), a phone number if public.
+- **Not in the guide:** how many stations, how the results are paged or batched
+  (the handover says `batch-number`), what "Incremental" asks for (the handover says
+  `effective-start-timestamp`), and the real endpoint addresses. Still for the probe.
+
 **The sticking point is "Don't redistribute raw API data".** Every design in which
 the browser does the search has to send the browser the prices, and a public repo
 shows them to everyone. Whether a trimmed, cleaned file of two fuels' prices counts
@@ -215,10 +248,15 @@ only open stations, nearest first, looks fine on that reading.
 2. **Distance** is straight-line, in miles, until John decides otherwise
    (Q5). Road distance needs a routing service, and sending positions to one
    would break the "nothing leaves the browser" value.
-3. **Open**: not permanently closed, not temporarily closed, and open at the
-   moment of the search by UK clock time (opening times for today's weekday,
-   or open all day). Worked out in the browser when the visitor searches, so
-   "open now" is right whenever the page was built (Q8).
+3. **Open**: not permanently closed (a future closure date still counts as open),
+   not temporarily closed, and **usually open** at the moment of the search by UK
+   clock time: the station's hours for today's weekday, or its bank-holiday hours on
+   a bank holiday, or open all day (Q8). Worked out in the browser when the visitor
+   searches, so "open now" is right whenever the page was built. Bank holiday dates
+   come from GOV.UK's bank-holidays feed (checked: it covers 2019 to 2028 for
+   England and Wales, Scotland and Northern Ireland), fetched by the collector and
+   put in the data file, so no visitor request is made. Hours that run past
+   midnight, and the nights the clocks change, need worked examples in the checks.
 4. **Eight**: the eight nearest that pass the open test, however far away
    (Hindcaster's rule for gauges). If fewer than eight are open, show those,
    with a plain sentence.
@@ -408,7 +446,9 @@ Q10 (order and marking) unanswered**; John to say if the mapping is wrong.
 - **Q6** Yes: unleaded (`E10`) and standard diesel (`B7_STANDARD`) only.
 - **Q7** Yes to all three: keep a station with one fuel, flag prices older than
   seven days, treat prices outside 100p to 300p as errors.
-- **Q8** Yes to the definition of "open" as drafted.
+- **Q8** Yes to the definition of "open" as drafted. *Amended by Claude, for John
+  to confirm:* the data does include bank-holiday hours (my earlier note that it
+  didn't was wrong), so they are used.
 - **Q9** Probably four times a day, but it depends on Q2 and the free limits.
   Q2 is settled (house way); the API limits are generous (§2), so four a day
   stands unless John wants fresher prices.
@@ -458,7 +498,7 @@ it (Q4 is A), but it matters for road distances and exact postcodes later.
 8. **What "open" means.** Open now by UK time; a station with no opening
    times listed counts as open, with "Opening hours not listed"; show "Open
    until 10pm", "Open 24 hours" and "Closes in less than an hour"? Bank
-   holidays aren't in the data as far as we know.
+   holiday hours are in the data (see §2) and will be used.
 9. **How fresh.** Collect and rebuild how often? Fuel Finder stations must
    report within 30 minutes, but each collection is a rebuild of the site.
    Recommended: start with four times a day (early morning, late morning,

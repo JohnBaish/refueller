@@ -77,6 +77,12 @@ Branch: `stage-2-collector`
    can be checked without the network) that join stations and prices, drop
    permanently closed stations, flag temporary closures, drop prices outside
    the sensible range, flag old prices, and trim to what the page needs.
+   Rules the field guide adds: Great Britain only (drop Northern Ireland by country
+   and `BT` postcode); a future `permanent_closure_date` stays open until then;
+   fuel codes matched without regard to case; a station whose position is far from
+   its own postcode district is left out; unusable opening hours are kept but marked
+   "hours not listed". The collector also fetches GOV.UK's bank-holidays feed and
+   writes the dates for England and Wales and for Scotland into the data file.
 2. `scripts/collect.ts`: fetch (one retry at most, polite to the API's limits),
    clean, write the data file, keep the last good copy when a run fails, and
    log each run (counts, newest price time, failures) in `data/runs/`.
