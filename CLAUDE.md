@@ -321,3 +321,12 @@ as the incremental prices call). The sample records are documentation tests ("TE
 folded groups (`location`, `opening_times`, `fuel_types`, `fuel_prices`) are still not
 expanded in any screenshot. All station and price endpoints are now seen except the "all
 prices" page's own text.
+
+### 2026-10-24 — a prices sample response from John
+
+Saved unchanged in `design/fuel-finder-prices-sample-2026-10-24.md`. Settles the price
+shape: `price` is a number (pence per litre), timestamps are UTC with milliseconds, there is
+no location in the prices call (join on `node_id`), and **a station lists only the fuels it
+sells** (the samples show one without E10 and one without diesel). Diesel is `B7_STANDARD`
+here and `B7_Standard` in the fields guide: match case-insensitively. Still not seen: the
+expanded `location`, `opening_times`, `fuel_types` and `amenities` of the station call.

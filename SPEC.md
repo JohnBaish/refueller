@@ -229,6 +229,16 @@ adds these, which shape the design:
   works by day only. These agree with the handover, which makes its host
   (`www.fuel-finder.service.gov.uk`) the likelier; no screenshot shows the host. Replies
   are plain JSON arrays; errors 400, 403, 429, 500, 502, 503, 504.
+- **A real prices sample (pasted by John, 24 October; saved in
+  `design/fuel-finder-prices-sample-2026-10-24.md`):** each station is
+  `{node_id, public_phone_number, trading_name, fuel_prices: [{fuel_type, price,
+  price_last_updated, price_change_effective_timestamp}]}`. `price` is a number in pence
+  per litre (132.9); timestamps are UTC with milliseconds and a trailing Z; the prices
+  call has **no position or address**, so it is joined to the stations call on `node_id`.
+  Diesel is spelt **`B7_STANDARD`** here (and `B7_Standard` in the fields guide), so
+  matching without regard to case is needed. **A station lists only the fuels it sells**:
+  one sample has E5 and diesel but no E10, another E5 and E10 but no diesel, which is
+  the "one fuel only" case from Q7.
 - **A mismatch for the probe to settle:** the fields guide describes `fuel_types` as
   true/false flags per code, but the sample response shows `fuel_types` as an *array*;
   `permanent_closure` is `false` in one sample and `null` in another. The code must
