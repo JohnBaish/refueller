@@ -172,8 +172,12 @@ unchanged in `design/fuel-finder-developer-docs-overview-2026-10-24.md`):**
   /api/v1/oauth/generate_access_token` with a **JSON** body `{client_id,
   client_secret}` (not the form-encoded body in the overview's generic example, and
   no `scope`). The access token lasts 3600 seconds; the refresh token 48 hours
-  (`refresh_token_expires_in`). Replies listed: 200, 400, 401, 429, 500, 502, 503,
-  504. This matches the handover's path, so the handover's host
+  (`refresh_token_expires_in`). The reply wraps the tokens: `{success, data:
+  {access_token, token_type: "Bearer", expires_in, refresh_token,
+  refresh_token_expires_in}, message}`. Errors listed: 400, 401 (bad credentials),
+  429, 500, 502, 503 (try again later), 504. A second call, `POST
+  /api/v1/oauth/regenerate_access_token`, swaps a refresh token for a new access
+  token. This matches the handover's path, so the handover's host
   (`www.fuel-finder.service.gov.uk`) is likelier than the overview's
   `api.fuelfinder.service.gov.uk`; the host is still not shown. Collecting four
   times a day needs one token request per run, so the refresh token isn't needed.

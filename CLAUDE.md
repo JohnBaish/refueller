@@ -282,3 +282,12 @@ access token 3600 s, refresh token 48 h, replies 200/400/401/429/500/502/503/504
 `scope`, `/v1/...`), so the specific page wins until the probe confirms. The screenshot's
 sample key strings were deliberately not copied (placeholders, not credentials; John hasn't
 registered yet). Host still not shown. Still needed: the other five endpoint pages.
+
+### 2026-10-24 — token endpoint, second screenshot
+
+Added to `design/fuel-finder-oauth-generate-token-2026-10-24.md`: the 200 reply is
+`{success, data:{access_token, token_type, expires_in, refresh_token,
+refresh_token_expires_in}, message}`, so the collector reads the token from `data`;
+error descriptions (401 invalid credentials, 503 "try again later", and so on); and the
+regenerate call's path, `POST /api/v1/oauth/regenerate_access_token`. Sample token strings
+not copied. Four data-endpoint pages still to come.
