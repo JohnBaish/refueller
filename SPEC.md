@@ -110,7 +110,26 @@ neither has been read. The handover's credit ("Contains public sector informatio
 from the Fuel Finder scheme, licensed under the Open Government Licence v3.0.")
 and its usage terms (present prices without bias, don't filter selectively to
 favour suppliers, don't alter timestamps; sorting by distance or price is fine)
-still need checking in the original. The question they decide is whether we may
+still need checking in the original.
+
+**Second-hand, from search snippets (24 October; not read at source).** A forum
+post says registration binds the user to the Open Government Licence and the
+aggregator's Fair Use policy; that the policy bars altering or hiding prices to
+distort the market, and requires prices to be presented without bias and not
+modified in misleading ways; and that recipients must link to a "Report a
+Discrepancy" feature or pass on complaints about the price data. A snippet of the
+CMA's published guidance on its enforcement functions (18 December 2025) says the
+information may be reused free of charge under the Open Government Licence,
+excluding logos. If both are right, a public repo and a trimmed public data file
+are fine, and Refueller would need a credit line, a not-endorsed line and a
+"Report a discrepancy" link. **Unconfirmed until the portal's terms and that CMA
+document are read.** The portal (`www.developer.fuel-finder.service.gov.uk`) is
+reachable by the proxy now, but its CloudFront layer answers an empty 403 to this
+container even from a real browser, so it may block requests from outside the UK
+or from cloud addresses; the same could apply to the API from GitHub Actions
+(Stage 1's probe will show).
+
+The question they decide is whether we may
 keep our own copy and pass the trimmed data on to every browser (Q3); showing
 only open stations, nearest first, looks fine on that reading.
 

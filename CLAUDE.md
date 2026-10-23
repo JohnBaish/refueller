@@ -159,3 +159,15 @@ so the handover's licence claim and credit sentence are unconfirmed until the
 portal's terms are read.
 
 **Not changed:** no app code. Still waiting for the portal terms (Q3) and Q9.
+
+### 2026-10-24 — developer portal allowed but still unreadable from here (branch `stage-0-spec`)
+
+John added `www.developer.fuel-finder.service.gov.uk`. The proxy now connects,
+but the portal answers an empty **403 from CloudFront**, for curl with browser-style
+headers and for real Chromium alike, so it blocks this container itself (cause
+unknown; possibly non-UK or cloud addresses). The CMA guidance PDF
+(`assets.publishing.service.gov.uk`) is also blocked by the proxy. Search snippets
+(second-hand, in SPEC §2) say the licence is the Open Government Licence plus the
+aggregator's Fair Use policy. **Risk to check in Stage 1:** the API itself may
+refuse GitHub Actions runners. Asked John to read the portal's terms pages in his
+own browser and paste the text (not a secret) or allow the CMA host.
