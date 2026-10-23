@@ -72,3 +72,28 @@ expired while requesting the access token regeneration".
 
 Request body schema: `application/json`, required (its fields are below the visible part
 of the screenshot).
+
+---
+
+## Third screenshot (24 October): the regenerate call's body and replies
+
+Transcribed by Claude; the sample client ID, refresh token and access token strings were not copied.
+
+Request body (`application/json`, required) for `POST /api/v1/oauth/regenerate_access_token`:
+
+| Field | Type | |
+|---|---|---|
+| client_id | string | required |
+| refresh_token | string | required |
+
+(No `client_secret` is asked for here.)
+
+Replies: 200 Access token regenerated successfully; 400 Invalid refresh token or client
+id; 401 Unauthorized – Invalid client credentials; 429 Too Many Requests; 500 Internal
+server error; 502 Bad gateway (the server received an invalid response from the upstream
+service); 503 Service temporarily unavailable (please try again later); 504 Gateway
+timeout (the upstream server failed to respond in time).
+
+Shape of the 200 sample: `{"success": true, "data": {"access_token": "…", "token_type":
+"Bearer", "expires_in": 3600}, "message": "Operation successful"}` (no new refresh token
+in this reply, as far as the visible part shows).

@@ -291,3 +291,10 @@ refresh_token_expires_in}, message}`, so the collector reads the token from `dat
 error descriptions (401 invalid credentials, 503 "try again later", and so on); and the
 regenerate call's path, `POST /api/v1/oauth/regenerate_access_token`. Sample token strings
 not copied. Four data-endpoint pages still to come.
+
+### 2026-10-24 — token endpoint, third screenshot
+
+Added to the same transcription: the regenerate call takes `client_id` and
+`refresh_token` (no secret) and returns `data.access_token` with an hour's expiry, and
+no new refresh token in the visible sample. This completes the token side. Four data
+endpoint pages still to come.
