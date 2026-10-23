@@ -68,6 +68,8 @@ doesn't rebuild the site (Vercel allows 100 deployments a day).
 
 ## Stage 1 — find out what the source really gives
 
+**Status, 24 October:** built on `stage-1-probe`; checked here against a fake server (17 checks, four deliberate breakages each caught). Waiting for John to say merge, because the "Run workflow" button only exists once the workflow is on `main`, and it touches the secrets. Then John presses Run workflow and Claude reads the run's log.
+
 Branch: `stage-1-probe`
 
 Needs John's yes to Q2 and Q3 first.

@@ -76,9 +76,15 @@ Refueller-specific points:
 
 ## Layout
 
-Nothing is built yet. Files so far: `SPEC.md`, `PLAN.md`, `README.md`, this
-file, `HOUSE-STYLE.md`, `SEO-HANDOVER.md`, `.claude/skills/fresh-look/`,
-`design/handover-2026-10-22.md`, `.gitignore`.
+Notes: `SPEC.md`, `PLAN.md`, `README.md`, this file, `HOUSE-STYLE.md`, `SEO-HANDOVER.md`,
+`.claude/skills/fresh-look/`, `design/` (the handover and the saved Fuel Finder documentation).
+
+Stage 1 (branch `stage-1-probe`, not yet on `main`): `scripts/probe.ts` (sign in, page through every
+station and price batch, print counts and shapes only), `scripts/lib/probe.ts` (pure helpers: the
+host allow-list, redaction, hours classes, summaries, a page-file size estimate),
+`scripts/check-probe.ts` (`npm run check`: rules plus a full run against a fake server),
+`.github/workflows/probe.yml` (Run workflow only), `.env.example`. `npm run lint`, `npm run typecheck`.
+No app yet.
 
 ## Log
 
@@ -404,3 +410,31 @@ The probe must find the API host itself, trying only government hosts (handover:
 secret is never sent to anywhere else. The public repo's Actions logs and any committed report
 must hold counts and field names only, never raw data or secrets. Q9 (CSV or five-minute API)
 is still open; the probe does not depend on it. Whether the secret has an expiry date: ask John.
+
+### 2026-10-24 — stage 1: the probe built (branch `stage-1-probe`)
+
+**John:** added the two secrets in GitHub (no expiry date seen) and said go ahead.
+
+**What:** `scripts/probe.ts` signs in at the first government host that answers (the handover's
+`www.fuel-finder.service.gov.uk`, then the portal example's `api.fuelfinder.service.gov.uk`, then
+`api.fuel-finder.service.gov.uk`), reads every station batch and price batch one request at a time
+(0.8 s apart; the limit is 100 a minute), tries the three "incremental" calls once, tries the refresh call
+once, and prints **counts and shapes only**: batch sizes, field types, hours classes (including the
+00:00 to 00:00 question, Q14), fuel-code spellings, price ranges and ages, the station/price join, closure
+and position oddities, and an estimate of the page's data file (JSON and gzip bytes). It also records
+rate-limit headers. It writes the same summary to the run's job summary. Safety: secrets go only to the
+listed hosts and never to a redirect target; the token stays in memory; every printed line passes
+through `redact`; the workflow has read-only permissions and runs no `npm install`. Test-like station
+names are counted, with at most five names quoted; no codes, addresses or prices of individual stations.
+
+**Checked here:** `npm run check` (17 checks): host allow-list (including look-alike and `user@` tricks),
+redaction, times and hours classes, summaries of John's three saved samples, and the whole probe against
+a fake server on this machine: paging until an empty batch, a wrapped reply, a 429 waited out, a redirect
+not followed (a trap server received nothing), wrong credentials (no data requests made), an expired token
+renewed once, a host off the list refused, nothing answering. **Four deliberate breakages each made the right
+check fail** (following redirects; printing the token past `redact`; ignoring a `user@` host; reading
+00:00 to 00:00 as ordinary hours), then the code was restored. `npm run lint` and `npm run typecheck` are clean.
+
+**Couldn't be checked:** anything against the real API (this container is blocked; Q: will GitHub's servers
+be accepted?), the workflow on GitHub itself, and the real host and data. **Not merged:** John to say
+merge (the workflow touches the secrets, and the Run workflow button needs it on `main`).

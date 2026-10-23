@@ -1,0 +1,41 @@
+# Probes the Fuel Finder API (PLAN Stage 1). Run by hand only ("Run workflow"): there is
+# no schedule. It signs in once, reads every station and price batch one request at a
+# time, and prints COUNTS AND SHAPES ONLY, because this repo and its logs are public.
+#
+# Safety, on purpose:
+#  - read-only permissions: the job can't change the repo;
+#  - no `npm install`: no third-party code ever runs next to the secrets;
+#  - the secrets go to one step only, and scripts/probe.ts sends them only to the
+#    government hosts listed in scripts/lib/probe.ts, never following a redirect.
+name: Probe Fuel Finder
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      # Without the secrets: proves the safety rules still hold before they are used.
+      - name: Checks
+        run: node scripts/check-probe.ts
+
+      - name: Probe
+        env:
+          FUEL_FINDER_CLIENT_ID: ${{ secrets.FUEL_FINDER_CLIENT_ID }}
+          FUEL_FINDER_CLIENT_SECRET: ${{ secrets.FUEL_FINDER_CLIENT_SECRET }}
+        run: node scripts/probe.ts

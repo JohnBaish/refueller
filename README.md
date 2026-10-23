@@ -10,4 +10,8 @@ project by John Baish, intended for `refueller.baish.net`.
   Clockmaker, Backtimer, Flowcharter and Hindcaster.
 - `design/handover-2026-10-22.md` is the original planning handover.
 
-Nothing is built yet.
+**Stage 1 (the probe) is on the branch `stage-1-probe`; there is no page yet.**
+
+- `npm run check` tries the probe's rules, and runs the whole probe against a fake Fuel Finder server on this machine.
+- `.github/workflows/probe.yml` ("Probe Fuel Finder", Run workflow only) reads the real API using the two GitHub secrets and prints counts and shapes only.
+- `npm run lint`, `npm run typecheck`.

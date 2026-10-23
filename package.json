@@ -1,0 +1,17 @@
+{
+  "name": "refueller",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "lint": "oxlint",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "check": "node scripts/check-probe.ts",
+    "probe": "node scripts/probe.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "oxlint": "^1.79.0",
+    "typescript": "~6.0.2"
+  }
+}
