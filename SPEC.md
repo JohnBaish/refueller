@@ -167,6 +167,16 @@ unchanged in `design/fuel-finder-developer-docs-overview-2026-10-24.md`):**
   `client_id`, `client_secret` and `scope=fuelfinder.read`; the example reply has
   `expires_in: 3600` (one hour). The token endpoint's address is **blank in the
   pasted text**. A new token each run is enough.
+- **Token endpoint seen (screenshot, 24 October; transcribed in
+  `design/fuel-finder-oauth-generate-token-2026-10-24.md`):** `POST
+  /api/v1/oauth/generate_access_token` with a **JSON** body `{client_id,
+  client_secret}` (not the form-encoded body in the overview's generic example, and
+  no `scope`). The access token lasts 3600 seconds; the refresh token 48 hours
+  (`refresh_token_expires_in`). Replies listed: 200, 400, 401, 429, 500, 502, 503,
+  504. This matches the handover's path, so the handover's host
+  (`www.fuel-finder.service.gov.uk`) is likelier than the overview's
+  `api.fuelfinder.service.gov.uk`; the host is still not shown. Collecting four
+  times a day needs one token request per run, so the refresh token isn't needed.
 - **The addresses and names conflict with the handover.** The portal's examples
   use `https://api.fuelfinder.service.gov.uk/v1/prices/...` and
   `/v1/prices?fuel_type=unleaded`; the handover has `www.fuel-finder.service.gov.uk`

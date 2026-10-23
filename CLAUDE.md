@@ -31,6 +31,7 @@ Read these first, in this order:
    `design/fuel-finder-api-fields-guide-2026-10-24.md` (the real field names) and
    `design/fuel-finder-information-recipient-api-2026-10-24.md` (the four endpoints) and
    `design/fuel-finder-oauth-token-api-2026-10-24.md` (the two token endpoints).
+   And `design/fuel-finder-oauth-generate-token-2026-10-24.md` (the token call, from a screenshot).
 
 Key points from the house style, repeated because they matter most:
 
@@ -270,3 +271,14 @@ token, and a POST to regenerate one from a refresh token. The same token-reuse g
 before; no addresses or parameters in the paste; the version field is empty. So the
 collector's token handling is: one POST at the start of a run, reuse it, and use the refresh
 call (not a fresh login) if a run outlasts the token. Still needed: each endpoint's own page.
+
+### 2026-10-24 — the token endpoint page (screenshot) from John
+
+First real endpoint page. Transcribed (not saved as an image) in
+`design/fuel-finder-oauth-generate-token-2026-10-24.md`: `POST
+/api/v1/oauth/generate_access_token`, JSON body with `client_id` and `client_secret`,
+access token 3600 s, refresh token 48 h, replies 200/400/401/429/500/502/503/504.
+**Matches the handover's path; differs from the overview's generic example** (form body,
+`scope`, `/v1/...`), so the specific page wins until the probe confirms. The screenshot's
+sample key strings were deliberately not copied (placeholders, not credentials; John hasn't
+registered yet). Host still not shown. Still needed: the other five endpoint pages.
