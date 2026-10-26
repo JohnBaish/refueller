@@ -518,3 +518,19 @@ CSV be fetched automatically, and from where? can the API be opened to a specifi
 (the probe with diagnostics, the notes, the saved documentation); nothing is running or scheduled; the two GitHub secrets
 exist; no app, no page. **To resume:** a new thread on `main`, with their reply pasted in. Housekeeping for John: the network
 allow-list still includes the Fuel Finder hosts and `assets.publishing.service.gov.uk`, and can be trimmed while paused.
+
+### 2026-10-26 — the Fuel Finder team replied: a UK address is needed
+
+John sent the email; the reply (probably automatic) is saved in `design/fuel-finder-team-reply-2026-10-26.md`. It lists
+"an IP address outside the UK" first among the causes of a 403, and offers whitelisting for a service outside the UK
+only for "a single static public outbound IP address". **Checked by web search:** GitHub's standard (free) runners use
+changing Azure addresses and GitHub advises against allow-listing them; fixed addresses come only with "larger
+runners", which need a paid Team or Enterprise plan. So whitelisting GitHub's servers is not possible for free, and
+**the collector must run from a UK address.** Oracle's Always Free tier includes a London region (UK South), but
+free capacity there can't be confirmed in advance (third-party guide; Oracle's own pages read were silent).
+
+**Options put to John (PLAN, "26 October"):** A, a machine at his home (proven to reach the site); B, a free Oracle
+machine in London (works only if the block is by country, not by data-centre network); C, other London cloud
+services (need a card; not recommended). **Still to design:** publishing fresh prices every five minutes without a
+Vercel rebuild each time. **Drafted:** a short follow-up email asking whether UK data centres are accepted and where the
+CSV is (`design/email-fuel-finder-team-2026-10-26-followup.md`). No code changed.

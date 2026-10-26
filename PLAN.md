@@ -35,6 +35,23 @@ Branch: `stage-0-spec`
 `SEO-HANDOVER.md` and `.claude/skills/fresh-look/` copied from clockwheel
 (`36378ed`). John answers SPEC §11.
 
+## 26 October 2026: the Fuel Finder team replied (`design/fuel-finder-team-reply-2026-10-26.md`)
+
+Their reply (probably automatic) lists "an IP address outside the UK" as the first reason for a 403, and offers
+whitelisting for a service outside the UK **if it has a single static public outbound IP address**. GitHub's free
+servers have no fixed address (fixed addresses come only with GitHub's paid "larger runners"), so whitelisting
+GitHub is not possible for free. **So the collector has to run from a UK address.** Choices for John (not decided):
+- **A. A computer at John's home** (one already on all the time, or a Raspberry Pi, a one-off purchase). Shown to
+  work: the site loads from his home broadband. He looks after it; it stops if the power or broadband does.
+- **B. A free cloud machine in London** (Oracle's Always Free tier). No hardware, always on, but an account to set
+  up, free capacity in London is not guaranteed, and it works only if the block is by country, not by data-centre
+  network (follow-up question 1 asks exactly this).
+- **C. Other London cloud services** (for example AWS Lambda): free tiers exist but need a card, with a small risk of
+  charges if misconfigured; not recommended given "must stay free".
+**Still to design, whichever is chosen:** getting fresh prices to the page every five minutes without a Vercel
+rebuild each time (Vercel allows 100 deployments a day). A follow-up email asking whether UK data centres are
+accepted, and where the CSV is, is drafted in `design/email-fuel-finder-team-2026-10-26-followup.md`.
+
 ## PAUSED (24 October 2026) until the Fuel Finder team reply
 
 John will send `design/email-fuel-finder-team-2026-10-24.md` on Monday 26 October. **To resume:** start a new thread on
