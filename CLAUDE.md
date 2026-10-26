@@ -534,3 +534,11 @@ machine in London (works only if the block is by country, not by data-centre net
 services (need a card; not recommended). **Still to design:** publishing fresh prices every five minutes without a
 Vercel rebuild each time. **Drafted:** a short follow-up email asking whether UK data centres are accepted and where the
 CSV is (`design/email-fuel-finder-team-2026-10-26-followup.md`). No code changed.
+
+### 2026-10-26 — follow-up email revised
+
+John asked whether the follow-up clashed with his first email. It didn't contradict it, but it stated an undecided plan as
+fact ("will run from a UK address") with no reason given. Revised in `design/email-fuel-finder-team-2026-10-26-followup.md`:
+explains that GitHub's servers have no fixed address (so no whitelisting request), says he *plans* to move the job to a UK
+address calling the API about every five minutes to meet the Fair Use policy, and keeps the same two questions. Kept short on
+purpose.
