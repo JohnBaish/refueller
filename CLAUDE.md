@@ -79,7 +79,7 @@ Refueller-specific points:
 Notes: `SPEC.md`, `PLAN.md`, `README.md`, this file, `HOUSE-STYLE.md`, `SEO-HANDOVER.md`,
 `.claude/skills/fresh-look/`, `design/` (the handover and the saved Fuel Finder documentation).
 
-Stage 1 (branch `stage-1-probe`, not yet on `main`): `scripts/probe.ts` (sign in, page through every
+Stage 1 (on `main` since 24 October, with the diagnostics added the same day): `scripts/probe.ts` (sign in, page through every
 station and price batch, print counts and shapes only), `scripts/lib/probe.ts` (pure helpers: the
 host allow-list, redaction, hours classes, summaries, a page-file size estimate),
 `scripts/check-probe.ts` (`npm run check`: rules plus a full run against a fake server),
@@ -542,3 +542,11 @@ fact ("will run from a UK address") with no reason given. Revised in `design/ema
 explains that GitHub's servers have no fixed address (so no whitelisting request), says he *plans* to move the job to a UK
 address calling the API about every five minutes to meet the Fair Use policy, and keeps the same two questions. Kept short on
 purpose.
+
+### 2026-10-26 — follow-up sent; waiting again
+
+John sent the revised follow-up (`design/email-fuel-finder-team-2026-10-26-followup.md`). Waiting for the answer to: are UK data
+centres accepted, and where is the CSV? Still open with John: whether he has a computer at home that stays on (or would buy a
+Raspberry Pi), whether he'd set up an Oracle account, and whether Claude should write the comparison of the two (including
+publishing prices every five minutes without a Vercel rebuild each time). Also fixed: the Layout section above said Stage 1 was
+not yet on `main`. No code changed.
