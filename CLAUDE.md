@@ -550,3 +550,10 @@ centres accepted, and where is the CSV? Still open with John: whether he has a c
 Raspberry Pi), whether he'd set up an Oracle account, and whether Claude should write the comparison of the two (including
 publishing prices every five minutes without a Vercel rebuild each time). Also fixed: the Layout section above said Stage 1 was
 not yet on `main`. No code changed.
+
+### 2026-10-26 — John's answers on where the collector could run; the decision tree
+
+No computer at home to leave on, and John would not buy a Raspberry Pi: option A is out. He would "potentially" set up an Oracle
+account (option B). The comparison write-up is not needed. **Decision tree recorded in PLAN.md** (depends on the team's reply):
+(1) CSV fetchable from an address GitHub can reach -> stays on GitHub Actions, twice a day; (2) else UK data centres accepted ->
+Oracle London machine; (3) else Refueller stops and John moves on to his next project. No code changed; waiting for the team.

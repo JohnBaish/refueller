@@ -35,6 +35,19 @@ Branch: `stage-0-spec`
 `SEO-HANDOVER.md` and `.claude/skills/fresh-look/` copied from clockwheel
 (`36378ed`). John answers SPEC §11.
 
+## 26 October 2026, later: John's answers, and the decision tree
+
+John has **no home machine to leave on and won't buy one** (so option A is out), would "potentially" set up an Oracle
+account (option B), and so the comparison is not needed. **What happens depends only on the Fuel Finder team's answer to the
+follow-up email:**
+1. **If the CSV can be fetched automatically from an address that isn't closed to GitHub's servers:** the collector stays on
+   GitHub Actions, twice a day, when each CSV is published. Free, simple, and compliant (SPEC §2a, Q9 option A). Best case.
+2. **Otherwise, if UK data centres are accepted:** the collector runs on a free Oracle machine in London (John's account). More to
+   look after (updates, free capacity in London not guaranteed, the machine can be reclaimed if idle), and the API every five
+   minutes needs prices published without a Vercel rebuild each time.
+3. **Otherwise (UK home and business broadband only):** Refueller can't be built within "free, with nothing for John to look
+   after", and John would move on to his next project. The notes and saved documentation stay on `main`.
+
 ## 26 October 2026: the Fuel Finder team replied (`design/fuel-finder-team-reply-2026-10-26.md`)
 
 Their reply (probably automatic) lists "an IP address outside the UK" as the first reason for a 403, and offers
