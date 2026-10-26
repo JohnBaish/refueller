@@ -568,3 +568,12 @@ upgraded); **idle Always Free machines (all of CPU 95th percentile, network and 
 reclaimed**, and Oracle's suggested cure is to upgrade to Pay As You Go (no charge inside the free limits, but billing on); free ARM
 capacity in London is not guaranteed. **Proposed:** a cheap feasibility test first (Oracle machine plus self-hosted runner, run the
 existing probe there). Q9 is decided by necessity: API at least every five minutes. Awaiting John's go or no-go. No code changed.
+
+### 2026-10-26 — why five minutes, and the third email
+
+John asked why the collector would have to poll every five minutes. It is the Fair Use policy in the registration terms (quoted in
+SPEC §2a): for a site promoting fuel retail to motorists, "the most up to date CSV, or ... the API ... on average ... not more than 5
+minutes". Once a day is not covered, and the team had not answered that part of the first email. Claude's reading is the cautious one,
+not a ruling. **John sent a third email** (`design/email-fuel-finder-team-2026-10-26-third.md`) asking whether twice-daily
+refreshes in step with the CSV, with each price's age shown, would meet the policy. Noted: either way a UK-address machine is
+needed (API and CSV are both UK-only); the answer only changes how heavy the setup is. **Oracle test on hold until they answer.**

@@ -35,6 +35,16 @@ Branch: `stage-0-spec`
 `SEO-HANDOVER.md` and `.claude/skills/fresh-look/` copied from clockwheel
 (`36378ed`). John answers SPEC §11.
 
+## 26 October 2026, night: the freshness question asked directly (John sent it)
+
+The team never answered the Fair Use question in John's first email (what to do for a scheduled site). The policy's wording allows only
+"the most up to date CSV" or "the API ... on average ... not more than 5 minutes" for a site that promotes fuel retail to motorists;
+once a day via the API is neither. **Third email sent** (`design/email-fuel-finder-team-2026-10-26-third.md`): would refreshing
+twice a day, in step with the CSV, with each price's age shown, meet the policy? **Whatever they say, the API and the CSV both need a
+UK address, so a UK machine is still needed;** their answer decides how heavy the setup is (twice a day: one small job and a
+rebuild each time; every five minutes: 288 runs a day and data published without a rebuild). **Do not start the Oracle test until they
+answer.**
+
 ## 26 October 2026, evening: the team's second reply (`design/fuel-finder-team-reply-2026-10-26-b.md`)
 
 **API: "requests can be made from UK-based data centres, including cloud servers hosted in the UK."** **CSV: "you will need to
