@@ -557,3 +557,14 @@ No computer at home to leave on, and John would not buy a Raspberry Pi: option A
 account (option B). The comparison write-up is not needed. **Decision tree recorded in PLAN.md** (depends on the team's reply):
 (1) CSV fetchable from an address GitHub can reach -> stays on GitHub Actions, twice a day; (2) else UK data centres accepted ->
 Oracle London machine; (3) else Refueller stops and John moves on to his next project. No code changed; waiting for the team.
+
+### 2026-10-26 — the second reply: UK cloud servers are accepted; the CSV is not an escape route
+
+Saved in `design/fuel-finder-team-reply-2026-10-26-b.md`. **API: accepted from UK data centres including UK-hosted cloud servers.
+CSV: needs a subscription and is UK-IP-only**, so it can't be fetched by GitHub's servers either. Outcome 1 of the decision tree is
+gone; outcome 2 (a collector on a UK cloud machine, John's "potentially" Oracle account) is the only free automatic route. **Checked by
+web search (secondary sources; Oracle's pages not read directly):** Oracle sign-up needs a card for verification (not charged unless
+upgraded); **idle Always Free machines (all of CPU 95th percentile, network and ARM memory below 20% over seven days) can be
+reclaimed**, and Oracle's suggested cure is to upgrade to Pay As You Go (no charge inside the free limits, but billing on); free ARM
+capacity in London is not guaranteed. **Proposed:** a cheap feasibility test first (Oracle machine plus self-hosted runner, run the
+existing probe there). Q9 is decided by necessity: API at least every five minutes. Awaiting John's go or no-go. No code changed.

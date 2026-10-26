@@ -212,7 +212,10 @@ rule is by country or by type of network; which one is still not known.
 **The team's reply (26 October; saved in `design/fuel-finder-team-reply-2026-10-26.md`)** names "an IP address outside
 the UK" as the first cause of a 403 and offers whitelisting only for "a single static public outbound IP address".
 That points to a block by country. GitHub's free servers have no fixed address, so the collector must run from a UK
-address (PLAN, "26 October"). Whether UK data-centre addresses are accepted is asked in the follow-up email.
+address (PLAN, "26 October"). **The team's second reply (26 October; `design/fuel-finder-team-reply-2026-10-26-b.md`):** the API accepts requests "from UK-based
+data centres, including cloud servers hosted in the UK"; the CSV needs a subscription and "is restricted to UK IP addresses". So the
+CSV route (Q9 option A) is closed to GitHub's servers too, and **Q9 is now decided by necessity: the API, called at least every five
+minutes on average, from a UK-hosted machine** (PLAN, "26 October, evening").
 
 **The portal's "Developer Guidelines" (pasted by John, 24 October; saved
 unchanged in `design/fuel-finder-developer-guidelines-2026-10-24.md`).** The first

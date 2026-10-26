@@ -35,12 +35,34 @@ Branch: `stage-0-spec`
 `SEO-HANDOVER.md` and `.claude/skills/fresh-look/` copied from clockwheel
 (`36378ed`). John answers SPEC §11.
 
+## 26 October 2026, evening: the team's second reply (`design/fuel-finder-team-reply-2026-10-26-b.md`)
+
+**API: "requests can be made from UK-based data centres, including cloud servers hosted in the UK."** **CSV: "you will need to
+subscribe", and "access to the CSV file is restricted to UK IP addresses"**, at the portal page
+`.../fuel-finder/access-latest-fuelprices`. So **outcome 1 below is gone** (the CSV is closed to GitHub's servers too), and
+**outcome 2, a collector on a UK cloud machine, is the only route that keeps Refueller free and automatic.**
+
+**The Oracle Always Free London route: what is known (web search; Oracle's own pages not read directly, so re-check):**
+- Sign-up needs a **payment card for identity verification**; Oracle says it is not charged unless the account is upgraded.
+- **Idle machines can be reclaimed:** Oracle deems an Always Free machine idle if, over seven days, CPU (95th percentile),
+  network and (for ARM machines) memory are all below 20%. A collector that wakes every five minutes is almost certainly
+  "idle" by that test. Oracle's suggested cure is to **upgrade to Pay As You Go**, with no charge while usage stays inside the
+  Always Free limits. That means billing switched on, which John may not want.
+- Free ARM capacity in London is not guaranteed at sign-up (third-party reports); the home region can't be changed later.
+- Whether an Oracle London address counts as "UK" for the CloudFront rule is likely but unproven.
+
+**Proposed next step (not started; needs John's yes): a feasibility test with little sunk cost.** John creates the Oracle account
+and one machine in London; installs a GitHub "self-hosted runner" on it (Claude gives the steps; the secrets stay in GitHub);
+a manual-run copy of the probe workflow runs on that machine. Green would prove the address is accepted and show the real data
+(station count, field quality, hours, file size). Red would end the route cheaply. Only then design the five-minute collector and how
+fresh prices reach the page without a Vercel rebuild each time (a data file published somewhere the page can read it at run time).
+
 ## 26 October 2026, later: John's answers, and the decision tree
 
 John has **no home machine to leave on and won't buy one** (so option A is out), would "potentially" set up an Oracle
 account (option B), and so the comparison is not needed. **What happens depends only on the Fuel Finder team's answer to the
 follow-up email:**
-1. **If the CSV can be fetched automatically from an address that isn't closed to GitHub's servers:** the collector stays on
+1. ~~If the CSV can be fetched automatically from an address that isn't closed to GitHub's servers~~ (**ruled out 26 October**): the collector stays on
    GitHub Actions, twice a day, when each CSV is published. Free, simple, and compliant (SPEC §2a, Q9 option A). Best case.
 2. **Otherwise, if UK data centres are accepted:** the collector runs on a free Oracle machine in London (John's account). More to
    look after (updates, free capacity in London not guaranteed, the machine can be reclaimed if idle), and the API every five
