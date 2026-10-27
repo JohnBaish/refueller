@@ -84,7 +84,7 @@ station and price batch, print counts and shapes only), `scripts/lib/probe.ts` (
 host allow-list, redaction, hours classes, summaries, a page-file size estimate),
 `scripts/check-probe.ts` (`npm run check`: rules plus a full run against a fake server),
 `.github/workflows/probe.yml` (Run workflow only), `.env.example`. `npm run lint`, `npm run typecheck`.
-Stage 1c (branch `stage-1c-lambda`, not yet on `main`): `lambda/handler.ts` and `lambda/make-handler.ts` (the probe as an AWS Lambda
+Stage 1c (on `main` since 27 October): `lambda/handler.ts` and `lambda/make-handler.ts` (the probe as an AWS Lambda
 handler), `scripts/lib/run-probe.ts` (the probe, shared by the workflow and Lambda), `scripts/build-lambda.mjs`, `scripts/check-lambda.ts`,
 `.github/workflows/lambda-package.yml`, `design/aws-test-steps-2026-10-27.md`.
 No app yet.
@@ -626,4 +626,4 @@ summary with no secret, token or station code anywhere; a refused front door ret
 unredacted setting echoed in the summary), then the code was restored. Lint, type-check and the earlier 19 checks are clean; the CLI still starts.
 
 **Couldn't be checked:** anything on AWS itself (the console, the Lambda runtime's Node 22 version, whether a London AWS address is accepted, the
-sign-up screens, the budget template's name): the steps are written from general knowledge and flagged as such. **Not merged:** John to say merge.
+sign-up screens, the budget template's name): the steps are written from general knowledge and flagged as such. **Merged to `main` at John's word (27 October).** John will come back to the AWS test later; nothing is running or scheduled.
