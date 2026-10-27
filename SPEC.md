@@ -212,7 +212,16 @@ rule is by country or by type of network; which one is still not known.
 **The team's reply (26 October; saved in `design/fuel-finder-team-reply-2026-10-26.md`)** names "an IP address outside
 the UK" as the first cause of a 403 and offers whitelisting only for "a single static public outbound IP address".
 That points to a block by country. GitHub's free servers have no fixed address, so the collector must run from a UK
-address (PLAN, "26 October"). **The team's second reply (26 October; `design/fuel-finder-team-reply-2026-10-26-b.md`):** the API accepts requests "from UK-based
+address (PLAN, "26 October"). **The team's third reply (27 October; `design/fuel-finder-team-reply-2026-10-27.md`) reverses the five-minute conclusion.** It says "the CSV file
+is updated twice daily, so you can use these publication times to schedule your data refreshes"; that "there is no requirement under the
+Fuel Finder regulations for your website to make API requests every five minutes" (the five minutes "relates to how frequently the Fuel
+Finder service updates its API following a reported price change"); and recommends "clearly displaying when each fuel price was last
+updated". It adds that use "remains subject to the Fuel Finder Fair Use policy". **Correction:** the cautious reading of the Fair Use
+wording in the previous two notes and in §2a item 2 overstated the rule for this site; the service team's written answer is the one to
+rely on (kept on file). **Q9 is now decided: refresh twice a day, in step with the CSV publication times (times not yet known), and
+show each price's age.** Still to settle: the publication times, and whether to fetch the API just after each (probably) or the CSV.
+
+**The team's second reply (26 October; `design/fuel-finder-team-reply-2026-10-26-b.md`):** the API accepts requests "from UK-based
 data centres, including cloud servers hosted in the UK"; the CSV needs a subscription and "is restricted to UK IP addresses". So the
 CSV route (Q9 option A) is closed to GitHub's servers too, and **Q9 is now decided by necessity: the API, called at least every five
 minutes on average, from a UK-hosted machine** (PLAN, "26 October, evening").
@@ -599,7 +608,7 @@ Q10 (order and marking) unanswered**; John to say if the mapping is wrong.
 - **Q8** Yes to the definition of "open" as drafted. *Amended by Claude, for John
   to confirm:* the data does include bank-holiday hours (my earlier note that it
   didn't was wrong), so they are used.
-- **Q9** *Reopened by the terms (§2a): four a day does not meet the Fair Use policy.*
+- **Q9** *(27 October: decided, twice a day in step with the CSV publication times; see §2a, the team's third reply.) Reopened by the terms (§2a): four a day does not meet the Fair Use policy.*
   Earlier: probably four times a day, but it depends on Q2 and the free limits.
   Q2 is settled (house way); the API limits are generous (§2), so four a day
   stands unless John wants fresher prices.

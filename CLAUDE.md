@@ -577,3 +577,16 @@ minutes". Once a day is not covered, and the team had not answered that part of 
 not a ruling. **John sent a third email** (`design/email-fuel-finder-team-2026-10-26-third.md`) asking whether twice-daily
 refreshes in step with the CSV, with each price's age shown, would meet the policy. Noted: either way a UK-address machine is
 needed (API and CSV are both UK-only); the answer only changes how heavy the setup is. **Oracle test on hold until they answer.**
+
+### 2026-10-27 — the third reply: twice a day is fine (this reverses the five-minute conclusion)
+
+Saved in `design/fuel-finder-team-reply-2026-10-27.md`. The team: the CSV is updated twice daily, "so you can use these publication times to
+schedule your data refreshes"; "no requirement ... for your website to make API requests every five minutes" (that is how fast *their* API
+updates after a price change); show when each price was last updated; the Fair Use policy still applies. **Correction:** my earlier reading
+of the Fair Use wording (SPEC §2a item 2, and what I told John on 26 October) was too cautious for this site; their written answer is the
+one to rely on. **Q9 decided: twice a day, in step with the CSV publication times, with price ages shown.** The five-minute design, and the
+"publish data without a Vercel rebuild" problem, are gone. **Still needed:** a UK address for two short runs a day, so Oracle London (a machine
+that would count as idle) or a small AWS London scheduled function (checked by search: EventBridge Scheduler has 14 million free invocations a
+month on AWS's page; Lambda's 1 million free requests a month from a third party; new AWS accounts have a credit-based free plan that ends after
+about six months unless upgraded), both with a card on file. **Open:** John's choice and comfort with a billing-enabled account; the CSV's two
+publication times. No code changed.

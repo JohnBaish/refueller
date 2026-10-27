@@ -35,6 +35,23 @@ Branch: `stage-0-spec`
 `SEO-HANDOVER.md` and `.claude/skills/fresh-look/` copied from clockwheel
 (`36378ed`). John answers SPEC §11.
 
+## 27 October 2026: the team says twice a day is fine (`design/fuel-finder-team-reply-2026-10-27.md`)
+
+**Twice a day, in step with the CSV publication times, with each price's age shown, is what the team recommends; the five-minute
+rule is not ours.** This removes the 288-runs-a-day design and the "publish data without a Vercel rebuild" problem: the collector commits
+the trimmed data file twice a day, Vercel rebuilds twice a day (limit 100), as first planned. **What is still needed is a UK address for those
+two short runs a day** (the API and the CSV both refuse other countries). Candidates, all needing an account with a card, all unverified here:
+- **Oracle London machine plus a GitHub self-hosted runner.** One machine to look after; a twice-a-day job leaves it "idle" by Oracle's
+  rule (CPU, network, memory all below 20% over seven days), so it risks being reclaimed unless the account is upgraded to Pay As You Go.
+- **A small scheduled function in AWS London** (Lambda plus EventBridge Scheduler). Nothing to maintain and no idle-reclaim rule. EventBridge
+  Scheduler has 14 million free invocations a month (AWS's page) and Lambda 1 million free requests a month (a third-party figure, to check).
+  Needs the collector ported into a function, its own copy of the Fuel Finder secrets, and a GitHub token to commit the data. AWS's new
+  accounts (since July 2025, secondary sources) start on a "free plan" with $100 to $200 of credit that ends after about six months unless
+  upgraded to a paid plan; the always-free services stay free but billing would be on.
+- **Other London serverless services** (Google Cloud, Azure) work the same way.
+**Both routes need John to accept a card on file and, in the end, a billing-enabled account with no expected charge.** Decide this before
+anything is set up. **Also to find out:** the CSV's two publication times (ask the team, or see the subscription).
+
 ## 26 October 2026, night: the freshness question asked directly (John sent it)
 
 The team never answered the Fair Use question in John's first email (what to do for a scheduled site). The policy's wording allows only
