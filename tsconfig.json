@@ -1,8 +1,12 @@
 {
   "compilerOptions": {
     "target": "es2023",
-    "lib": ["ES2023"],
-    "types": ["node"],
+    "lib": [
+      "ES2023"
+    ],
+    "types": [
+      "node"
+    ],
     "skipLibCheck": true,
     "module": "nodenext",
     "allowImportingTsExtensions": true,
@@ -15,5 +19,8 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["scripts"]
+  "include": [
+    "scripts",
+    "lambda"
+  ]
 }

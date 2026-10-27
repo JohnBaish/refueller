@@ -35,6 +35,13 @@ Branch: `stage-0-spec`
 `SEO-HANDOVER.md` and `.claude/skills/fresh-look/` copied from clockwheel
 (`36378ed`). John answers SPEC §11.
 
+## Stage 1c status, 27 October: built on branch `stage-1c-lambda` (not merged)
+
+`lambda/` (the handler), `scripts/lib/run-probe.ts` (the probe, split out of `scripts/probe.ts`), `scripts/build-lambda.mjs` (esbuild: one
+26 KB JavaScript file, only Node built-ins imported), `.github/workflows/lambda-package.yml` ("Build Lambda package", Run workflow only, read-only,
+no secrets; leaves `refueller-probe.zip` as a download on the run page), `scripts/check-lambda.ts`. John's steps: `design/aws-test-steps-2026-10-27.md`.
+Waiting for John to say merge (the Run workflow button needs the workflow on `main`).
+
 ## 27 October 2026, later: John chose AWS (London) for the twice-daily UK collector
 
 **Decided by John:** twice a day (agreed); a card and a billing-enabled cloud account are acceptable, with no charge expected; **route: AWS London**

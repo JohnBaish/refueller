@@ -14,4 +14,5 @@ project by John Baish, intended for `refueller.baish.net`.
 
 - `npm run check` tries the probe's rules, and runs the whole probe against a fake Fuel Finder server on this machine.
 - `.github/workflows/probe.yml` ("Probe Fuel Finder", Run workflow only) reads the real API using the two GitHub secrets and prints counts and shapes only.
+- `.github/workflows/lambda-package.yml` ("Build Lambda package", Run workflow only) builds the same probe as one small file for AWS Lambda in London (`lambda/`, `scripts/build-lambda.mjs`); the steps for John are in `design/aws-test-steps-2026-10-27.md`.
 - `npm run lint`, `npm run typecheck`.

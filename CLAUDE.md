@@ -84,6 +84,9 @@ station and price batch, print counts and shapes only), `scripts/lib/probe.ts` (
 host allow-list, redaction, hours classes, summaries, a page-file size estimate),
 `scripts/check-probe.ts` (`npm run check`: rules plus a full run against a fake server),
 `.github/workflows/probe.yml` (Run workflow only), `.env.example`. `npm run lint`, `npm run typecheck`.
+Stage 1c (branch `stage-1c-lambda`, not yet on `main`): `lambda/handler.ts` and `lambda/make-handler.ts` (the probe as an AWS Lambda
+handler), `scripts/lib/run-probe.ts` (the probe, shared by the workflow and Lambda), `scripts/build-lambda.mjs`, `scripts/check-lambda.ts`,
+`.github/workflows/lambda-package.yml`, `design/aws-test-steps-2026-10-27.md`.
 No app yet.
 
 ## Log
@@ -601,3 +604,26 @@ as a Lambda function in London, run once by John, log pasted back, which holds c
 day by EventBridge Scheduler in `Europe/London` time, saving the data file to this repo through GitHub's API with a repo-limited token (expiry to record).
 Free-tier cautions listed (no private network, no Secrets Manager, budget alert, read AWS's own sign-up screens). Nothing built; waiting for John's go-ahead
 on Stage 1c.
+
+### 2026-10-27 — stage 1c built: the probe as an AWS Lambda package (branch `stage-1c-lambda`)
+
+**John:** go ahead with the package.
+
+**What:** split the probe into `scripts/lib/run-probe.ts` (no command-line code; also returns the redacted summary text) and a thin
+`scripts/probe.ts`; added `lambda/make-handler.ts` (reads the two values from the function's environment variables, runs the probe, prints counts
+and shapes only to the log, and returns the same redacted summary plus the AWS region and Node version, so the console's Test result can be
+copied) and `lambda/handler.ts` (exports just `handler`). `scripts/build-lambda.mjs` bundles it with esbuild (a dev dependency, used only to build) into
+`dist-lambda/index.mjs`: one 26 KB plain-JavaScript file importing only Node built-ins, no command-line code. `.github/workflows/lambda-package.yml`
+("Build Lambda package": Run workflow only, read-only, no secrets) lints, type-checks, runs every check, builds, zips and keeps `refueller-probe.zip`
+for 14 days as a download (the artifact is a zip around the zip: unzip once). `design/aws-test-steps-2026-10-27.md` is John's numbered guide: package,
+account (read the plan screens and tell Claude before choosing), London region, budget alert, one function (Node.js 22.x, 512 MB, 5 minute timeout), the two
+settings typed into AWS only, Test, paste the Response back. No function URL, no trigger.
+
+**Checked here:** `npm run check` now includes `scripts/check-lambda.ts`: the handler against a fake server (missing settings; a full run returning the
+summary with no secret, token or station code anywhere; a refused front door returning the diagnosis); and the real built bundle (one small file, only
+`node:` imports, no command-line code, loads and exports only `handler`, answers plainly with the settings missing; the zip holds just `index.mjs`).
+**Three deliberate breakages each made the right check fail** (the handler returning the secret; command-line code pulled into the bundle; an
+unredacted setting echoed in the summary), then the code was restored. Lint, type-check and the earlier 19 checks are clean; the CLI still starts.
+
+**Couldn't be checked:** anything on AWS itself (the console, the Lambda runtime's Node 22 version, whether a London AWS address is accepted, the
+sign-up screens, the budget template's name): the steps are written from general knowledge and flagged as such. **Not merged:** John to say merge.

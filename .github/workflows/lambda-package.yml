@@ -1,0 +1,50 @@
+# Builds the AWS Lambda package for the Fuel Finder probe (PLAN Stage 1c). Run by hand only ("Run workflow").
+# The package is ONE JavaScript file made from this repo's own code (nothing from npm inside it), zipped, and kept as a
+# downloadable file on the run page. There are no secrets anywhere in it or in this workflow; the two Fuel Finder values
+# are typed into AWS by John. Read-only permissions: the job can't change the repo.
+name: Build Lambda package
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lambda-package
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Install (from the lock file)
+        run: npm ci
+
+      - name: Lint, type-check and run every check
+        run: |
+          npm run lint
+          npm run typecheck
+          npm run check
+
+      - name: Build the package
+        run: |
+          npm run build:lambda
+          rm -f dist-lambda/refueller-probe.zip
+          zip -j -q dist-lambda/refueller-probe.zip dist-lambda/index.mjs
+          unzip -l dist-lambda/refueller-probe.zip
+          sha256sum dist-lambda/index.mjs dist-lambda/refueller-probe.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: refueller-probe-lambda
+          path: dist-lambda/refueller-probe.zip
+          if-no-files-found: error
+          retention-days: 14

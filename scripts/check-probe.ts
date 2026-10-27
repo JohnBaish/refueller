@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import { runProbe } from './probe.ts';
+import { runProbe } from './lib/run-probe.ts';
 import {
   CANDIDATE_HOSTS,
   classifyDay,

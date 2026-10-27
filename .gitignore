@@ -27,3 +27,7 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# Lambda package (built by the "Build Lambda package" workflow)
+dist-lambda
+*.zip
