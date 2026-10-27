@@ -641,3 +641,12 @@ add AWS's rules to `CLAUDE.md`) was read and **not run**: not needed for a conso
 doing it now, on the free plan (6 months or $200 credit; then upgrade or the account closes; credits usable for 12 months after upgrading;
 Always Free allowances continue). `design/aws-test-steps-2026-10-27.md` now points at the full sign-up. If Refueller goes ahead on AWS:
 **upgrade before late April 2027**, after checking the then-current Lambda and Scheduler free limits. The Stockholm project is untouched.
+
+### 2026-10-27 — the probe works from AWS London (notes only)
+
+John made the full AWS account (London available), the budget, and the function `refueller-probe` (Node.js 24.x, as 22.x wasn't
+offered or needed; the console's "Upload from" is now under **Update**), and pressed Test. **Fuel Finder accepted the London AWS
+address:** sign-in, all 17 station and 17 price batches (8,146 stations, 8,141 price records), the incremental calls and the refresh
+call all worked. `ok: false` only because the end of each list is a **404 on the next batch**, not an empty batch. Figures and what
+they change in `design/probe-result-aws-2026-10-27.md`. New question: the seven-day "old price" flag would flag 69% of prices.
+Q14 covers 458 stations. Nothing else running; the function only runs when John presses Test.
