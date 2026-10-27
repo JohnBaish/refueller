@@ -627,3 +627,17 @@ unredacted setting echoed in the summary), then the code was restored. Lint, typ
 
 **Couldn't be checked:** anything on AWS itself (the console, the Lambda runtime's Node 22 version, whether a London AWS address is accepted, the
 sign-up screens, the budget template's name): the steps are written from general knowledge and flagged as such. **Merged to `main` at John's word (27 October).** John will come back to the AWS test later; nothing is running or scheduled.
+
+### 2026-10-27 — the CSV's second time; AWS sign-up lands in Stockholm (notes only)
+
+**CSV:** John found the second daily publication time, **10am** (the other is 4pm), taken as UK time. The collector's two runs go just
+after each. SPEC §2a and PLAN updated.
+
+**AWS:** John first signed up through AWS's new quick sign-up, which made a "project" fixed to **Stockholm** (eu-north-1): in that
+experience Europe always gets Stockholm (AWS's docs, via search; the pages themselves are blocked here), and Fuel Finder refuses
+non-UK addresses. The "Agent Toolkit" prompt AWS offered (install the CLI and an MCP connection, give an AI tool ongoing account access,
+add AWS's rules to `CLAUDE.md`) was read and **not run**: not needed for a console-only test. Of the two ways to reach London
+(activate "advanced features", which removes the hard spend limit; or the full "advanced" sign-up), John chose the full sign-up and is
+doing it now, on the free plan (6 months or $200 credit; then upgrade or the account closes; credits usable for 12 months after upgrading;
+Always Free allowances continue). `design/aws-test-steps-2026-10-27.md` now points at the full sign-up. If Refueller goes ahead on AWS:
+**upgrade before late April 2027**, after checking the then-current Lambda and Scheduler free limits. The Stockholm project is untouched.

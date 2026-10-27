@@ -22,7 +22,12 @@ says: AWS changes its screens often and I can't see them.
 
 ## Part 2: create the AWS account
 
-6. Go to `https://aws.amazon.com` and click **Create an AWS account**.
+**Use AWS's full ("advanced") sign-up, not the new quick one (found 27 October).** The quick sign-up, with a Google, GitHub,
+Apple or Amazon login and a "project", puts every European account in **Stockholm** (eu-north-1) and doesn't let you choose
+London; Fuel Finder would refuse a Swedish address. The full sign-up asks for an email, account name and password, and lets
+you choose London afterwards in the console. John's first, Stockholm project is left alone for now (close it later).
+
+6. Go to `https://portal.aws.amazon.com/billing/signup` (AWS's full sign-up).
 7. Fill in your email, a password and an account name (for example "John Baish personal"). Choose the **Personal** account
    type if asked. Add your address, card and phone details when asked.
 8. **If AWS offers a choice of plan** (a "Free plan" and a "Paid plan"), read the descriptions on screen. For this test I'd

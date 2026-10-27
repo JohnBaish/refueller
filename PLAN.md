@@ -45,9 +45,9 @@ Merged at John's word; the "Build Lambda package" button now exists. John will c
 ## 27 October 2026, later: John chose AWS (London) for the twice-daily UK collector
 
 **Decided by John:** twice a day (agreed); a card and a billing-enabled cloud account are acceptable, with no charge expected; **route: AWS London**
-(region eu-west-2), a small scheduled function. **The CSV's publication times:** the portal showed the latest file uploaded at 16:00 on 26 October
-(UK or UTC not yet known); John will look for the second time (watching the page over a day or two, or subscribing for the "new file" emails). The
-API is near-real-time and each price has its own timestamp, so the exact times only help to choose two sensible run times.
+(region eu-west-2), a small scheduled function. **The CSV's publication times:** about **10am and 4pm** (16:00 on 26 October from the portal; John found 10am,
+27 October; taken as UK time, not yet confirmed). The API is near-real-time and each price has its own timestamp, so these only set the two run
+times: shortly after each, e.g. 10.15am and 4.15pm UK time.
 
 **Proposed design (not started; John to agree before anything is built):**
 - **Stage 1c, a small feasibility test on AWS.** A GitHub workflow builds a ready-to-upload zip of the existing probe as a Lambda function (kept as a
@@ -78,7 +78,7 @@ two short runs a day** (the API and the CSV both refuse other countries). Candid
   upgraded to a paid plan; the always-free services stay free but billing would be on.
 - **Other London serverless services** (Google Cloud, Azure) work the same way.
 **Both routes need John to accept a card on file and, in the end, a billing-enabled account with no expected charge.** Decide this before
-anything is set up. **Also to find out:** the CSV's two publication times (ask the team, or see the subscription).
+anything is set up. **Also to find out:** the CSV's two publication times (found 27 October: about 10am and 4pm).
 
 ## 26 October 2026, night: the freshness question asked directly (John sent it)
 

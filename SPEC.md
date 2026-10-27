@@ -219,8 +219,8 @@ Finder service updates its API following a reported price change"); and recommen
 updated". It adds that use "remains subject to the Fuel Finder Fair Use policy". **Correction:** the cautious reading of the Fair Use
 wording in the previous two notes and in §2a item 2 overstated the rule for this site; the service team's written answer is the one to
 rely on (kept on file). **Q9 is now decided: refresh twice a day, in step with the CSV publication times (times not yet known), and
-show each price's age.** Still to settle: the publication times, and whether to fetch the API just after each (probably) or the CSV.
-**John's choices, 27 October:** a card and a billing-enabled account are acceptable (no charge expected); **the twice-a-day UK runs will be on AWS London** (PLAN, "27 October, later"). The latest CSV on the portal showed an upload at 16:00 on 26 October (time zone not yet known); the second daily time is still to be found.
+show each price's age.** Publication times found 27 October (about 10am and 4pm; SPEC §2a below). Still to settle: whether to fetch the API just after each (probably) or the CSV.
+**John's choices, 27 October:** a card and a billing-enabled account are acceptable (no charge expected); **the twice-a-day UK runs will be on AWS London** (PLAN, "27 October, later"). The latest CSV on the portal showed an upload at 16:00 on 26 October; **John found the other daily time: 10am** (27 October). So the CSV is published at about 10am and 4pm (taken as UK time, not yet confirmed), and the collector's two runs go just after those.
 
 **The team's second reply (26 October; `design/fuel-finder-team-reply-2026-10-26-b.md`):** the API accepts requests "from UK-based
 data centres, including cloud servers hosted in the UK"; the CSV needs a subscription and "is restricted to UK IP addresses". So the
