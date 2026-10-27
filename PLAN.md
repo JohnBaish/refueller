@@ -35,6 +35,27 @@ Branch: `stage-0-spec`
 `SEO-HANDOVER.md` and `.claude/skills/fresh-look/` copied from clockwheel
 (`36378ed`). John answers SPEC §11.
 
+## 27 October 2026, later: John chose AWS (London) for the twice-daily UK collector
+
+**Decided by John:** twice a day (agreed); a card and a billing-enabled cloud account are acceptable, with no charge expected; **route: AWS London**
+(region eu-west-2), a small scheduled function. **The CSV's publication times:** the portal showed the latest file uploaded at 16:00 on 26 October
+(UK or UTC not yet known); John will look for the second time (watching the page over a day or two, or subscribing for the "new file" emails). The
+API is near-real-time and each price has its own timestamp, so the exact times only help to choose two sensible run times.
+
+**Proposed design (not started; John to agree before anything is built):**
+- **Stage 1c, a small feasibility test on AWS.** A GitHub workflow builds a ready-to-upload zip of the existing probe as a Lambda function (kept as a
+  downloadable artifact, no secrets in it). John creates the AWS account, makes one function in London, types the two Fuel Finder values into the
+  function's settings (never into a chat), uploads the zip, presses Test, and pastes back the function's log (it holds counts and shapes only, as now).
+  Green proves a London AWS address is accepted and finally shows the real data. Red ends the route cheaply.
+- **Stage 2, the collector as a function.** The same code, trimmed to the page's data file, run twice a day by **EventBridge Scheduler** (it can use the
+  `Europe/London` time zone, so summer time looks after itself), saving the data file into this repo through GitHub's API so Vercel rebuilds. It needs a
+  GitHub token limited to this one repo with write access to contents (**an expiry date to write down; GitHub allows at most a year**).
+- **Keeping AWS free (checks to make against AWS's own pages before relying on any of this):** stay in London; do not put the function in a private network
+  (that brings charges); do not use AWS Secrets Manager (it is paid; the function's own settings, or the free SSM Parameter Store, are enough); set a
+  budget alert at a pound or so; choose the plan on sign-up carefully (new accounts start on a credit-based "free plan" that ends after about six months
+  unless moved to a paid plan, per secondary sources). John reads AWS's own sign-up screens, since they change.
+- **What Claude can't do:** use AWS. John does the console steps, one at a time, with instructions from Claude; the function's log is how Claude sees results.
+
 ## 27 October 2026: the team says twice a day is fine (`design/fuel-finder-team-reply-2026-10-27.md`)
 
 **Twice a day, in step with the CSV publication times, with each price's age shown, is what the team recommends; the five-minute

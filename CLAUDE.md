@@ -590,3 +590,14 @@ that would count as idle) or a small AWS London scheduled function (checked by s
 month on AWS's page; Lambda's 1 million free requests a month from a third party; new AWS accounts have a credit-based free plan that ends after
 about six months unless upgraded), both with a card on file. **Open:** John's choice and comfort with a billing-enabled account; the CSV's two
 publication times. No code changed.
+
+### 2026-10-27 — John chose AWS London; the CSV time question
+
+John: the portal's latest CSV was uploaded at 16:00 on 26 October (time zone unknown) and he wonders whether the second time can be confirmed
+publicly; he is happy with a card and a billing-enabled account; **he chose AWS** (London). Claude suggested watching the portal page across a day
+or two, or subscribing so that "new file" emails show the publication times, and noted the exact times matter little because the API is near-real-time
+and every price carries its own timestamp. **Design sketched in PLAN.md ("27 October, later"):** Stage 1c, a feasibility test (the existing probe packaged
+as a Lambda function in London, run once by John, log pasted back, which holds counts and shapes only); Stage 2, the collector as a function run twice a
+day by EventBridge Scheduler in `Europe/London` time, saving the data file to this repo through GitHub's API with a repo-limited token (expiry to record).
+Free-tier cautions listed (no private network, no Secrets Manager, budget alert, read AWS's own sign-up screens). Nothing built; waiting for John's go-ahead
+on Stage 1c.
