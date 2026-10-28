@@ -87,7 +87,7 @@ host allow-list, redaction, hours classes, summaries, a page-file size estimate)
 Stage 1c (on `main` since 27 October): `lambda/handler.ts` and `lambda/make-handler.ts` (the probe as an AWS Lambda
 handler), `scripts/lib/run-probe.ts` (the probe, shared by the workflow and Lambda), `scripts/build-lambda.mjs`, `scripts/check-lambda.ts`,
 `.github/workflows/lambda-package.yml`, `design/aws-test-steps-2026-10-27.md`.
-Stage 2 (branch `stage-2-collector`): `scripts/lib/clean.ts` (the rules, no network), `scripts/lib/collect.ts` (one run: Fuel Finder,
+Stage 2 (on `main` since 28 October): `scripts/lib/clean.ts` (the rules, no network), `scripts/lib/collect.ts` (one run: Fuel Finder,
 bank holidays, one commit to `main` through GitHub's API), `lambda/collector.ts` and `lambda/make-collector.ts`, `scripts/check-collect.ts`;
 `npm run build:lambda` makes `dist-lambda/collector/` and `dist-lambda/probe/`. Data on `main`: `data/stations.json`, `data/prices.json`,
 `data/bank-holidays.json`, `data/runs/YYYY-MM.jsonl`. John's steps: `design/aws-collector-steps-2026-10-28.md`.
@@ -683,4 +683,4 @@ was **not** caught at first, because the check only looked at the authorisation 
 and catches it. All code restored.
 
 **Couldn't be checked:** the real API's behaviour beyond the 27 October probe, the real GitHub API, the AWS scheduler and the console
-steps (written from general knowledge). Not merged: John to say.
+steps (written from general knowledge). **Merged to `main` at John's word (28 October);** he follows the steps on 29 October. Nothing runs until he creates the function and its timetable.

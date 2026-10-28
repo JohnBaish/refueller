@@ -236,7 +236,7 @@ Needs John's yes to Q2 and Q3 first.
 
 ## Stage 2 — the collector
 
-**Built 28 October on `stage-2-collector`, as an AWS Lambda function in London** (the GitHub Actions and cron-job.org
+**Built 28 October on `stage-2-collector` and merged to `main` the same day, as an AWS Lambda function in London** (the GitHub Actions and cron-job.org
 design below is superseded: the API refuses non-UK addresses). John's answers, 28 October: runs at **10.15am and 4.15pm
 UK time** (AWS's scheduler, Europe/London); old prices marked after **30 days** (Q7, B); 00:00 to 00:00 read as agreed
 (Q14); **the collector's commits go straight to `main`**; unusual prices shown with a note, never marked cheapest (B).
