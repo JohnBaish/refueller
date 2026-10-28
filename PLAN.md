@@ -236,7 +236,19 @@ Needs John's yes to Q2 and Q3 first.
 
 ## Stage 2 — the collector
 
-Branch: `stage-2-collector`
+**Built 28 October on `stage-2-collector`, as an AWS Lambda function in London** (the GitHub Actions and cron-job.org
+design below is superseded: the API refuses non-UK addresses). John's answers, 28 October: runs at **10.15am and 4.15pm
+UK time** (AWS's scheduler, Europe/London); old prices marked after **30 days** (Q7, B); 00:00 to 00:00 read as agreed
+(Q14); **the collector's commits go straight to `main`**; unusual prices shown with a note, never marked cheapest (B).
+
+What it is: `scripts/lib/clean.ts` (the rules), `scripts/lib/collect.ts` (Fuel Finder, GOV.UK bank holidays, and one
+commit to `main` through GitHub's API: `data/stations.json`, `data/prices.json`, `data/bank-holidays.json`,
+`data/runs/YYYY-MM.jsonl`), `lambda/collector.ts` and `lambda/make-collector.ts`, `scripts/check-collect.ts`; the
+"Build Lambda packages" workflow makes both packages. John's steps: `design/aws-collector-steps-2026-10-28.md` (a
+fine-grained GitHub key for this repo only, Contents read and write, about a year: **expiry date to record here**).
+Left for Stage 3: the check of each station's position against its postcode.
+
+*The original plan, kept for the record:*
 
 1. `scripts/lib/clean.ts`: plain functions (kept apart from fetching, so they
    can be checked without the network) that join stations and prices, drop

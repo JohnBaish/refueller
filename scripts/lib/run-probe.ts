@@ -248,6 +248,8 @@ export async function runProbe(opts: ProbeOptions) {
     let envelope = '';
     for (let n = 1; n <= maxBatches; n++) {
       const reply = await get(`${path}?batch-number=${n}`);
+      // The API marks the end of the list with a 404 on the batch after the last (seen from AWS London, 27 October).
+      if (reply.status === 404 && n > 1) break;
       if (reply.status !== 200) {
         failure = { batch: n, status: reply.status || reply.error, bodyLength: reply.text.length, bodyKeys: keysOf(parse(reply.text)) };
         break;

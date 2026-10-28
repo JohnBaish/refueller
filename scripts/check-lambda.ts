@@ -127,7 +127,7 @@ await check('handler: a refused front door returns the diagnosis, ok false', asy
 // --- The real built package -------------------------------------------------------------------------
 
 execFileSync('node', ['scripts/build-lambda.mjs'], { stdio: 'pipe' });
-const bundlePath = new URL('../dist-lambda/index.mjs', import.meta.url);
+const bundlePath = new URL('../dist-lambda/probe/index.mjs', import.meta.url);
 
 await check('bundle: one small plain-JavaScript file that imports only Node built-ins', () => {
   const text = readFileSync(bundlePath, 'utf8');
@@ -150,8 +150,35 @@ await check('bundle: loads, exports only `handler`, and answers when the setting
 });
 
 await check('bundle: the zip holds just index.mjs', () => {
-  execFileSync('zip', ['-j', '-q', 'dist-lambda/refueller-probe.zip', 'dist-lambda/index.mjs']);
+  execFileSync('zip', ['-j', '-q', 'dist-lambda/refueller-probe.zip', 'dist-lambda/probe/index.mjs']);
   const listing = execFileSync('unzip', ['-Z1', 'dist-lambda/refueller-probe.zip']).toString().trim();
+  assert.equal(listing, 'index.mjs');
+});
+
+const collectorPath = new URL('../dist-lambda/collector/index.mjs', import.meta.url);
+
+await check('collector bundle: one plain-JavaScript file that imports only Node built-ins', () => {
+  const text = readFileSync(collectorPath, 'utf8');
+  assert.ok(text.length > 5_000 && text.length < 150_000, `size ${text.length}`);
+  const imports = [...text.matchAll(/^import .*? from "([^"]+)"/gm)].map((m) => m[1]);
+  assert.ok(imports.length > 0 && imports.every((i) => i.startsWith('node:')), `imports ${imports.join(', ')}`);
+  assert.equal(text.includes('process.argv'), false, 'command-line code in the bundle');
+  assert.ok(text.includes('https://api.github.com') && text.includes('https://www.fuel-finder.service.gov.uk'));
+});
+
+await check('collector bundle: loads, exports only `handler`, and names the missing settings', async () => {
+  const mod = await import(pathToFileURL(collectorPath.pathname).href);
+  assert.deepEqual(Object.keys(mod), ['handler']);
+  await withEnv({ FUEL_FINDER_CLIENT_ID: undefined, FUEL_FINDER_CLIENT_SECRET: undefined, REFUELLER_GITHUB_TOKEN: undefined }, async () => {
+    const r = await mod.handler({});
+    assert.equal(r.ok, false);
+    assert.equal(r.problem, 'not set: FUEL_FINDER_CLIENT_ID, FUEL_FINDER_CLIENT_SECRET, REFUELLER_GITHUB_TOKEN');
+  });
+});
+
+await check('collector bundle: the zip holds just index.mjs', () => {
+  execFileSync('zip', ['-j', '-q', 'dist-lambda/refueller-collector.zip', 'dist-lambda/collector/index.mjs']);
+  const listing = execFileSync('unzip', ['-Z1', 'dist-lambda/refueller-collector.zip']).toString().trim();
   assert.equal(listing, 'index.mjs');
 });
 

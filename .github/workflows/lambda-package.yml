@@ -1,8 +1,8 @@
-# Builds the AWS Lambda package for the Fuel Finder probe (PLAN Stage 1c). Run by hand only ("Run workflow").
-# The package is ONE JavaScript file made from this repo's own code (nothing from npm inside it), zipped, and kept as a
-# downloadable file on the run page. There are no secrets anywhere in it or in this workflow; the two Fuel Finder values
+# Builds the two AWS Lambda packages: the collector (PLAN Stage 2) and the probe (Stage 1c). Run by hand only ("Run workflow").
+# Each package is ONE JavaScript file made from this repo's own code (nothing from npm inside it), zipped, and kept as a
+# downloadable file on the run page. There are no secrets anywhere in them or in this workflow; the values they need
 # are typed into AWS by John. Read-only permissions: the job can't change the repo.
-name: Build Lambda package
+name: Build Lambda packages
 
 on:
   workflow_dispatch:
@@ -34,13 +34,22 @@ jobs:
           npm run typecheck
           npm run check
 
-      - name: Build the package
+      - name: Build the packages
         run: |
           npm run build:lambda
-          rm -f dist-lambda/refueller-probe.zip
-          zip -j -q dist-lambda/refueller-probe.zip dist-lambda/index.mjs
+          rm -f dist-lambda/*.zip
+          zip -j -q dist-lambda/refueller-collector.zip dist-lambda/collector/index.mjs
+          zip -j -q dist-lambda/refueller-probe.zip dist-lambda/probe/index.mjs
+          unzip -l dist-lambda/refueller-collector.zip
           unzip -l dist-lambda/refueller-probe.zip
-          sha256sum dist-lambda/index.mjs dist-lambda/refueller-probe.zip
+          sha256sum dist-lambda/*/index.mjs dist-lambda/*.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: refueller-collector-lambda
+          path: dist-lambda/refueller-collector.zip
+          if-no-files-found: error
+          retention-days: 14
 
       - uses: actions/upload-artifact@v4
         with:

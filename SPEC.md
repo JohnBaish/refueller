@@ -605,7 +605,17 @@ Q10 (order and marking) unanswered**; John to say if the mapping is wrong.
 - **Q5** Straight-line miles; one decimal place for less than five miles.
 - **Q6** Yes: unleaded (`E10`) and standard diesel (`B7_STANDARD`) only.
 - **Q7** Yes to all three: keep a station with one fuel, flag prices older than
-  seven days, treat prices outside 100p to 300p as errors.
+  seven days, treat prices outside 100p to 300p as errors. **Changed 28 October
+  (John, option B):** the real data showed 69% of prices more than seven days old, so
+  every price shows its date and only those **more than 30 days old** are marked
+  (never hidden: the Fair Use policy). **Also 28 October (John, option B): unusual
+  prices.** A price more than 30p from the middle price in Great Britain (worked out
+  each run) is shown with a note ("Unusual price, may be a mistake") and the Report a
+  Discrepancy link, and is never marked cheapest. The 30p is provisional, to be set
+  after a few weeks of real prices; the rule goes in "About these figures".
+- **Q14** **Decided 28 October (John agreed Claude's reading):** 00:00 to 00:00
+  without the 24-hour flag on some days means closed on those days; on every day it
+  means "opening hours not given" (the station is still listed).
 - **Q8** Yes to the definition of "open" as drafted. *Amended by Claude, for John
   to confirm:* the data does include bank-holiday hours (my earlier note that it
   didn't was wrong), so they are used.

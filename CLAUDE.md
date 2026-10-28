@@ -87,6 +87,10 @@ host allow-list, redaction, hours classes, summaries, a page-file size estimate)
 Stage 1c (on `main` since 27 October): `lambda/handler.ts` and `lambda/make-handler.ts` (the probe as an AWS Lambda
 handler), `scripts/lib/run-probe.ts` (the probe, shared by the workflow and Lambda), `scripts/build-lambda.mjs`, `scripts/check-lambda.ts`,
 `.github/workflows/lambda-package.yml`, `design/aws-test-steps-2026-10-27.md`.
+Stage 2 (branch `stage-2-collector`): `scripts/lib/clean.ts` (the rules, no network), `scripts/lib/collect.ts` (one run: Fuel Finder,
+bank holidays, one commit to `main` through GitHub's API), `lambda/collector.ts` and `lambda/make-collector.ts`, `scripts/check-collect.ts`;
+`npm run build:lambda` makes `dist-lambda/collector/` and `dist-lambda/probe/`. Data on `main`: `data/stations.json`, `data/prices.json`,
+`data/bank-holidays.json`, `data/runs/YYYY-MM.jsonl`. John's steps: `design/aws-collector-steps-2026-10-28.md`.
 No app yet.
 
 ## Log
@@ -650,3 +654,33 @@ address:** sign-in, all 17 station and 17 price batches (8,146 stations, 8,141 p
 call all worked. `ok: false` only because the end of each list is a **404 on the next batch**, not an empty batch. Figures and what
 they change in `design/probe-result-aws-2026-10-27.md`. New question: the seven-day "old price" flag would flag 69% of prices.
 Q14 covers 458 stations. Nothing else running; the function only runs when John presses Test.
+
+### 2026-10-28 — stage 2: the collector built (branch `stage-2-collector`)
+
+**John's answers:** runs at 10.15am and 4.15pm UK time; old prices marked after 30 days, not 7 (Q7, B); 00:00 to 00:00 is closed
+on those days, or "hours not given" when every day (Q14); the collector's commits go straight to `main`; unusual prices (more than 30p
+from the middle price in Great Britain, provisional) shown with a note and the Report a Discrepancy link, never marked cheapest (B).
+SPEC Q7, Q14 and PLAN Stage 2 updated.
+
+**What:** an AWS Lambda function (not GitHub Actions: the API refuses non-UK addresses). Each run signs in, fetches every station and
+price batch (one at a time, 0.8 s apart, at most one retry; the end of a list is the 404 seen on 27 October), keeps Great Britain by
+postcode (BT, IM, GY, JE left out), drops permanently closed stations (a future closure date means still open), positions outside a
+rough GB box, and stations with neither E10 nor diesel in 100p to 300p; keeps prices and "last updated" times exactly as given; marks
+unusual prices; turns hours into "06:00-22:00", "24h" or "closed" per day. It saves `data/stations.json` (one station a line),
+`data/prices.json` (keyed by the first 12 characters of the station code), `data/bank-holidays.json` (GOV.UK, when readable) and a
+line in `data/runs/YYYY-MM.jsonl`, all in one commit to `main` through GitHub's API (starting again once if `main` moved). If Fuel
+Finder fails, or fewer than 4,000 records come back, or fewer than 3,000 stations are kept, the data files are left alone and only
+the run line is saved. Secrets: Fuel Finder values only to the Fuel Finder host, the GitHub key only to `api.github.com`; nothing
+followed through redirects; everything logged, saved or returned passes `redact`. The handler never throws (AWS would re-run it).
+The probe now also treats the end-of-list 404 as the end. The build workflow makes both packages.
+
+**Checked here:** `npm run check`: the 19 probe checks, 17 new collector checks (the rules, then whole runs against a fake Fuel
+Finder, fake GitHub and fake GOV.UK: a good run, secrets kept to their own servers, a refused sign-in, too few records, a first-batch
+404, `main` moving while saving, foreign hosts refused, a missing setting) and 9 Lambda checks (both bundles: one file each, only
+Node built-ins, only `handler` exported). Lint and type-check clean. **Four deliberate breakages:** three were caught at once (no
+minimum count; unusual at exactly 30p; Northern Ireland kept). The fourth (the GitHub key sent to Fuel Finder in an extra header)
+was **not** caught at first, because the check only looked at the authorisation header and the body; it now looks at every header,
+and catches it. All code restored.
+
+**Couldn't be checked:** the real API's behaviour beyond the 27 October probe, the real GitHub API, the AWS scheduler and the console
+steps (written from general knowledge). Not merged: John to say.
