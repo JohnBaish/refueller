@@ -308,8 +308,9 @@ Branch: `stage-5-page`
    `SafetyNet` pattern from Hindcaster.
 2. Build the agreed page; remembered postcode in `localStorage`
    (`refueller.choice`); statistics stripped of anything after "#".
-3. Late in the design, **ask John whether Refueller should have a dark mode**
-   (HOUSE-STYLE §2 and §16), and if so mock it up in both themes first.
+3. **Dark mode, built in from the start** (John, 29 October; HOUSE-STYLE §2
+   and §16): the agreed colours and switch, following the device's setting;
+   mock-ups in both themes.
 4. Browser checks as above, plus every real data state (old copy, missing
    price, nothing open).
 
@@ -342,7 +343,6 @@ worked example (net 38p, break-even about 2p a litre).
 | Now | Answer SPEC §11 |
 | Stage 1 | Register for Fuel Finder, read the terms, add the two secrets, allow the network sites |
 | Stage 2 | cron-job.org job and GitHub token; re-save `collect.yml` on github.com after Claude changes it |
-| Stage 5 | Dark mode yes or no |
 | Stage 6 | Vercel project, domain, Web Analytics, Search Console, DNS |
 
 ## Dates to remember

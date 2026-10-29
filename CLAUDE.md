@@ -12,7 +12,7 @@ Read these first, in this order:
    the numbered open questions).
 2. `PLAN.md`: the staged build. Work one stage at a time, on its branch.
 3. `HOUSE-STYLE.md`: the shared look and ways of working. Copied from
-   `JohnBaish/clockwheel` on 2026-10-23 (at clockwheel commit `36378ed`).
+   `JohnBaish/clockwheel`; last re-copied 2026-10-29 (at clockwheel commit `cba1629`).
    Clockwheel holds the master copy. If it has changed since, re-copy it and
    note that here. The same goes for `SEO-HANDOVER.md` and
    `.claude/skills/fresh-look/` (the `/fresh-look` review).
@@ -684,3 +684,9 @@ and catches it. All code restored.
 
 **Couldn't be checked:** the real API's behaviour beyond the 27 October probe, the real GitHub API, the AWS scheduler and the console
 steps (written from general knowledge). **Merged to `main` at John's word (28 October);** he follows the steps on 29 October. Nothing runs until he creates the function and its timetable.
+
+### 2026-10-29 — house style re-copied; dark mode from the start (notes only)
+
+From clockwheel `cba1629` (John): every tool has a dark mode that follows the device's light or dark
+setting until the visitor uses the switch (§2), built in from the start rather than asked about late
+(§16). So the Refueller page (stage 5 onwards) is to be built with dark mode and mock-ups in both themes.

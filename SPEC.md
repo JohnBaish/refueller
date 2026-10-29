@@ -694,6 +694,7 @@ it (Q4 is A), but it matters for road distances and exact postcodes later.
     "Opening hours not listed" (shown, not counted as open for the eight) if every day is
     like that. Your call, whenever the real numbers are in.
 
-Not asked yet, by design: dark mode (asked late in the design, HOUSE-STYLE
-§16), the calculator's details, the favicon and link-preview image, and the
+Dark mode is decided (John, 29 October): yes, following the device's
+setting, built in from the start (HOUSE-STYLE §2). Not asked yet, by
+design: the calculator's details, the favicon and link-preview image, and the
 search title and description.

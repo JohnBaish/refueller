@@ -61,10 +61,12 @@ Each of neutral, accent and accent-2 has a 100–900 ramp
 `--color-accent-700` `#8c491a` is the darker terracotta used for
 text-style action buttons and links).
 
-**Dark mode is optional, tool by tool** (John, 2026-10-23). Light is the
-house look and always the default; Hindcaster is the first tool with a
-dark mode, and it's the one to copy. Clockmaker, Backtimer and Flowcharter
-are light only for now (John may come back to them). The agreed dark
+**Every tool has a dark mode** (John, 2026-10-29, replacing "optional,
+tool by tool"). New tools are built with it from the start, not asked about
+late in the design; tools in development get it too. Hindcaster and
+Lightreader have it (Hindcaster's is the one to copy); for Clockmaker,
+Backtimer, Flowcharter and the landing page, mock-ups went to John on
+2026-10-29, and nothing goes live until he agrees. The agreed dark
 colours (Hindcaster's "option B"; a first, near-black version was too
 dark and harsh on John's phone and laptop):
 
@@ -96,8 +98,16 @@ terracotta labels below 4.5:1. How it's built (Hindcaster's
 - The choice is kept in `localStorage` (`<tool>.theme`), and a few lines
   in `index.html` set it before the page draws, so there's no flash of
   the light page. Blocked storage just means light.
-- Light by default, even when a phone is set to dark (John's choice;
-  following the phone's setting would be one line in `index.html`).
+- **It follows the device's own setting** (light or dark) until the
+  visitor uses the switch (John, 2026-10-29; until then it was light by
+  default). Only a choice that differs from the device is kept, as
+  `'light'` or `'dark'`; setting the switch back to match the device
+  removes it, so the page follows the device again. While nothing is kept,
+  the page changes live when the device does (for example a phone that
+  turns dark at dusk). The `index.html` script works out the same before
+  the page draws: a kept choice wins, otherwise
+  `matchMedia('(prefers-color-scheme: dark)')`. Blocked storage just means
+  following the device.
 - The footer's privacy wording mentions it. Hindcaster's: "Your device,
   rather than the website, stores your last choices (location and light
   or dark mode), so the page opens the same way next time."
@@ -619,9 +629,9 @@ started this way.
    answers beside them, and build nothing visible until he agrees.
 8. Before building pages, show mock-ups at 1200px and 390px; before wiring
    in a favicon or preview image, show the options (§7).
-9. Late in the design, once the pages are agreed, ask John whether the
-   tool should have a dark mode (§2). If yes, use the agreed dark colours
-   and switch, and show mock-ups in both themes first.
+9. Build dark mode in from the start (§2; John, 2026-10-29, so don't ask):
+   the agreed dark colours and switch, following the device's setting, and
+   mock-ups in both themes.
 
 **John's own jobs later, when each comes up:** the Vercel project, its
 domain and Web Analytics (§9); any keys, as GitHub secrets, never pasted
