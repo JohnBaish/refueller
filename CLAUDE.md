@@ -47,6 +47,7 @@ Key points from the house style, repeated because they matter most:
 - Check in a real browser at 1200px and at 390px with touch emulation, and
   say what couldn't be checked.
 - Add a dated entry below for every change.
+- **Project tracker:** when something significant changes (a stage finished, a decision made, something goes live or is parked), update this project's file and its line in `INDEX.md` in `JohnBaish/baish.net-directory`, following that repo's README.
 
 Refueller-specific points:
 
@@ -690,3 +691,9 @@ steps (written from general knowledge). **Merged to `main` at John's word (28 Oc
 From clockwheel `cba1629` (John): every tool has a dark mode that follows the device's light or dark
 setting until the visitor uses the switch (§2), built in from the start rather than asked about late
 (§16). So the Refueller page (stage 5 onwards) is to be built with dark mode and mock-ups in both themes.
+
+### 2026-10-29 — project tracker line (notes only, straight to `main`)
+
+At John's request: a line in the key points asking future sessions to update
+this project's file in the project tracker (`JohnBaish/baish.net-directory`)
+when something significant changes.
