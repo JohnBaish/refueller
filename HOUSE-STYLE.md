@@ -381,6 +381,13 @@ and add its tags. Nothing else needs fixing or remaking first.
 - **Handing over to a fresh thread:** a dated handover file in `design/`
   with everything agreed, what's open and where things are, listed in the
   notes' "read these first" order.
+- **The project tracker** (`JohnBaish/baish.net-directory`, private;
+  John, 2026-10-29): one file per project in `projects/`, one line each
+  in `INDEX.md`, and the outside services in `SERVICES.md`. Its
+  `README.md` has the rules. When something significant changes (a stage
+  finished, a decision made, something goes live or is parked), update
+  the project's file and its `INDEX.md` line, straight to `main`. Each
+  tool's `CLAUDE.md` says so in its key points.
 - **Accuracy:** never stand in made-up figures for real ones; anything made
   up is labelled "Illustration only", and test data comes from real
   examples. Work facts out (weekdays, clock-change dates, sunrise times,
@@ -615,7 +622,8 @@ started this way.
 >    `.claude/skills/fresh-look/` from clockwheel, noting the commit.
 > 3. Write `SPEC.md` (what the tool does, with numbered open questions at
 >    the end), `PLAN.md` (stages, one branch each) and `CLAUDE.md`
->    (working notes and a dated log, with a reading list).
+>    (working notes and a dated log, with a reading list, and the project
+>    tracker line from §10 in its key points).
 > 4. Then ask me the open questions in a numbered batch. Don't build any
 >    of the app until I've answered and agreed the first stage.
 
@@ -632,6 +640,10 @@ started this way.
 9. Build dark mode in from the start (§2; John, 2026-10-29, so don't ask):
    the agreed dark colours and switch, following the device's setting, and
    mock-ups in both themes.
+10. Add the tool to the project tracker (§10): a file in `projects/` and a
+    line in `INDEX.md` in `JohnBaish/baish.net-directory`. If it was
+    planned in a Claude chat and already has a starter file there,
+    update that file rather than starting a new one.
 
 **John's own jobs later, when each comes up:** the Vercel project, its
 domain and Web Analytics (§9); any keys, as GitHub secrets, never pasted
