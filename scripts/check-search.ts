@@ -90,7 +90,9 @@ await check('words: miles, clock times, names and addresses', () => {
   assert.equal(tidyName('READING EXTRA - PETROL FILLING STATION'), 'Reading Extra – Petrol Filling Station');
   assert.equal(tidyAddress(st({ address: ['150 OXFORD ROAD', 'READING', 'READING'], postcode: 'RG1 7PJ' })), '150 Oxford Road, Reading, RG1 7PJ');
   // John, 30 October: initials kept (PE33 9RF, KT12 1RZ).
-  assert.equal(tidyName('PC&AT Hudson'), 'PC&AT Hudson', 'a name with small letters is left exactly as typed');
+  assert.equal(tidyName('PC&AT Hudson'), 'PC&AT Hudson', 'a name in mixed capitals and small letters is left exactly as typed');
+  assert.equal(tidyName('trewellard garage petrol station'), 'Trewellard Garage Petrol Station', 'all small letters: treated like capitals');
+  assert.equal(tidyName('r s morphet ltd'), 'R S Morphet Ltd');
   assert.equal(tidyName('TGC - WALTON HOUSE'), 'TGC – Walton House');
   assert.equal(tidyName('PGG ESSO'), 'PGG Esso');
   assert.equal(tidyName('J&J MOTORS LTD'), 'J&J Motors Ltd');

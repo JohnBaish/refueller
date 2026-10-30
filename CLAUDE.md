@@ -902,3 +902,11 @@ check was first added after the file's summary line and so not counted, then mov
 TQ1 4AH, PE33 9TF, IV51 9JS, TR21 0JY and PA77 6UP at 1200px and 390px with touch: an unusual note only at RG9, the blue 45-day
 line at TQ1, "More" at PE33, none of the island prices marked; no sideways scroll, no errors.
 **Found:** every unusual price outside those areas on 30 October is also more than 45 days old.
+
+### 2026-10-30 — names typed all in small letters (branch `stage-5-page`)
+
+**John** (TR21): "trewellard garage petrol station" should have capitals. The rule left any line with small letters as typed; now
+only a mix of capitals and small letters is left as typed, and a line all in small letters is treated like one in capitals
+("Trewellard Garage Petrol Station", "R S Morphet Ltd"). 118 names and address lines on 30 October, all read through: sensible,
+apart from what the stations' own typing can't tell us ("je garner" shows as "Je Garner", probably J E Garner).
+`npm run check` (new checks), lint, type-check, build.

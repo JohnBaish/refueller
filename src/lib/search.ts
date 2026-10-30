@@ -244,7 +244,8 @@ export function updatedText(iso: string, ms: number): string {
 export const isOld = (iso: string, ms: number) => Math.floor((ms - Date.parse(iso)) / 86_400_000) > 45;
 
 // Fuel Finder gives most names in capitals. Shown in ordinary capitalisation (John, 30 October), except: a name or address line
-// that already has small letters is left exactly as the station typed it ("PC&AT Hudson"); words with no vowel are taken as
+// typed in a mix of capitals and small letters is left exactly as the station typed it ("PC&AT Hudson"), and one typed all in
+// small letters is treated like one in capitals ("trewellard garage" shows as "Trewellard Garage"); words with no vowel are taken as
 // initials and kept in capitals ("TGC", "PGG"), apart from the usual short forms ("Ltd", "Rd", "St"); and short pieces joined
 // by "&" stay in capitals ("J&J").
 const KEEP = new Set(['BP', 'MFG', 'SF', 'UK', 'EG', 'HGV', 'JET']);
@@ -260,8 +261,9 @@ function word(w: string): string {
 }
 export function tidyName(s: string): string {
   const spaced = s.split(/\s+/).filter(Boolean);
-  if (/[a-z]/.test(s)) return spaced.join(' ').replace(/ - /g, ' – ');
+  if (/[a-z]/.test(s) && /[A-Z]/.test(s)) return spaced.join(' ').replace(/ - /g, ' – ');
   return spaced
+    .map((w) => w.toUpperCase())
     .map((w) => {
       const amp = w.includes('&');
       return w.split(/([-.&,])/).map((piece, i) => (i % 2 || (amp && piece.length <= 2) ? piece : word(piece))).join('');
