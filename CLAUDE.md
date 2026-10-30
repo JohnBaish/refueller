@@ -725,3 +725,9 @@ the repo: no Northern Ireland, Isle of Man or Channel Islands postcodes; nothing
 "about 6,200 in Great Britain" counted by the unreliable `country` field; by postcode it is 7,535 (8,146 less 591 and 20).
 **For later (Stage 5):** the page should load a smaller file made at build time; and `prices.json` changes every run, so watch the
 repo's size. Next: John sets up the timetable (Part 5).
+
+### 2026-10-30 — the timetable works (notes only)
+
+John made the schedule `refueller-twice-daily` (EventBridge Scheduler, London, Europe/London, 10.15am and 4.15pm). Its first run
+saved `2481f55` "Data: 2026-10-30 10:15 UTC" (10.15am GMT, the clocks having gone back on 25 October): ok, 37 requests, 106 s
+(slower than the test's 30 s, still well inside the 5-minute limit), 7,533 stations kept. The collector now runs by itself.
