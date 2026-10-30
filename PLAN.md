@@ -334,13 +334,32 @@ with the hub's description updated, and the overview PDF
 **Link-preview tagline:** "Nearby petrol and diesel prices" (John, 30 October), on the image (`design/og-refueller.html`) and in the
 `og:`/`twitter:` descriptions. **Update it when Refueller gains more features** (the calculator, "may be close to the route").
 
-## Stage 7 — the calculator (later)
+## Stage 7 — the calculator (next, after John's go on 30 October 2026)
 
 Branch: `stage-7-calculator`
 
 "Is it worth driving further?" (SPEC §9). Its own questions, mock-ups and
 checks first; the arithmetic in `npm run check`, including the handover's
 worked example (net 38p, break-even about 2p a litre).
+
+**Decided by John (30 October 2026):**
+- **Where:** a small "Worth driving here?" link under each station's prices, opening a panel beneath that station.
+- **Compared with:** the nearest station that is open and sells the chosen fuel.
+- **What the visitor types:** how much they'll spend, in £, starting at **£50**; and their car's mpg, starting at a typical
+  figure for the chosen fuel, which they can type over. Defaults (C4 option a): **petrol 36 mpg, diesel 43 mpg**, from
+  NimbleFins's figures based on drivers' own fill-ups (seen only in a search summary; the page couldn't be opened from here).
+  Overall figures, not town-only. Labelled "a typical figure; change it to your car's".
+- **Litres** = £ ÷ the nearest station's price; **saving** = litres × the difference in price per litre.
+- **Extra miles** from road routes (OS Open Roads, `design/road-routing-feasibility-2026-10-30.md`), there and back, shown as
+  "about N miles" in a box the visitor can type over.
+- **Fuel:** Unleaded and Diesel buttons, starting on the one used last time.
+- **Remembered on the device:** fuel, mpg and £ amount (the footer's privacy sentence to say so).
+- **Wording (C6, agreed):** "Worth it: you'd save about £1.20 on 40 litres. The extra 6 miles would use about 82p of fuel, so
+  you'd be about 38p better off." / "Not worth it: the extra 6 miles would use about 82p of fuel, more than the 40p you'd save."
+  / "It's worth the trip if this station is at least 2.1p a litre cheaper. This doesn't count your time or wear on the car."
+  (to be adapted to £ spent rather than litres).
+- **Still to come:** an "About these figures" paragraph on the calculator and the OS credit for the road map, drafted with the
+  mock-up. Fair Use: no problem (prices as reported, compared on price and miles).
 
 ---
 

@@ -1029,3 +1029,10 @@ Edinburgh in 0.23 s on a browser slowed to phone speed, all on the visitor's dev
 (Cardiff to Bristol), so a single allowance doesn't fit. Findings, caveats (no one-way streets, figures probably a little short)
 and conclusions in `design/road-routing-feasibility-2026-10-30.md`; PLAN idea 3 points to it. Download and scripts in the
 scratchpad only (the 3.4 GB unpacked data deleted after).
+
+### 2026-10-30 — the calculator's questions answered (notes only)
+
+**John:** a "Worth driving here?" panel under each station; compared with the nearest open station selling that fuel; the visitor
+types £ to spend (starting at £50) and mpg (starting at 36 for petrol, 43 for diesel, typical figures they can change; NimbleFins,
+seen in a search summary only); litres = £ ÷ the nearest price; extra miles from road routes, shown as "about N miles" and editable;
+fuel buttons; fuel, mpg and £ remembered on the device; the agreed wording. Recorded in PLAN Stage 7. Next: the mock-up.
