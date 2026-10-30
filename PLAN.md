@@ -334,7 +334,7 @@ with the hub's description updated, and the overview PDF
 **Link-preview tagline:** "Nearby petrol and diesel prices" (John, 30 October), on the image (`design/og-refueller.html`) and in the
 `og:`/`twitter:` descriptions. **Update it when Refueller gains more features** (the calculator, "may be close to the route").
 
-## Stage 7 — the calculator (built 30 October 2026 on `stage-7-calculator`, waiting for John's look)
+## Stage 7 — the calculator (merged to `main` 30 October 2026)
 
 Branch: `stage-7-calculator`
 
@@ -427,4 +427,9 @@ within a chosen distance; county or region pages for search.
    - *Data:* a long journey crosses many postcode areas, so either more area files load, or the index carries each
      station's two prices (it would grow a little). Decide with a mock-up.
    - The calculator (stage 7) fits here: whether the cheaper price pays for the extra miles.
+4. **Full postcodes (John, 30 October; next after the 14-day graph):** search from the whole postcode ("RG1 8FR") when it is
+   typed, not just the middle of its district. Positions from OS Open Names (the same download as `data/outcodes.json`), one
+   file per postcode area, loaded only for the area typed, so nothing leaves the browser. The wording needs thinking about with
+   and without the second half (headings, "Straight-line distances from …", the hint "Only the first half (RG1) is used.", About).
+   The calculator's road miles would still start from the district middle (road figures for every postcode would be far too big).
 

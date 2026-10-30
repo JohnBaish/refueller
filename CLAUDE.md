@@ -1092,3 +1092,10 @@ M1 (4) and TR21 (none) at 1200px and 390px with touch; no errors, no sideways sc
 **John also asked** whether full postcodes were due by now: no. Q4 was "district centres, for now", and full postcodes were left for
 later in the mock-up round of 30 October; they aren't yet in the agreed feature order.
 
+### 2026-10-30 — stage 7 merged to `main`; full postcodes in the plan
+
+**John:** merge and put it live; all the draft wording stands. Brought in `main`'s data commits; checks, lint and build clean;
+`stage-7-calculator` merged into `main`, so Vercel's production build (still on Vercel's own address) has the calculator. Full
+postcodes added to PLAN "Ideas logged for later" (item 4), next after the 14-day graph, with the wording with and without the
+second half still to work out.
+
