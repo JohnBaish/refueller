@@ -1020,3 +1020,12 @@ station", the heading and the not-listed message agreed; reopening the page stay
 renamed. **Checked:** checks, lint, type-check, build; at 1200px, 390px and 320px with touch: eight links with the new words, a
 tap opens the station's eight, no errors, no sideways scroll. Merged `feature-centre-station` into `main` at John's word.
 **Next:** the calculator's questions.
+
+### 2026-10-30 — road routes in the browser: feasibility test (notes only)
+
+**John** asked whether anything better than "as the crow flies" was possible for "may be close to the route". Tested OS Open Roads
+(OS OpenData, GB, October 2026): motorways, A and B roads joined into a 1.16 MB (compressed) network routes Westminster to
+Edinburgh in 0.23 s on a browser slowed to phone speed, all on the visitor's device. Road-to-straight ratios ran from 1.11 to 1.58
+(Cardiff to Bristol), so a single allowance doesn't fit. Findings, caveats (no one-way streets, figures probably a little short)
+and conclusions in `design/road-routing-feasibility-2026-10-30.md`; PLAN idea 3 points to it. Download and scripts in the
+scratchpad only (the 3.4 GB unpacked data deleted after).
