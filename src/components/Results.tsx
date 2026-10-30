@@ -95,12 +95,13 @@ function OpenCell({ row }: { row: Row }) {
   );
 }
 
-// "Centre on this station" (John, 30 October): searches again from that station's own position.
+// "Find stations near this one" (John, 30 October; first called "Centre on this station"): searches again from that
+// station's own position.
 function CentreLink({ row, centreId }: { row: Row; centreId?: string }) {
   if (row.station.id === centreId) return null;
   return (
     <a className="centre-link" href={stationHash(row.station)}>
-      Centre on this station
+      Find stations near this one
     </a>
   );
 }

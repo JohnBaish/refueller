@@ -1012,3 +1012,11 @@ Wording drafted, for John: "This station", the heading, the not-listed message.
 postcodes), lint, both type-checks, build; at 1200px and 390px with touch: RG4 shows eight links, the second opens Caversham Esso
 Express's eight (seven links), Back returns to RG4, a reload keeps the station, an unknown code gives the message, no errors, no
 sideways scroll. Pictures `design/previews/centre-*.png`.
+
+### 2026-10-30 — the link renamed "Find stations near this one"; merged to `main`
+
+**John:** "Centre on this station" wasn't obvious at a glance; chose "Find stations near this one" (option A of five); "This
+station", the heading and the not-listed message agreed; reopening the page stays on the last postcode. The link and the comments
+renamed. **Checked:** checks, lint, type-check, build; at 1200px, 390px and 320px with touch: eight links with the new words, a
+tap opens the station's eight, no errors, no sideways scroll. Merged `feature-centre-station` into `main` at John's word.
+**Next:** the calculator's questions.

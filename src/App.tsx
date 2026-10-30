@@ -8,7 +8,7 @@ import { readPostcode, type PostcodeResult } from './lib/search.ts';
 // after "#" (#RG4: browsers never send that part, and the visit statistics drop it) and on this device as the last choice.
 const CHOICE = 'refueller.choice';
 
-// The address after "#": a postcode district (#RG4) or a station (#station/RG/d20f21e97871, "Centre on this station").
+// The address after "#": a postcode district (#RG4) or a station (#station/RG/d20f21e97871, "Find stations near this one").
 function fromHash(): Target | null {
   const h = decodeURIComponent(location.hash.slice(1));
   const st = /^station\/([A-Za-z]{1,2})\/([0-9a-f]{12})$/.exec(h);

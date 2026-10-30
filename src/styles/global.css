@@ -31,7 +31,7 @@ a { color: var(--color-accent-700); }
 .brand { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); }
 .sname { font-weight: 600; }
 .addr { font-size: 12.5px; color: var(--color-neutral-700); }
-/* "Centre on this station" (John, 30 October): a small link under the station, like the "More" button. */
+/* "Find stations near this one" (John, 30 October): a small link under the station, like the "More" button. */
 .centre-link { display: inline-block; margin-top: 4px; font-size: 12.5px; color: var(--color-accent-700); text-underline-offset: 3px; }
 .pcard .centre-link { margin-top: 10px; }
 .dist { font-weight: 600; white-space: nowrap; }

@@ -290,7 +290,7 @@ export function nearestEight(outcode: string, stations: Station[], prices: Price
   return { place, rows, closedNow: rows.filter((r) => r.open.open === false).length };
 }
 
-// The eight nearest to any point: the middle of a postcode district, or a station's own position ("Centre on this station",
+// The eight nearest to any point: the middle of a postcode district, or a station's own position ("Find stations near this one",
 // John, 30 October), with their opening states and the cheapest of each fuel marked.
 export function nearestFrom(lat: number, lon: number, stations: Station[], prices: Prices, outcodes: Outcodes, bank: BankHolidays, ms: number): Row[] {
   const rows: Row[] = stations

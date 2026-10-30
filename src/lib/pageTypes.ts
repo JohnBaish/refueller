@@ -5,7 +5,7 @@ import type { BankHolidays, Outcodes, Price, Station } from './search.ts';
 // [name, brand, address lines joined by "|", postcode, hours ("|"-joined, one entry when every day is the same; "" when not
 //  given), bank-holiday type and hours ("type|hours" or ""), flags ("m" motorway, "s" supermarket), unleaded, diesel,
 //  the station's own code (the first 12 characters of Fuel Finder's, as in data/; it stays the same from one collection to the
-//  next, so a "Centre on this station" address keeps working)]
+//  next, so a "Find stations near this one" address keeps working)]
 // where a price is [pence, last updated as given, 1 if unusual] or 0 when the station doesn't sell that fuel.
 export type DetailRow = [string, string, string, string, string, string, string, PriceCell, PriceCell, string];
 export type PriceCell = [number, string, 0 | 1] | 0;
