@@ -953,3 +953,14 @@ John asked to see "Nearby diesel and unleaded petrol prices" (rendered on one li
 `design/previews/og-refueller-one-line.png` and `-two-lines.png`), then preferred "Nearby petrol and diesel prices" (no full stop).
 `design/og-refueller.html`, `design/previews/og-refueller.png` and PLAN's note updated; it fits on one line with room to spare.
 Fonts confirmed loaded. Waiting for John's approval before wiring in.
+
+### 2026-10-30 — link preview and search set-up wired in (branch `stage-6-launch`)
+
+**John** approved the image. `public/og-refueller.png` (copied from the render); `index.html` gains the canonical link
+(`https://refueller.baish.net/`), a comment on what the tags are for, and `og:`/`twitter:` tags (title "Refueller", description
+"Nearby petrol and diesel prices", the image, `summary_large_image`). `public/robots.txt` (allow all, sitemap line) and
+`public/sitemap.xml` (the one address), plain files as the project serves only its own domain (SEO-HANDOVER item 8). The page
+title and search description were agreed on 30 October. The tags point at the final domain, so link previews only work once it
+is set up. **Checked:** build, `npm run check`, lint, type-check; `vite preview` at 1200px and 390px with touch: tab title,
+canonical, preview tags and favicon correct, no errors or sideways scroll; robots.txt, sitemap.xml, the image and the favicon
+all served with the right types.
