@@ -61,3 +61,21 @@ the ordinary search.
   scheduled job.
 - **Open questions for later:** how to describe the remaining approximation in "About these figures"; whether to add one-way
   information (OpenStreetMap has it, under a different licence, ODbL, which needs its own credit and share-alike terms).
+
+## Later the same day: short local trips need every road
+
+The calculator compares stations a mile or two apart, and the main-roads network is too coarse for that: from the middle of RG4 it put
+Emmer Green Esso (0.36 miles in a straight line) at 1.59 miles by road, because the trip must start and end on a main road. A network
+of **every** road in OS grid square SU (100 km by 100 km, around Reading) gives sensible figures:
+
+| Station (from the middle of RG4) | Straight line | Every road | Main roads only |
+|---|---|---|---|
+| Emmer Green Esso Express | 0.36 mi | 0.57 mi | 1.59 mi |
+| Caversham Esso Express | 1.06 mi | 1.40 mi | 1.36 mi |
+| MFG Thames Valley | 1.30 mi | 1.59 mi | 2.35 mi |
+| Reading Extra (Tesco) | 1.68 mi | 2.51 mi | 2.75 mi |
+| Reading W Extra (Tesco) | 2.10 mi | 2.99 mi | 3.10 mi |
+
+That square of every road is 206,806 points and 241,987 edges, **2.69 MB** compressed. So the calculator would load only the small
+squares round the search (for example 10 km squares, a few tens of KB each on average, more in towns), while longer routes use the
+1.2 MB main-roads network. Sizes for small squares are estimates from this one square, not yet measured.

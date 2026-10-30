@@ -1036,3 +1036,12 @@ scratchpad only (the 3.4 GB unpacked data deleted after).
 types £ to spend (starting at £50) and mpg (starting at 36 for petrol, 43 for diesel, typical figures they can change; NimbleFins,
 seen in a search summary only); litres = £ ÷ the nearest price; extra miles from road routes, shown as "about N miles" and editable;
 fuel buttons; fuel, mpg and £ remembered on the device; the agreed wording. Recorded in PLAN Stage 7. Next: the mock-up.
+
+### 2026-10-30 — calculator mock-ups (notes only)
+
+The real RG4 page with a "Worth driving here?" link under each station and the panel opened under Reading Extra (Tesco), compared
+with Emmer Green Esso (the nearest open station selling unleaded): `design/previews/calc-{not-worth,worth}-{computer,phone}.png`.
+Figures worked out from the day's real prices and a road network of every road round Reading: £50 at 36 mpg and about 4 extra miles,
+"Not worth it" (88p of fuel against 57p saved; worth it at 3.1p a litre cheaper); £90 at 50 mpg, "Worth it" (£1.03 saved, 64p of fuel,
+39p better off). The sums checked against the handover's example (38p, 2.05p). Main roads alone proved too coarse for such short
+trips; the findings added to `design/road-routing-feasibility-2026-10-30.md`. Panel styles injected in the browser only; no app code.
