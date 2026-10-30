@@ -819,3 +819,9 @@ QQ1 (not found), BT1 (Northern Ireland), typing "rg4 7hn" and "RG47HN", Back bet
 district, the switch kept as `refueller.theme`: no sideways scroll; the only failed load is Vercel's statistics script, which exists
 only on Vercel. Pictures `design/previews/page-*.png`. **Couldn't be checked:** a real phone, and Vercel (no Vercel project for
 Refueller yet). Not merged.
+
+### 2026-10-30 — Vercel project made; first preview (branch `stage-5-page`)
+
+John made the Vercel project for Refueller. `stage-5-page` had been pushed before it existed, so it had no preview; this push
+(with `main`'s latest data brought in) starts one. Preview link pattern (HOUSE-STYLE §10):
+`https://refueller-git-stage-5-page-john-baish.vercel.app`. Vercel's status can be read from GitHub's commit-status API.
