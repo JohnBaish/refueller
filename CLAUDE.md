@@ -725,3 +725,16 @@ the repo: no Northern Ireland, Isle of Man or Channel Islands postcodes; nothing
 "about 6,200 in Great Britain" counted by the unreliable `country` field; by postcode it is 7,535 (8,146 less 591 and 20).
 **For later (Stage 5):** the page should load a smaller file made at build time; and `prices.json` changes every run, so watch the
 repo's size. Next: John sets up the timetable (Part 5).
+
+### 2026-10-30 — stage 4: first mock-ups (branch `stage-4-mockups`)
+
+John set up the timetable (`refueller-twice-daily`, Europe/London, 10.15am and 4.15pm) and asked to move on to design, with RG4
+as the place to show. **First round:** `design/mock/mock-results.html` (with `rg4.js`, the real stations and prices from the
+10.08am collection, and a copy of clockwheel's `organic.css`), pictures in `design/previews/mock-1-*.png`: the postcode screen,
+RG4's eight nearest open stations at 12.30pm Friday and at 11.30pm (five nearer stations closed), computer and phone, light and
+dark, and labelled options ("Updated 3 days ago" with a "Cheapest" tag, or "Updated October 26th" with the cheapest shaded). A
+dashed "Illustration only" box shows real stations with made-up problems (an unusual price, a price more than 30 days old, no
+diesel). RG4's centre is Hindcaster's district centre (OS Open Names), turned into latitude and longitude. Names tidied for display
+(capitals to ordinary case, BP and MFG kept); towns not repeated in addresses. All wording is draft, for John. Checked: both fonts
+loaded, no sideways scroll at 1200px or at 390px with touch. **Seen in the real data:** 30-day-old diesel prices are common near
+Reading. Not merged.

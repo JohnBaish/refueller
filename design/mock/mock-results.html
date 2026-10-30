@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Refueller mock-up</title>
+<link rel="stylesheet" href="organic.css">
+<style>
+@font-face { font-family: 'Caprasimo'; font-weight: 400; src: url('node_modules/@fontsource/caprasimo/files/caprasimo-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Figtree'; font-weight: 400; src: url('node_modules/@fontsource/figtree/files/figtree-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Figtree'; font-weight: 600; src: url('node_modules/@fontsource/figtree/files/figtree-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Figtree'; font-weight: 700; src: url('node_modules/@fontsource/figtree/files/figtree-latin-700-normal.woff2') format('woff2'); }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg: #2a2723; --color-surface: #37332e; --color-text: #e8dfcf; --color-accent: #dd8a56;
+  --color-divider: color-mix(in srgb, #e8dfcf 16%, transparent);
+  --color-neutral-100: #423d36; --color-neutral-700: #b0a593; --color-neutral-800: #e3d9c7;
+  --color-accent-100: #4a2a14; --color-accent-300: #b2622d; --color-accent-600: #e8935d; --color-accent-700: #f2a573; --color-accent-800: #ffc6a5;
+  --color-accent-2-100: #2f3a20; --color-accent-2-800: #d4e4b8;
+}
+body { margin: 0; background: var(--color-bg); color: var(--color-text); font-family: Figtree, sans-serif; font-size: 15px; line-height: 1.55; }
+.mono { font-variant-numeric: tabular-nums; }
+.nav { background: var(--color-surface); padding: var(--space-3) var(--space-6); }
+.switch { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--color-divider); border-radius: 999px; padding: 4px 10px 4px 6px; font-size: 10px; letter-spacing: 0.1em; color: var(--color-neutral-700); }
+.switch i { width: 26px; height: 26px; border-radius: 50%; background: var(--color-bg); display: grid; place-items: center; font-style: normal; font-size: 14px; }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 var(--space-6) var(--space-6); }
+h1, h2, h3 { font-family: Caprasimo, serif; font-weight: 400; margin: 0; }
+.head { padding: var(--space-6) 0 var(--space-4); }
+.head h2 { font-size: 32px; line-height: 1.15; margin-top: 4px; }
+.lead { color: var(--color-neutral-700); margin: 6px 0 0; max-width: 640px; }
+.search { display: flex; gap: var(--space-2); align-items: center; margin-top: var(--space-4); flex-wrap: wrap; }
+.search .input { font-size: 15px; width: 200px; padding: 10px 14px; text-transform: uppercase; }
+.search .input::placeholder { text-transform: none; }
+.hint { font-size: 12.5px; color: var(--color-neutral-700); margin-top: 6px; }
+.results-head { display: flex; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-4); }
+.results-head h3 { font-size: 22px; }
+.notes { font-size: 12.5px; color: var(--color-neutral-700); margin: 6px 0 var(--space-3); }
+.table { width: 100%; }
+.table td { vertical-align: top; padding: 12px 8px; }
+.table th.num, .table td.num { text-align: right; }
+.brand { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); }
+.sname { font-weight: 600; }
+.addr { font-size: 12.5px; color: var(--color-neutral-700); }
+.price { font-size: 17px; font-weight: 600; white-space: nowrap; }
+.upd { font-size: 11.5px; color: var(--color-neutral-700); white-space: nowrap; }
+.old { color: var(--color-accent-700); font-weight: 600; }
+.cheap-tag { display: inline-block; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; background: var(--color-accent); color: var(--color-bg); border-radius: 999px; padding: 1px 8px; margin-left: 6px; vertical-align: 2px; font-weight: 600; }
+.cheap-cell { background: color-mix(in srgb, var(--color-accent) 14%, transparent); border-radius: 10px; }
+.cheap-cell .price { color: var(--color-accent-700); }
+.unusual { font-size: 11.5px; color: var(--color-accent-700); }
+.unusual a, .footer a, .notes a { color: var(--color-accent-700); }
+.none { color: var(--color-neutral-700); font-size: 13px; }
+.openuntil { white-space: nowrap; }
+.illus { margin-top: var(--space-6); border: 2px dashed var(--color-divider); border-radius: 20px; padding: var(--space-3) var(--space-4); }
+.illus-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-neutral-700); }
+.footer { margin-top: 64px; padding-top: var(--space-3); border-top: 1px solid var(--color-divider); font-size: 12px; line-height: 1.6; color: var(--color-neutral-700); text-align: center; }
+.footer p { margin: 0 0 6px; }
+/* phone cards */
+.cards { display: flex; flex-direction: column; gap: var(--space-3); }
+.pcard { background: var(--color-surface); border-radius: 20px; padding: var(--space-3) var(--space-4); }
+.pcard-top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.pcard .grid { display: grid; grid-template-columns: 84px 1fr; row-gap: 8px; column-gap: 10px; margin-top: 10px; }
+.pcard .lbl { font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-neutral-700); padding-top: 4px; }
+.dist { font-weight: 600; white-space: nowrap; }
+@media (max-width: 720px) {
+  .nav { padding: var(--space-3) var(--space-4); }
+  .wrap { padding: 0 var(--space-4) var(--space-6); }
+  .head h2 { font-size: 28px; }
+  .search .input { font-size: 16px; flex: 1; min-width: 0; }
+  .search .btn { min-height: 44px; }
+  .upd { white-space: normal; }
+  .illus { padding: var(--space-3) var(--space-2); }
+}
+</style>
+</head>
+<body>
+<div class="nav"><span class="nav-brand">Refueller</span><span class="switch" id="sw"><i>☀</i><span class="sw-l">DARK</span></span></div>
+<div class="wrap" id="app"></div>
+<script src="rg4.js"></script>
+<script>
+const q = new URLSearchParams(location.search);
+if (q.get('theme') === 'dark') { document.documentElement.dataset.theme = 'dark'; document.querySelector('#sw i').textContent = '☾'; }
+const narrow = innerWidth <= 720;
+if (narrow) document.querySelector('.sw-l').remove();
+const view = q.get('view') || 'results';
+const when = q.get('time') || 'day';
+const updStyle = q.get('updated') || 'ago';
+const cheapStyle = q.get('cheap') || 'tag';
+const D = window.DATA;
+const state = D[when];
+const now = Date.parse(state.at);
+
+const UPPER = new Set(['BP', 'MFG', 'SF', 'W', 'ESSO']);
+const word = (w) => (UPPER.has(w) ? (w === 'ESSO' ? 'Esso' : w) : /\d/.test(w) ? w : w.charAt(0) + w.slice(1).toLowerCase());
+const tidy = (s) => s.split(/\s+/).map((w) => w.split('-').map(word).join('-')).join(' ').replace(/ - /g, ' – ');
+const ord = (n) => n + (n % 10 === 1 && n !== 11 ? 'st' : n % 10 === 2 && n !== 12 ? 'nd' : n % 10 === 3 && n !== 13 ? 'rd' : 'th');
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const clock = (hhmm) => { let [h, m] = hhmm.split(':').map(Number); if (h === 23 && m === 59) return 'midnight'; if (h === 0 && m === 0) return 'midnight'; if (h === 12 && m === 0) return 'midday'; const ap = h < 12 ? 'am' : 'pm'; h = h % 12 || 12; return m ? `${h}.${String(m).padStart(2,'0')}${ap}` : `${h}${ap}`; };
+const miles = (m) => m < 5 ? `${m.toFixed(1)} miles` : `${Math.round(m)} miles`;
+function updated(iso) {
+  const t = Date.parse(iso);
+  const days = Math.floor((now - t) / 86400000);
+  if (updStyle === 'date') { const d = new Date(t); return `Updated ${MONTHS[d.getUTCMonth()]} ${ord(d.getUTCDate())}`; }
+  if (days < 1) { const h = Math.max(1, Math.round((now - t) / 3600000)); return `Updated ${h} hour${h === 1 ? '' : 's'} ago`; }
+  return `Updated ${days} day${days === 1 ? '' : 's'} ago`;
+}
+const isOld = (iso) => Math.floor((now - Date.parse(iso)) / 86400000) > 30;
+const shown = state.stations;
+const cheapest = {};
+for (const f of ['e10', 'diesel']) {
+  const ps = shown.map((s) => s.prices?.[f]).filter((p) => p && !p.x).map((p) => p.p);
+  cheapest[f] = ps.length ? Math.min(...ps) : null;
+}
+function priceHtml(s, f) {
+  const p = s.prices?.[f];
+  if (!p) return `<span class="none">Doesn’t sell ${f === 'e10' ? 'unleaded' : 'diesel'}</span>`;
+  const cheap = !p.x && p.p === cheapest[f];
+  const tag = cheap && cheapStyle === 'tag' ? '<span class="cheap-tag">Cheapest</span>' : '';
+  const old = isOld(p.u);
+  return `<div class="price mono">${p.p.toFixed(1)}p${tag}</div><div class="upd${old ? ' old' : ''}">${updated(p.u)}${old ? ' · may be out of date' : ''}</div>` +
+    (p.x ? `<div class="unusual">Unusual price, may be a mistake. <a href="#">Report it</a></div>` : '');
+}
+const cellClass = (s, f) => { const p = s.prices?.[f]; return p && !p.x && p.p === cheapest[f] && cheapStyle !== 'tag' ? ' cheap-cell' : ''; };
+function untilText(s) {
+  if (s.open === null) return 'Opening hours not given';
+  if (s.until === '24h' || s.until === '23:59') return s.until === '24h' ? 'Open 24 hours' : 'Open until midnight';
+  return `Open until ${clock(s.until)}`;
+}
+const addr = (s) => `${[...new Set(s.address.map(tidy))].join(', ')}, ${s.postcode}`;
+const nowText = when === 'day' ? 'Friday at 12.30pm' : 'Friday at 11.30pm';
+const collected = '9.08am today';
+
+function header() {
+  return `<div class="head"><div class="card-kicker">Fuel prices</div><h2>${view === 'start' ? 'Find the cheapest fuel near you' : 'Refueller'}</h2>
+  <p class="lead">${view === 'start' ? 'Enter a postcode to see the eight nearest open petrol stations, with their unleaded and diesel prices.' : ''}</p>
+  <div class="search"><input class="input" value="${view === 'start' ? '' : 'RG4'}" placeholder="RG4 or RG4 7HN" aria-label="Postcode"><button class="btn btn-primary">Go</button></div>
+  ${view === 'start' ? '<div class="hint">Only the first half (RG4) is used. Nothing you type leaves this page.</div>' : ''}</div>`;
+}
+function resultsHead() {
+  const W = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+  const n = state.closedNearer;
+  const extra = n > 0 ? ` ${n < 10 ? W[n] : n} nearer station${n === 1 ? ' is' : 's are'} closed at this time.` : '';
+  return `<div class="results-head"><h3>Eight nearest open stations to RG4 (Caversham)</h3></div>
+  <p class="notes">Open now (${nowText}).${extra} Straight-line distances from the middle of RG4. Prices collected at ${collected}, as reported by each station; they may have changed since. <a href="#">Report a wrong price</a></p>`;
+}
+function table(list) {
+  return `<table class="table${cheapStyle !== 'tag' ? ' cheap-bold' : ''}"><thead><tr><th>Station</th><th class="num">Distance</th><th class="num">Unleaded (E10)</th><th class="num">Diesel</th><th>Open</th></tr></thead><tbody>` +
+    list.map((s) => `<tr><td><div class="brand">${s.brand}</div><div class="sname">${tidy(s.name)}</div><div class="addr">${addr(s)}</div></td>
+    <td class="num mono dist">${miles(s.miles)}</td><td class="num${cellClass(s,'e10')}">${priceHtml(s,'e10')}</td><td class="num${cellClass(s,'diesel')}">${priceHtml(s,'diesel')}</td><td class="openuntil">${untilText(s)}</td></tr>`).join('') + '</tbody></table>';
+}
+function cards(list) {
+  return `<div class="cards${cheapStyle !== 'tag' ? ' cheap-bold' : ''}">` + list.map((s) => `<div class="pcard"><div class="pcard-top"><div><div class="brand">${s.brand}</div><div class="sname">${tidy(s.name)}</div></div><div class="dist mono">${miles(s.miles)}</div></div>
+  <div class="grid"><div class="lbl">Unleaded</div><div class="${cellClass(s,'e10')}">${priceHtml(s,'e10')}</div><div class="lbl">Diesel</div><div class="${cellClass(s,'diesel')}">${priceHtml(s,'diesel')}</div><div class="lbl">Open</div><div>${untilText(s)}</div><div class="lbl">Address</div><div class="addr">${addr(s)}</div></div></div>`).join('') + '</div>';
+}
+function illustration() {
+  // Made-up variations of real stations, to show the special cases; labelled as such.
+  const base = shown.slice(0, 3).map((s) => JSON.parse(JSON.stringify(s)));
+  base[0].prices.e10 = { p: 139.9, u: '2026-03-10T17:49:41Z', x: 1 };
+  base[1].prices.e10 = { p: base[1].prices.e10.p, u: '2026-09-12T10:00:00Z' };
+  delete base[2].prices.diesel;
+  return `<div class="illus"><div class="illus-label">Illustration only: real stations with made-up problems, to show how each would look</div>
+  <p class="notes">1: an unusual price (more than 30p from the middle price), never marked cheapest. 2: a price more than 30 days old. 3: a station that doesn’t sell diesel.</p>
+  ${narrow ? cards(base) : table(base)}</div>`;
+}
+function footer() {
+  return `<div class="footer"><p>Prices from the government’s Fuel Finder scheme. Contains public sector information licensed under the Open Government Licence v3.0. <a href="#">Report a wrong price to Fuel Finder</a>.</p>
+  <p>Refueller is a free-to-use personal project by John Baish, not connected with the Fuel Finder scheme. We don’t record anything you do here, apart from anonymous visit statistics (no cookies, no personal data), showing us how the site is used. Your device, rather than the website, stores your last choices (postcode and light or dark mode), so the page opens the same way next time.</p>
+  <p>More free tools at <a href="#">www.baish.net</a>.</p></div>`;
+}
+document.getElementById('app').innerHTML = view === 'start' ? header() + footer()
+  : header() + resultsHead() + (narrow ? cards(shown) : table(shown)) + (q.get('illus') === '0' ? '' : illustration()) + footer();
+</script>
+</body>
+</html>
