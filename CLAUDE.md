@@ -933,3 +933,8 @@ ring or solid terracotta, ink and terracotta shapes): A, an ink fuel pump with a
 A on solid terracotta. `design/favicon-options.html` (from Hindcaster's) shows them at 16, 32, 48 and 96px beside the Clockmaker,
 Backtimer, Flowcharter, Hindcaster and baish.net icons in a row of browser tabs; renders `design/previews/favicon-options*.png`
 (2x and 1x). Nothing wired in; waiting for John's choice.
+
+### 2026-10-30 — favicon A chosen and wired in (branch `stage-6-launch`)
+
+**John chose A** (the fuel pump). `public/favicon.svg` (a copy of `design/favicon-options/a-pump.svg`), linked from `index.html`;
+the build copies it into the site. Next: the link-preview wording, then the image.
