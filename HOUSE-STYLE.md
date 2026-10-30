@@ -92,6 +92,13 @@ terracotta labels below 4.5:1. How it's built (Hindcaster's
   `@media screen { :root[data-theme="dark"] { … } }`, with
   `color-scheme: dark`; `organic.css` stays as it is. Screen only, so a
   printed page is always light.
+- **Finer text smoothing in dark mode**, in the same screen-only block,
+  straight after the dark colours:
+  `:root[data-theme="dark"] body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }`.
+  Macs draw light text on a dark page with heavier, soft edges, most of all
+  the Caprasimo headings; this made it "way better" (John, October 30th
+  2026, on a MacBook). Only browsers on macOS use it (iPhones, Windows and
+  Android ignore it), and light mode is left as it is.
 - A switch at the top right of the nav bar (like DPD's tracking page): a
   pill with a sun or moon, `role="switch"`, a small "DARK" label on a
   computer only, 44px tall to tap on a phone.
@@ -117,7 +124,11 @@ terracotta labels below 4.5:1. How it's built (Hindcaster's
 
 - **Headings and buttons:** Caprasimo, weight 400 — the only weight that
   exists. Don't ask for bold or italic Caprasimo: the browser fakes it and
-  John found the result "mushy".
+  John found the result "mushy". This includes anything that inherits
+  Caprasimo from a heading or button and is then set bold (a small tag or
+  label inside a heading, say): such labels use the body font, Figtree
+  (John, October 30th 2026, after a faked-bold tag in Riverwatcher's
+  mock-up looked blurry).
 - **Body:** Figtree 400 / 600 / 700, base size 15px, line-height 1.55.
 - Heading sizes: h1 42, h2 32, h3 25, h4 20 (px).
 - Both fonts are **self-hosted** through `@fontsource` (imported at the top

@@ -12,7 +12,7 @@ Read these first, in this order:
    the numbered open questions).
 2. `PLAN.md`: the staged build. Work one stage at a time, on its branch.
 3. `HOUSE-STYLE.md`: the shared look and ways of working. Copied from
-   `JohnBaish/clockwheel`; last re-copied 2026-10-29 (at clockwheel commit `aa12cd6`).
+   `JohnBaish/clockwheel`; last re-copied 2026-10-30 (at clockwheel commit `674122d`).
    Clockwheel holds the master copy. If it has changed since, re-copy it and
    note that here. The same goes for `SEO-HANDOVER.md` and
    `.claude/skills/fresh-look/` (the `/fresh-look` review).
@@ -925,3 +925,8 @@ the page title and search description); "cheapest on the way" to say "may be clo
 idea 3); merge, then on to stage 6. `stage-5-page` (with stages 3 and 4 in it) fast-forwarded into `main` after the checks,
 lint, type-check and build. Vercel now builds the page from `main` (on Vercel's own address; `refueller.baish.net` comes in
 stage 6), and again after each collection.
+
+### 2026-10-30 — house style re-copied (notes only, straight to `main`)
+
+From clockwheel `674122d`: §2 dark mode also sets finer text smoothing (Macs), §3 never bold
+Caprasimo. The page, when built, should include both. No app code yet.
