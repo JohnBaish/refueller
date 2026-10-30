@@ -326,7 +326,7 @@ Analytics (John); Search Console (John); then, last, the baish.net landing card
 with the hub's description updated, and the overview PDF
 (`design/overview/` in clockwheel). A **fresh look** review after launch.
 
-**Link-preview tagline:** "Nearby fuel prices" (John, 30 October), on the image (`design/og-refueller.html`) and in the
+**Link-preview tagline:** "Nearby petrol and diesel prices" (John, 30 October), on the image (`design/og-refueller.html`) and in the
 `og:`/`twitter:` descriptions. **Update it when Refueller gains more features** (the calculator, "may be close to the route").
 
 ## Stage 7 — the calculator (later)

@@ -946,3 +946,10 @@ the build copies it into the site. Next: the link-preview wording, then the imag
 favicon's pump drawn large on the pale disc, title "Refueller", tagline "Nearby fuel prices" (no full stop, as John wrote it).
 Rendered at 1200×630 to `design/previews/og-refueller.png`; Caprasimo 400 and Figtree 600 confirmed loaded. Waiting for John's
 approval before it goes in `public/` with the `og:`/`twitter:` tags.
+
+### 2026-10-30 — tagline tried as "Nearby petrol and diesel prices" (branch `stage-6-launch`)
+
+John asked to see "Nearby diesel and unleaded petrol prices" (rendered on one line and on two,
+`design/previews/og-refueller-one-line.png` and `-two-lines.png`), then preferred "Nearby petrol and diesel prices" (no full stop).
+`design/og-refueller.html`, `design/previews/og-refueller.png` and PLAN's note updated; it fits on one line with room to spare.
+Fonts confirmed loaded. Waiting for John's approval before wiring in.
