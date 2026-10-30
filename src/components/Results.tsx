@@ -22,7 +22,7 @@ export const REPORT_URL = 'https://www.fuel-finder.service.gov.uk/motorist/price
 
 const WORDS = ['no', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight'];
 
-// The current time, moved on every minute, so "Open until …" and "Updated … ago" stay right while the page is open.
+// The current time, moved on every minute, so "Open until …" and "Price set … ago" stay right while the page is open.
 function useNow(): number {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {

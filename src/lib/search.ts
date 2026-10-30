@@ -117,12 +117,26 @@ export function hoursOn(s: Station, date: string, day: number, bank: BankHoliday
 export type OpenState =
   | { open: true; until: 'always' | string } // "22:30"; "always" when open all day and the next day too
   | { open: false; next: { days: number; time: string; weekday: string } | null }
-  | { open: null }; // hours not given
+  | { open: null; wrong?: true }; // hours not given, or (wrong) given but implausible
+
+// Hours that can't be right, almost always a 12-hour slip (John, 30 October: "Opening hours look wrong", no more detail; never
+// corrected, as the Fair Use policy says alter nothing). A station's hours look wrong when any day, bank holidays included:
+//   - opens at 6pm or later and closes the same evening (Whittington Garage 6pm-10pm; Asda Harwich 6.30pm-9.30pm on weekdays);
+//   - opens exactly 12 hours later than another day that closes at the same time (6pm-10pm beside 6am-10pm);
+//   - closes exactly 12 hours earlier than another day that opens at the same time (6am-10am beside 6am-10pm).
+// Genuinely short hours, such as an island shop's 12-2pm, aren't caught.
+export function hoursLookWrong(s: Station): boolean {
+  const spans = [...(s.hours ?? []), s.bankHoliday?.hours ?? '']
+    .filter((h) => /^\d\d:\d\d-\d\d:\d\d$/.test(h))
+    .map((h) => h.split('-').map(toMins) as [number, number]);
+  return spans.some(([o, c]) => (o >= 18 * 60 && c > o) || spans.some(([o2, c2]) => (o === o2 + 720 && c === c2) || (o === o2 && c === c2 - 720)));
+}
 
 // Open now, and until when; or closed, and when it next opens (looking up to a week ahead). Hours that run past midnight
 // ("22:00-02:00") count on the next morning too.
 export function openState(s: Station, ms: number, bank: BankHolidays): OpenState {
   if (!s.hours) return { open: null };
+  if (hoursLookWrong(s)) return { open: null, wrong: true };
   const { date, day, mins } = ukNow(ms);
   const yesterday = hoursOn(s, addDays(date, -1), (day + 6) % 7, bank);
   if (yesterday && yesterday.includes('-')) {
@@ -163,7 +177,7 @@ export function clockText(hhmm: string): string {
 }
 
 export function openText(state: OpenState): string {
-  if (state.open === null) return 'Opening hours not given';
+  if (state.open === null) return state.wrong ? 'Opening hours look wrong' : 'Opening hours not given';
   if (state.open) return state.until === 'always' ? 'Open 24 hours' : `Open until ${clockText(state.until)}`;
   if (!state.next) return 'Closed';
   const t = clockText(state.next.time);
@@ -172,25 +186,46 @@ export function openText(state: OpenState): string {
   return `Closed until ${state.next.weekday} ${t}`;
 }
 
-// "Updated less than an hour ago", "Updated 3 hours ago", "Updated 1 day ago", "Updated 34 days ago".
+// "Price set less than an hour ago", "Price set 3 hours ago", "Price set 1 day ago", "Price set 34 days ago" (John, 30 October: in the
+// data a new time nearly always comes with a new price, so this is when the price was set).
 export function updatedText(iso: string, ms: number): string {
   const ago = ms - Date.parse(iso);
   if (!Number.isFinite(ago)) return '';
   const days = Math.floor(ago / 86_400_000);
-  if (days >= 1) return `Updated ${days} day${days === 1 ? '' : 's'} ago`;
+  if (days >= 1) return `Price set ${days} day${days === 1 ? '' : 's'} ago`;
   const hours = Math.floor(ago / 3_600_000);
-  if (hours < 1) return 'Updated less than an hour ago';
-  return `Updated ${hours} hour${hours === 1 ? '' : 's'} ago`;
+  if (hours < 1) return 'Price set less than an hour ago';
+  return `Price set ${hours} hour${hours === 1 ? '' : 's'} ago`;
 }
 
 // More than 30 days old (John, 28 October: marked, never hidden).
 export const isOld = (iso: string, ms: number) => Math.floor((ms - Date.parse(iso)) / 86_400_000) > 30;
 
-// Fuel Finder gives names in capitals. Shown in ordinary capitalisation, keeping a few that are initials (John, 30 October).
+// Fuel Finder gives most names in capitals. Shown in ordinary capitalisation (John, 30 October), except: a name or address line
+// that already has small letters is left exactly as the station typed it ("PC&AT Hudson"); words with no vowel are taken as
+// initials and kept in capitals ("TGC", "PGG"), apart from the usual short forms ("Ltd", "Rd", "St"); and short pieces joined
+// by "&" stay in capitals ("J&J").
 const KEEP = new Set(['BP', 'MFG', 'SF', 'UK', 'EG', 'HGV', 'JET']);
-const word = (w: string) => (KEEP.has(w.toUpperCase()) ? w.toUpperCase() : /\d/.test(w) || w !== w.toUpperCase() ? w : w.charAt(0) + w.slice(1).toLowerCase());
+const SHORT: Record<string, string> = { LTD: 'Ltd', RD: 'Rd', ST: 'St', LN: 'Ln', DR: 'Dr', NR: 'Nr', JCT: 'Jct', MR: 'Mr', MRS: 'Mrs', NTH: 'Nth', NRTH: 'Nrth', MKT: 'Mkt', STN: 'Stn', SQ: 'Sq', CRT: 'Crt', PL: 'Pl', CRNR: 'Crnr', SVCS: 'Svcs', CWM: 'Cwm', CWT: 'Cwt', PWL: 'Pwl' };
+function word(w: string): string {
+  const u = w.toUpperCase();
+  if (KEEP.has(u)) return u;
+  if (SHORT[u]) return SHORT[u];
+  if (/\d/.test(w)) return w;
+  const letters = u.replace(/[^A-Z]/g, '');
+  if (letters && !/[AEIOUY]/.test(letters)) return u;
+  return w.toLowerCase().replace(/[a-z]/, (c) => c.toUpperCase());
+}
 export function tidyName(s: string): string {
-  return s.split(/\s+/).filter(Boolean).map((w) => w.split('-').map(word).join('-')).join(' ').replace(/ - /g, ' – ');
+  const spaced = s.split(/\s+/).filter(Boolean);
+  if (/[a-z]/.test(s)) return spaced.join(' ').replace(/ - /g, ' – ');
+  return spaced
+    .map((w) => {
+      const amp = w.includes('&');
+      return w.split(/([-.&,])/).map((piece, i) => (i % 2 || (amp && piece.length <= 2) ? piece : word(piece))).join('');
+    })
+    .join(' ')
+    .replace(/ - /g, ' – ');
 }
 // A postcode shown with its space, whichever way Fuel Finder gave it ("CW13HD" shows as "CW1 3HD").
 export function postcodeText(postcode: string): string {

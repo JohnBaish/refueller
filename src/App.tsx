@@ -89,19 +89,35 @@ function SearchBox({ start, initial }: { start: boolean; initial: string }) {
 }
 
 function About() {
+  // Draft wording (Claude, 30 October), for John to edit.
   return (
     <section className="about">
       <h3>About these figures</h3>
       <p>
         Prices and opening times come from the Government’s Fuel Finder service, which petrol stations are required to keep
-        up to date. Refueller collects them twice a day, at about 10.15am and 4.15pm. Each price shows when the station last
-        updated it; one not updated for more than 30 days is shown in a stronger colour.
+        up to date. Refueller collects them twice a day, at about 10.15am and 4.15pm. Under each price is how long ago the
+        station set it. Stations report a price when it changes, so an older price may well still be right.
       </p>
       <p>
         Only unleaded (E10) and standard diesel are shown. A price below 100p or above 300p a litre is taken as a mistake and
-        left out. A price more than 30p away from the middle price across Great Britain is marked as unusual, and is never
-        marked as the cheapest.
+        left out.
       </p>
+      <p>How to read the list:</p>
+      <ul>
+        <li>
+          <strong>Cheapest</strong> marks the lowest unleaded and the lowest diesel price among the stations shown.
+        </li>
+        <li>“Price set …” turns orange when the price was set more than 30 days ago, so it’s worth checking.</li>
+        <li>
+          An orange “Unusual price” note means the price is more than 30p away from the middle price across Great Britain,
+          and may be a mistake. It is never marked as the cheapest.
+        </li>
+        <li>A grey “Closed until …” means the station is closed now; its row is shown fainter.</li>
+        <li>
+          “Opening hours look wrong” means the hours the station gave can’t be right (often 6pm given for 6am), so check
+          before you go.
+        </li>
+      </ul>
       <p>
         Distances are in a straight line from the middle of the postcode district, so they’re approximate. Stations that Fuel
         Finder lists as temporarily closed are left out, and so are a few whose position on the map is far from their own

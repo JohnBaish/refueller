@@ -842,3 +842,24 @@ genuine short island hours (Coll, Eday) are not caught. Options put to John; cor
 proposed (Fair Use: alter nothing). (6) "Centre on this station" noted as a later feature: centre on the station's own
 position, not its postcode district, still worked out in the browser.
 (Housekeeping: `pkill -f` stopped this session's own shell, as in Hindcaster; stop preview servers by process number.)
+
+### 2026-10-30 — "Price set", hours that look wrong, initials kept, About drafted (branch `stage-5-page`)
+
+**John:** (2) "Price set 16 days ago" (was "Updated …"); (5) "Opening hours look wrong", no more detail, and Asda Harwich's
+6.30pm-9.30pm every weekday must be caught too; initials kept in names (PE33 9RF "PC&AT Hudson", KT12 1RZ "TGC"); (4) asked
+for a draft of the colours wording.
+
+**What:** `updatedText` says "Price set …". `hoursLookWrong()` in `src/lib/search.ts`: a station's hours look wrong when any day
+(bank holidays included) opens at 6pm or later and closes the same evening, or opens exactly 12 hours later / closes exactly 12
+hours earlier than another day with the same other end; then it says "Opening hours look wrong" every day (not open, not
+closed, never corrected). 19 stations on 30 October, all looking like slips; island shops' short hours and overnight hours not
+caught. `tidyName`: a name or line with small letters is left exactly as typed; words with no vowel (A E I O U Y) kept in
+capitals as initials, except the usual short forms (`SHORT`: Ltd, Rd, St, Cwm …); short pieces joined by "&" kept; "." and "&"
+split words like hyphens ("D.J.Johnson"). "About these figures" redrafted for John to edit: when the price was set, and a "How
+to read the list" list (Cheapest, orange "Price set", orange "Unusual price", grey "Closed until", "Opening hours look wrong").
+
+**Checked:** `npm run check` (new checks for the names and the hours; making the evening rule 7pm made the Asda check fail, then
+restored), lint, both type-checks, build; PE33, KT12 and CO12 at 1200px and 390px with touch: "PC&AT Hudson", "TGC – Walton
+House", Whittington and Asda Harwich "Opening hours look wrong", no "Updated" left, no sideways scroll, no errors.
+**Noticed, not changed:** Whittington Garage's address repeats "King's Lynn, PE33 9TF" (its first line holds the whole
+address); trader typos such as "Holden Renualt" are shown as given.

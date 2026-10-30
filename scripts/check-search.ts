@@ -10,6 +10,7 @@ import {
   milesText,
   nearestEight,
   openState,
+  hoursLookWrong,
   openText,
   outcodeOf,
   positionAgrees,
@@ -85,15 +86,38 @@ await check('words: miles, clock times, names and addresses', () => {
   assert.equal(tidyName('Checkpoint Service station'), 'Checkpoint Service station', 'mixed case left as given');
   assert.equal(tidyName('READING EXTRA - PETROL FILLING STATION'), 'Reading Extra – Petrol Filling Station');
   assert.equal(tidyAddress(st({ address: ['150 OXFORD ROAD', 'READING', 'READING'], postcode: 'RG1 7PJ' })), '150 Oxford Road, Reading, RG1 7PJ');
+  // John, 30 October: initials kept (PE33 9RF, KT12 1RZ).
+  assert.equal(tidyName('PC&AT Hudson'), 'PC&AT Hudson', 'a name with small letters is left exactly as typed');
+  assert.equal(tidyName('TGC - WALTON HOUSE'), 'TGC – Walton House');
+  assert.equal(tidyName('PGG ESSO'), 'PGG Esso');
+  assert.equal(tidyName('J&J MOTORS LTD'), 'J&J Motors Ltd');
+  assert.equal(tidyName('D.J.JOHNSON'), 'D.J.Johnson');
+  assert.equal(tidyName('ST. JOHNS RD'), 'St. Johns Rd');
+  assert.equal(tidyName('CWM GARAGE'), 'Cwm Garage');
+});
+
+await check('hours that look wrong: 12-hour slips and evening-only days; genuine short hours left alone', () => {
+  const now = at('2026-10-30T12:30:00Z');
+  const whittington = st({ hours: ['18:00-22:00', '18:00-22:00', '06:00-22:00', '18:00-22:00', '18:00-22:00', '07:00-22:00', '07:00-22:00'] });
+  assert.equal(hoursLookWrong(whittington), true);
+  assert.equal(openText(openState(whittington, now, bank)), 'Opening hours look wrong');
+  assert.equal(hoursLookWrong(st({ hours: [...week('18:30-21:30').slice(0, 6), '07:00-16:30'] })), true, 'Asda Harwich: evening only on weekdays');
+  assert.equal(hoursLookWrong(st({ hours: ['06:00-10:00', ...week('06:00-22:00').slice(1)] })), true, 'closes 12 hours early');
+  assert.equal(hoursLookWrong(st({ hours: week('07:00-22:30'), bankHoliday: { type: 'bank holiday', hours: '19:00-22:30' } })), true, 'bank-holiday hours too');
+  assert.equal(hoursLookWrong(st({ hours: ['closed', '12:00-14:00', 'closed', '12:00-14:00', 'closed', '12:00-14:00', 'closed'] })), false, 'Coll: genuinely short');
+  assert.equal(hoursLookWrong(st({ hours: ['14:00-17:00', 'closed', '14:00-17:00', 'closed', '14:00-17:00', 'closed', '14:00-16:00'] })), false, 'an afternoon shop');
+  assert.equal(hoursLookWrong(st({ hours: week('22:00-06:00') })), false, 'open overnight');
+  assert.equal(hoursLookWrong(st()), false);
+  assert.equal(hoursLookWrong(st({ hours: week('24h') })), false);
 });
 
 await check('updated: hours and days, and old after 30 whole days', () => {
   const now = at('2026-10-30T12:30:00Z');
-  assert.equal(updatedText('2026-10-30T12:00:00Z', now), 'Updated less than an hour ago');
-  assert.equal(updatedText('2026-10-30T11:00:00Z', now), 'Updated 1 hour ago');
-  assert.equal(updatedText('2026-10-29T15:30:00Z', now), 'Updated 21 hours ago');
-  assert.equal(updatedText('2026-10-29T12:00:00Z', now), 'Updated 1 day ago');
-  assert.equal(updatedText('2026-09-26T12:00:00Z', now), 'Updated 34 days ago');
+  assert.equal(updatedText('2026-10-30T12:00:00Z', now), 'Price set less than an hour ago');
+  assert.equal(updatedText('2026-10-30T11:00:00Z', now), 'Price set 1 hour ago');
+  assert.equal(updatedText('2026-10-29T15:30:00Z', now), 'Price set 21 hours ago');
+  assert.equal(updatedText('2026-10-29T12:00:00Z', now), 'Price set 1 day ago');
+  assert.equal(updatedText('2026-09-26T12:00:00Z', now), 'Price set 34 days ago');
   assert.equal(isOld('2026-09-30T10:00:00Z', now), false, '30 days');
   assert.equal(isOld('2026-09-29T10:00:00Z', now), true, '31 days');
 });
