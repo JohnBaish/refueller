@@ -730,7 +730,7 @@ repo's size. Next: John sets up the timetable (Part 5).
 
 John set up the timetable (`refueller-twice-daily`, Europe/London, 10.15am and 4.15pm) and asked to move on to design, with RG4
 as the place to show. **First round:** `design/mock/mock-results.html` (with `rg4.js`, the real stations and prices from the
-10.08am collection, and a copy of clockwheel's `organic.css`), pictures in `design/previews/mock-1-*.png`: the postcode screen,
+9.08am collection, and a copy of clockwheel's `organic.css`), pictures in `design/previews/mock-1-*.png`: the postcode screen,
 RG4's eight nearest open stations at 12.30pm Friday and at 11.30pm (five nearer stations closed), computer and phone, light and
 dark, and labelled options ("Updated 3 days ago" with a "Cheapest" tag, or "Updated October 26th" with the cheapest shaded). A
 dashed "Illustration only" box shows real stations with made-up problems (an unusual price, a price more than 30 days old, no
