@@ -753,3 +753,8 @@ full postcodes stay for later (SPEC Q10, Q4).
 John: centre the distance, price and opening columns under their headings (done; the station column stays left); the footer
 says "Prices from the Government's Fuel Finder service." (capital G, "service" not "scheme"), and "not connected with the Fuel
 Finder service" to match. Pictures `design/previews/mock-3-*.png`. John: "The rest looks really good."
+
+### 2026-10-30 — mock-ups, round 4 (branch `stage-4-mockups`)
+
+John: the "Cheapest" tag on its own line under the price, so every price lines up in its centred column. Done (price, then
+the tag, then "Updated …"). Pictures `design/previews/mock-4-*.png`.
