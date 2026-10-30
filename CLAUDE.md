@@ -730,6 +730,39 @@ the repo: no Northern Ireland, Isle of Man or Channel Islands postcodes; nothing
 **For later (Stage 5):** the page should load a smaller file made at build time; and `prices.json` changes every run, so watch the
 repo's size. Next: John sets up the timetable (Part 5).
 
+### 2026-10-30 — stage 4: first mock-ups (branch `stage-4-mockups`)
+
+John set up the timetable (`refueller-twice-daily`, Europe/London, 10.15am and 4.15pm) and asked to move on to design, with RG4
+as the place to show. **First round:** `design/mock/mock-results.html` (with `rg4.js`, the real stations and prices from the
+9.08am collection, and a copy of clockwheel's `organic.css`), pictures in `design/previews/mock-1-*.png`: the postcode screen,
+RG4's eight nearest open stations at 12.30pm Friday and at 11.30pm (five nearer stations closed), computer and phone, light and
+dark, and labelled options ("Updated 3 days ago" with a "Cheapest" tag, or "Updated October 26th" with the cheapest shaded). A
+dashed "Illustration only" box shows real stations with made-up problems (an unusual price, a price more than 30 days old, no
+diesel). RG4's centre is Hindcaster's district centre (OS Open Names), turned into latitude and longitude. Names tidied for display
+(capitals to ordinary case, BP and MFG kept); towns not repeated in addresses. All wording is draft, for John. Checked: both fonts
+loaded, no sideways scroll at 1200px or at 390px with touch. **Seen in the real data:** 30-day-old diesel prices are common near
+Reading. Not merged.
+
+### 2026-10-30 — mock-ups, round 2 (branch `stage-4-mockups`)
+
+**John:** "Updated 3 days ago" (not the date); the "Cheapest" tag (not shading); a gentler mark for prices more than 30 days old
+(now just the "Updated …" line in terracotta, no "may be out of date"); station names in ordinary capitals, yes; the postcode
+screen's heading "Check fuel prices near you". **Closed stations stay in the list** with "Closed until 7am tomorrow" (a grey pill,
+the row a little faded); the heading is now "Eight nearest stations to RG4 (Caversham)" and the note says how many are closed
+(SPEC §4 item 4 changed). Full stop after "Report a wrong price". Pictures `design/previews/mock-2-*.png`. Sorting by column and
+full postcodes stay for later (SPEC Q10, Q4).
+
+### 2026-10-30 — mock-ups, round 3 (branch `stage-4-mockups`)
+
+John: centre the distance, price and opening columns under their headings (done; the station column stays left); the footer
+says "Prices from the Government's Fuel Finder service." (capital G, "service" not "scheme"), and "not connected with the Fuel
+Finder service" to match. Pictures `design/previews/mock-3-*.png`. John: "The rest looks really good."
+
+### 2026-10-30 — mock-ups, round 4 (branch `stage-4-mockups`)
+
+John: the "Cheapest" tag on its own line under the price, so every price lines up in its centred column. Done (price, then
+the tag, then "Updated …"). Pictures `design/previews/mock-4-*.png`.
+
 ### 2026-10-30 — the timetable works (notes only)
 
 John made the schedule `refueller-twice-daily` (EventBridge Scheduler, London, Europe/London, 10.15am and 4.15pm). Its first run

@@ -418,7 +418,10 @@ only open stations, nearest first, looks fine on that reading.
    midnight, and the nights the clocks change, need worked examples in the checks.
 4. **Eight**: the eight nearest that pass the open test, however far away
    (Hindcaster's rule for gauges). If fewer than eight are open, show those,
-   with a plain sentence.
+   with a plain sentence. **Changed 30 October (John):** the eight nearest
+   stations whether open or not; a station closed at the time of the search
+   stays in the list with "Closed until 7am tomorrow" (or "until Monday 7am").
+   Temporarily closed stations (three days or more) are still left out.
 5. A station that sells neither unleaded nor diesel is left out; one that
    sells only one shows "No price" for the other (Q7).
 
