@@ -825,3 +825,20 @@ Refueller yet). Not merged.
 John made the Vercel project for Refueller. `stage-5-page` had been pushed before it existed, so it had no preview; this push
 (with `main`'s latest data brought in) starts one. Preview link pattern (HOUSE-STYLE §10):
 `https://refueller-git-stage-5-page-john-baish.vercel.app`. Vercel's status can be read from GitHub's commit-status API.
+
+### 2026-10-30 — John's first look at the preview: box round the table; About full width (branch `stage-5-page`)
+
+**John** (six points). Built for him to see on the preview: (1) the computer table now sits in a rounded box in the card
+colour (`.table-box`, like the phone cards; last row's line dropped); (3) "About these figures" now runs the full width
+of the table (its 760px limit removed). Picture `design/previews/page-box-computer.png`. Checked at 1200px light and
+dark and 390px with touch: About and the table both 1,047px wide (355px on a phone), no sideways scroll, no errors.
+
+**Found for his other points (nothing built):** (2) of the 1,373 price times that moved between the 9.08am and 4.15pm
+collections on 30 October, 1,371 came with a new price and 2 with the same one, so "updated" in the data almost always
+means "changed"; wording question put to John. (5) Whittington Garage (PE33 9TF) gives 6pm-10pm on four days and
+6am-10pm on another, almost certainly a 12-hour slip. A narrow test (a day that opens exactly 12 hours later, or closes
+exactly 12 hours earlier, than another day with the same other end) finds 17 stations, all of which look like slips;
+genuine short island hours (Coll, Eday) are not caught. Options put to John; correcting the hours ourselves is not
+proposed (Fair Use: alter nothing). (6) "Centre on this station" noted as a later feature: centre on the station's own
+position, not its postcode district, still worked out in the browser.
+(Housekeeping: `pkill -f` stopped this session's own shell, as in Hindcaster; stop preview servers by process number.)

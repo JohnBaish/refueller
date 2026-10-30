@@ -77,45 +77,47 @@ function OpenCell({ row }: { row: Row }) {
 
 function Table({ rows, now }: { rows: Row[]; now: number }) {
   return (
-    <table className="table stations">
-      <colgroup>
-        <col className="station" />
-        <col />
-        <col />
-        <col />
-        <col />
-      </colgroup>
-      <thead>
-        <tr>
-          <th>Station</th>
-          <th className="c">Distance</th>
-          <th className="c">Unleaded (E10)</th>
-          <th className="c">Diesel</th>
-          <th className="c">Open</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((r) => (
-          <tr key={r.station.id} className={r.open.open === false ? 'closed' : undefined}>
-            <td>
-              <div className="brand">{r.station.brand}</div>
-              <div className="sname">{tidyName(r.station.name)}</div>
-              <div className="addr">{tidyAddress(r.station)}</div>
-            </td>
-            <td className="c mono dist">{milesText(r.miles)}</td>
-            <td className="c">
-              <PriceCell p={r.prices.e10} cheapest={r.cheapest.e10} fuel="e10" now={now} />
-            </td>
-            <td className="c">
-              <PriceCell p={r.prices.diesel} cheapest={r.cheapest.diesel} fuel="diesel" now={now} />
-            </td>
-            <td className="c">
-              <OpenCell row={r} />
-            </td>
+    <div className="table-box">
+      <table className="table stations">
+        <colgroup>
+          <col className="station" />
+          <col />
+          <col />
+          <col />
+          <col />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Station</th>
+            <th className="c">Distance</th>
+            <th className="c">Unleaded (E10)</th>
+            <th className="c">Diesel</th>
+            <th className="c">Open</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.station.id} className={r.open.open === false ? 'closed' : undefined}>
+              <td>
+                <div className="brand">{r.station.brand}</div>
+                <div className="sname">{tidyName(r.station.name)}</div>
+                <div className="addr">{tidyAddress(r.station)}</div>
+              </td>
+              <td className="c mono dist">{milesText(r.miles)}</td>
+              <td className="c">
+                <PriceCell p={r.prices.e10} cheapest={r.cheapest.e10} fuel="e10" now={now} />
+              </td>
+              <td className="c">
+                <PriceCell p={r.prices.diesel} cheapest={r.cheapest.diesel} fuel="diesel" now={now} />
+              </td>
+              <td className="c">
+                <OpenCell row={r} />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
