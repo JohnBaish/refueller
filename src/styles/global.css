@@ -122,4 +122,6 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
     --shadow-md: 0 0 0 1px color-mix(in srgb, #e8dfcf 7%, transparent), 0 3px 10px #0008;
     --shadow-lg: 0 0 0 1px color-mix(in srgb, #e8dfcf 8%, transparent), 0 12px 32px #000a;
   }
+  /* Finer text smoothing in dark mode (HOUSE-STYLE §2): Macs draw light text on a dark page heavier; others ignore it. */
+  :root[data-theme="dark"] body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 }

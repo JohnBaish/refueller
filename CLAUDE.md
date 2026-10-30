@@ -982,3 +982,9 @@ build; at 1200px and 390px with touch: the new example, both messages, the short
 on RG1's results (Reading), no errors, no sideways scroll. Picture `design/previews/page-start-phone-2026-10-30.png`. Then merged
 `stage-6-launch` into `main` at John's word (favicon, link preview and tags, canonical, robots.txt, sitemap.xml, these changes).
 **Next (John):** add `refueller.baish.net` to the Vercel project and switch on Web Analytics.
+
+### 2026-10-30 — the house style's dark-mode smoothing added (on `main`)
+
+Merging stage 6 met the other session's house-style entry (clockwheel `674122d`) in this file; both entries kept. As that entry
+asks, `src/styles/global.css` now has the finer text smoothing in dark mode (HOUSE-STYLE §2), in the screen-only block after the
+dark colours. Checked for the other rule, no bold Caprasimo: nothing on the page sets the heading font bold (it is 400 everywhere).
