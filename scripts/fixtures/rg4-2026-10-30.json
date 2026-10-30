@@ -1,0 +1,1392 @@
+{
+"note": "Fuel Finder stations within 6 miles of RG4's middle and their prices, as collected at 10.15am on 30 October 2026 (Open Government Licence v3.0), for scripts/check-search.ts.",
+"collected": "2026-10-30T10:15:04.430Z",
+"stations": [
+{
+"id": "0580701e2f25",
+"name": "READING WEST CONNECT MWSA",
+"brand": "BP",
+"address": [
+"M4 MOTORWAY WESTBOUND",
+"READING"
+],
+"postcode": "RG30 3UQ",
+"lat": 51.42253,
+"lon": -1.03346,
+"hours": [
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "24h"
+},
+"motorway": true
+},
+{
+"id": "07ee17cece6d",
+"name": "MFG THAMES VALLEY",
+"brand": "ESSO",
+"address": [
+"GEORGE STREET",
+"READING"
+],
+"postcode": "RG4 8DH",
+"lat": 51.46428,
+"lon": -0.96568,
+"hours": [
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "06:00-23:00"
+}
+},
+{
+"id": "1234800bd145",
+"name": "WELDALE SF CONNECT",
+"brand": "BP",
+"address": [
+"324 WOKINGHAM ROAD",
+"READING"
+],
+"postcode": "RG6 1JU",
+"lat": 51.44215,
+"lon": -0.93139,
+"hours": [
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "24h"
+}
+},
+{
+"id": "1564aa1f8e88",
+"name": "TRIANGLE SF CONNECT",
+"brand": "BP",
+"address": [
+"READING ROAD",
+"WOKINGHAM"
+],
+"postcode": "RG41 5AB",
+"lat": 51.42428,
+"lon": -0.86698,
+"hours": [
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "24h"
+}
+},
+{
+"id": "1dbf1528f0dc",
+"name": "ASDA SHINFIELD EXPRESS PETROL",
+"brand": "ESSO",
+"address": [
+"ARBORFIELD ROAD",
+"SCHOOL GREEN",
+"READING"
+],
+"postcode": "RG2 9DY",
+"lat": 51.40494,
+"lon": -0.9435,
+"hours": [
+"00:00-23:59",
+"00:00-23:59",
+"00:00-23:59",
+"00:00-23:59",
+"00:00-23:59",
+"00:00-23:59",
+"00:00-23:59"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "00:00-23:59"
+}
+},
+{
+"id": "28387ac837ac",
+"name": "CAVERSHAM ESSO EXPRESS",
+"brand": "ESSO",
+"address": [
+"18-20 CHURCH ST",
+"READING"
+],
+"postcode": "RG4 8AU",
+"lat": 51.46787,
+"lon": -0.97523,
+"hours": [
+"07:00-23:00",
+"07:00-23:00",
+"07:00-23:00",
+"07:00-23:00",
+"07:00-23:00",
+"07:00-23:00",
+"07:00-23:00"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "07:00-23:00"
+}
+},
+{
+"id": "2867a3ffcb9c",
+"name": "SONNING CUTTING SF CONNECT",
+"brand": "BP",
+"address": [
+"709 LONDON ROAD",
+"READING"
+],
+"postcode": "RG6 1BG",
+"lat": 51.45916,
+"lon": -0.92109,
+"hours": [
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "24h"
+}
+},
+{
+"id": "36a8592edafc",
+"name": "MFG SWALLOWFIELD",
+"brand": "BP",
+"address": [
+"SWALLOWFIELD BYPASS",
+"READING"
+],
+"postcode": "RG7 1LZ",
+"lat": 51.39793,
+"lon": -0.98412,
+"hours": [
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "24h"
+}
+},
+{
+"id": "421b159aaf88",
+"name": "SHELL CO-OP FAIRFIELD",
+"brand": "SHELL",
+"address": [
+"585 BASINGSTOKE ROAD",
+"READING"
+],
+"postcode": "RG2 0TA",
+"lat": 51.41782,
+"lon": -0.97088,
+"hours": [
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "24h"
+}
+},
+{
+"id": "426affa07cfe",
+"name": "RONTEC READING",
+"brand": "BP",
+"address": [
+"RICHFIELD AVENUE",
+"READING"
+],
+"postcode": "RG1 8EQ",
+"lat": 51.46367,
+"lon": -0.98492,
+"hours": [
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "24h"
+}
+},
+{
+"id": "434c6efc8078",
+"name": "TWYFORD SF CONNECT",
+"brand": "BP",
+"address": [
+"NEW BATH ROAD",
+"READING"
+],
+"postcode": "RG10 9QA",
+"lat": 51.48729,
+"lon": -0.8685,
+"hours": [
+"06:00-22:00",
+"06:00-22:00",
+"06:00-22:00",
+"06:00-22:00",
+"06:00-22:00",
+"07:00-22:00",
+"07:30-22:00"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "06:00-22:00"
+}
+},
+{
+"id": "43c6fc3dde7d",
+"name": "READING EXTRA - PETROL FILLING STATION",
+"brand": "TESCO",
+"address": [
+"TESCO STORES LTD",
+"NAPIER ROAD",
+"READING"
+],
+"postcode": "RG1 8DF",
+"lat": 51.46005,
+"lon": -0.95608,
+"hours": [
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "24h"
+},
+"supermarket": true
+},
+{
+"id": "45ecd142cd46",
+"name": "COSTCO WHOLESALE READING",
+"brand": "COSTCO WHOLESALE",
+"address": [
+"100 SOUTH OAK WAY",
+"GREEN PARK, READING",
+"READING"
+],
+"postcode": "RG2 6UE",
+"lat": 51.41968,
+"lon": -0.98486,
+"hours": [
+"06:00-21:30",
+"06:00-21:30",
+"06:00-21:30",
+"06:00-21:30",
+"06:00-21:30",
+"06:00-20:00",
+"07:00-18:00"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "06:00-19:00"
+}
+},
+{
+"id": "5c7b47c38207",
+"name": "MFG SHINFIELD",
+"brand": "ESSO",
+"address": [
+"211 SHINFIELD ROAD",
+"READING"
+],
+"postcode": "RG2 8HA",
+"lat": 51.42787,
+"lon": -0.9456,
+"hours": [
+"06:00-00:00",
+"06:00-00:00",
+"06:00-00:00",
+"06:00-00:00",
+"06:00-00:00",
+"06:00-00:00",
+"06:00-00:00"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "06:00-00:00"
+}
+},
+{
+"id": "5ebbaa1cfb59",
+"name": "TGC - CHARVIL",
+"brand": "TEXACO",
+"address": [
+"NEW BATH ROAD",
+"CHARVIL",
+"READING"
+],
+"postcode": "RG10 9RL",
+"lat": 51.47475,
+"lon": -0.89063,
+"hours": [
+"05:00-00:00",
+"05:00-00:00",
+"05:00-00:00",
+"05:00-00:00",
+"05:00-00:00",
+"05:00-00:00",
+"05:00-00:00"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "05:00-00:00"
+}
+},
+{
+"id": "64ed22f64ed8",
+"name": "MFG READING",
+"brand": "VALERO",
+"address": [
+"69 LONDON ROAD",
+"READING"
+],
+"postcode": "RG1 5BW",
+"lat": 51.45154,
+"lon": -0.96034,
+"hours": [
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "24h"
+}
+},
+{
+"id": "689ec9dc4972",
+"name": "Regal Garages Ltd t/a Loddon Bridge service station",
+"brand": "Shell",
+"address": [
+"658 Wokingham Road",
+"Reading",
+"Berkshire"
+],
+"postcode": "RG6 7HN",
+"lat": 51.43779,
+"lon": -0.90117,
+"hours": [
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h"
+],
+"bankHoliday": {
+"type": "bank holiday",
+"hours": "24h"
+}
+},
+{
+"id": "69ee568b453b",
+"name": "READING SOUTHCOTE ESSO EXPRESS",
+"brand": "ESSO",
+"address": [
+"108 BATH RD",
+"READING"
+],
+"postcode": "RG30 2EU",
+"lat": 51.44472,
+"lon": -1.01716,
+"hours": [
+"06:00-00:00",
+"06:00-00:00",
+"06:00-00:00",
+"06:00-00:00",
+"06:00-00:00",
+"06:00-00:00",
+"06:00-00:00"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "06:00-00:00"
+}
+},
+{
+"id": "6c2ae3ef4fae",
+"name": "MFG READING ROSE KILN",
+"brand": "ESSO",
+"address": [
+"ROSE KILN LANE",
+"READING"
+],
+"postcode": "RG2 0HP",
+"lat": 51.4438,
+"lon": -0.97723,
+"hours": [
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "24h"
+}
+},
+{
+"id": "6deec6965da1",
+"name": "MFG NORCOT",
+"brand": "ESSO",
+"address": [
+"856 OXFORD ROAD",
+"READING"
+],
+"postcode": "RG30 1EL",
+"lat": 51.46237,
+"lon": -1.01349,
+"hours": [
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "24h"
+}
+},
+{
+"id": "75c9ec24027a",
+"name": "PGG REGATTA",
+"brand": "SHELL",
+"address": [
+"167 READING ROAD",
+"HENLEY ON THAMES"
+],
+"postcode": "RG9 1DP",
+"lat": 51.53066,
+"lon": -0.8994,
+"hours": [
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "24h"
+}
+},
+{
+"id": "90f09abb33c1",
+"name": "ASDA BERKELEY EXPRESS PETROL",
+"brand": "ESSO",
+"address": [
+"10 BERKELEY AVENUE",
+"READING"
+],
+"postcode": "RG1 6JT",
+"lat": 51.44819,
+"lon": -0.98018,
+"hours": [
+"00:00-23:59",
+"00:00-23:59",
+"00:00-23:59",
+"00:00-23:59",
+"00:00-23:59",
+"00:00-23:59",
+"00:00-23:59"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "00:00-23:59"
+}
+},
+{
+"id": "92337e9f1abc",
+"name": "EG LOWER EARLEY PFS",
+"brand": "EG ON THE MOVE",
+"address": [
+"NO 1, THE SQUARE",
+"CHALFONT WAY",
+"EARLEY"
+],
+"postcode": "RG6 5HJ",
+"lat": 51.4236,
+"lon": -0.9352,
+"hours": [
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "24h"
+}
+},
+{
+"id": "943a5c05d187",
+"name": "GLOBAL FUEL - CALCOT",
+"brand": "BP",
+"address": [
+"BATH ROAD",
+"READING"
+],
+"postcode": "RG31 7QN",
+"lat": 51.44114,
+"lon": -1.04998,
+"hours": [
+"05:00-23:00",
+"05:00-23:00",
+"05:00-23:00",
+"05:00-23:00",
+"05:00-23:00",
+"05:00-23:00",
+"05:00-23:00"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "05:00-23:00"
+}
+},
+{
+"id": "a16238b03e11",
+"name": "SAINSBURYS CALCOT",
+"brand": "SAINSBURYS",
+"address": [
+"BATH ROAD",
+"CALCOT",
+"READING"
+],
+"postcode": "RG31 7SA",
+"lat": 51.4417,
+"lon": -1.06024,
+"hours": [
+"05:30-00:00",
+"05:30-00:00",
+"05:30-00:00",
+"05:30-00:00",
+"05:30-00:00",
+"05:30-00:00",
+"06:30-23:00"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "07:30-20:30"
+},
+"supermarket": true
+},
+{
+"id": "a3770319a2ed",
+"name": "READING W EXTRA - PETROL FILLING STATION",
+"brand": "TESCO",
+"address": [
+"TESCO SUPERSTORE",
+"PORTMAN ROAD",
+"READING"
+],
+"postcode": "RG30 1AW",
+"lat": 51.45852,
+"lon": -0.99878,
+"hours": [
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "24h"
+},
+"supermarket": true
+},
+{
+"id": "aa45d70cbe65",
+"name": "ASDA TILEHURST SCHOOL ROAD PETROL FILLING STATION",
+"brand": "ASDA TILEHURST SCHOOL ROAD PETROL FILLING STATION",
+"address": [
+"12/14 SCHOOL ROAD",
+"TILEHURST, READING"
+],
+"postcode": "RG31 5AL",
+"lat": 51.46042,
+"lon": -1.03734,
+"hours": [
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "06:00-23:00"
+}
+},
+{
+"id": "ac60fbe8c8c1",
+"name": "BP Three Mile Cross",
+"brand": "BP Three Mile Cross",
+"address": [
+"BP GARAGE",
+"BASINGSTOKE ROAD,  THREE MILE CROSS",
+"READING"
+],
+"postcode": "RG7 1BA",
+"lat": 51.40523,
+"lon": -0.97397,
+"hours": [
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00",
+"06:30-22:30"
+],
+"bankHoliday": {
+"type": "bank holiday",
+"hours": "06:00-23:00"
+},
+"supermarket": true
+},
+{
+"id": "b09465372f65",
+"name": "MFG MORRISONS READING",
+"brand": "MORRISONS",
+"address": [
+"ROSE KILN LANE",
+"READING"
+],
+"postcode": "RG2 0HB",
+"lat": 51.43476,
+"lon": -0.97185,
+"hours": [
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "06:00-23:00"
+},
+"supermarket": true
+},
+{
+"id": "b2987c89cf1c",
+"name": "TILEHURST SF CONNECT",
+"brand": "BP",
+"address": [
+"TILEHURST ROAD",
+"READING"
+],
+"postcode": "RG1 7TW",
+"lat": 51.45166,
+"lon": -0.98414,
+"hours": [
+"06:30-23:00",
+"06:30-23:00",
+"06:30-23:00",
+"06:30-23:00",
+"06:30-23:00",
+"06:30-23:00",
+"06:30-23:00"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "06:30-23:00"
+}
+},
+{
+"id": "be1b19f2ae00",
+"name": "EMMER GREEN ESSO EXPRESS",
+"brand": "ESSO",
+"address": [
+"BUCKINGHAM DRIVE",
+"READING"
+],
+"postcode": "RG4 8RZ",
+"lat": 51.47855,
+"lon": -0.96514,
+"hours": [
+"07:00-22:30",
+"07:00-22:30",
+"07:00-22:30",
+"07:00-22:30",
+"07:00-22:30",
+"07:00-22:30",
+"07:00-22:30"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "07:00-22:30"
+}
+},
+{
+"id": "c77d00b837d0",
+"name": "READING EAST CONNECT MWSA",
+"brand": "BP",
+"address": [
+"M4 MOTORWAY EASTBOUND",
+"READING"
+],
+"postcode": "RG30 3UQ",
+"lat": 51.42575,
+"lon": -1.03135,
+"hours": [
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "24h"
+},
+"motorway": true
+},
+{
+"id": "c8c6222bc9e5",
+"name": "MFG LEANDER",
+"brand": "BP",
+"address": [
+"182-184 HENLEY ROAD",
+"READING"
+],
+"postcode": "RG4 5DL",
+"lat": 51.47102,
+"lon": -0.95312,
+"hours": [
+"07:00-22:00",
+"07:00-22:00",
+"07:00-22:00",
+"07:00-22:00",
+"07:00-22:00",
+"07:00-22:00",
+"07:00-22:00"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "07:00-22:00"
+}
+},
+{
+"id": "cbe7629f3f43",
+"name": "ASDA PANGBOURNE EXPRESS PETROL",
+"brand": "ASDA PANGBOURNE EXPRESS PETROL",
+"address": [
+"329 READING ROAD",
+"PANGBOURNE",
+"READING"
+],
+"postcode": "RG8 7JE",
+"lat": 51.48249,
+"lon": -1.08011,
+"hours": [
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00",
+"06:00-23:00"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "06:00-23:00"
+}
+},
+{
+"id": "d678374ee37b",
+"name": "Sonning Common Garage Ltd",
+"brand": "Murco",
+"address": [
+"Peppard Road",
+"Sonning Common",
+"Reading"
+],
+"postcode": "RG4 9SU",
+"lat": 51.52081,
+"lon": -0.98049,
+"hours": [
+"08:00-17:30",
+"08:00-17:30",
+"08:00-17:30",
+"08:00-17:30",
+"08:00-17:30",
+"closed",
+"closed"
+],
+"bankHoliday": {
+"type": "bank holiday",
+"hours": "closed"
+}
+},
+{
+"id": "e0cb432683a1",
+"name": "BP-KRISCOREADING",
+"brand": "BP",
+"address": [
+"150 OXFORD ROAD",
+"READING",
+"READING"
+],
+"postcode": "RG1 7PJ",
+"lat": 51.45569,
+"lon": -0.98746,
+"hours": [
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h",
+"24h"
+],
+"bankHoliday": {
+"type": "bank holiday",
+"hours": "24h"
+}
+},
+{
+"id": "f36d710c6038",
+"name": "Whitehill Service Station",
+"brand": "Shell",
+"address": [
+"WHITEHILL SERVICE STATION",
+"REMENHAM HILL,  REMENHAM",
+"HENLEY-ON-THAMES"
+],
+"postcode": "RG9 3EP",
+"lat": 51.539,
+"lon": -0.87659,
+"hours": [
+"07:00-19:00",
+"07:00-19:00",
+"07:00-19:00",
+"07:00-19:00",
+"07:00-19:00",
+"08:00-19:00",
+"09:00-19:00"
+],
+"bankHoliday": {
+"type": "bank holiday",
+"hours": "09:00-18:00"
+}
+},
+{
+"id": "f3bf133eaa02",
+"name": "STOKE ROW GARAGE",
+"brand": "STOKE ROW GARAGE",
+"address": [
+"STOKE ROW GARAGE",
+"STOKE ROW, HENLEY-ON-THAMES, RG9 5QL",
+"HENLEY-ON-THAMES"
+],
+"postcode": "RG9 5QL",
+"lat": 51.55096,
+"lon": -1.02021,
+"hours": [
+"08:30-17:30",
+"08:30-17:30",
+"08:30-17:30",
+"08:30-17:30",
+"08:30-17:30",
+"08:30-13:30",
+"closed"
+],
+"bankHoliday": {
+"type": "bank holiday",
+"hours": "closed"
+}
+},
+{
+"id": "fcda7dfe7e7e",
+"name": "ASDA LOWER EARLEY SUPERCENTRE",
+"brand": "ASDA LOWER EARLEY SUPERCENTRE",
+"address": [
+"CHALFONT WAY, LOWER EARLEY",
+"READING"
+],
+"postcode": "RG6 5TT",
+"lat": 51.42331,
+"lon": -0.93246,
+"hours": [
+"00:00-23:59",
+"00:00-23:59",
+"00:00-23:59",
+"00:00-23:59",
+"00:00-23:59",
+"00:00-23:59",
+"00:00-23:59"
+],
+"bankHoliday": {
+"type": "standard",
+"hours": "09:00-18:00"
+},
+"supermarket": true
+}
+],
+"prices": {
+"0580701e2f25": {
+"e10": {
+"p": 198.9,
+"u": "2026-10-22T13:30:08.000Z"
+},
+"diesel": {
+"p": 222.9,
+"u": "2026-10-22T13:30:08.000Z"
+}
+},
+"07ee17cece6d": {
+"e10": {
+"p": 174.9,
+"u": "2026-10-23T22:03:22.000Z"
+},
+"diesel": {
+"p": 199.9,
+"u": "2026-10-23T22:03:22.000Z"
+}
+},
+"1234800bd145": {
+"e10": {
+"p": 173.9,
+"u": "2026-10-24T11:00:00.000Z"
+},
+"diesel": {
+"p": 201.9,
+"u": "2026-10-14T08:45:01.000Z"
+}
+},
+"1564aa1f8e88": {
+"e10": {
+"p": 179.9,
+"u": "2026-10-09T11:00:09.000Z"
+},
+"diesel": {
+"p": 202.9,
+"u": "2026-10-24T11:00:00.000Z"
+}
+},
+"1dbf1528f0dc": {
+"e10": {
+"p": 175.9,
+"u": "2026-09-23T19:42:56.000Z"
+},
+"diesel": {
+"p": 199.9,
+"u": "2026-09-18T19:27:00.000Z"
+}
+},
+"28387ac837ac": {
+"e10": {
+"p": 177.9,
+"u": "2026-10-14T15:30:50.991Z"
+},
+"diesel": {
+"p": 201.9,
+"u": "2026-09-29T15:20:35.927Z"
+}
+},
+"2867a3ffcb9c": {
+"e10": {
+"p": 174.9,
+"u": "2026-10-28T09:45:02.000Z"
+},
+"diesel": {
+"p": 199.9,
+"u": "2026-09-25T12:45:00.000Z"
+}
+},
+"36a8592edafc": {
+"e10": {
+"p": 171.9,
+"u": "2026-10-23T23:01:11.000Z"
+},
+"diesel": {
+"p": 199.9,
+"u": "2026-10-12T21:21:11.000Z"
+}
+},
+"421b159aaf88": {
+"e10": {
+"p": 178.9,
+"u": "2026-10-23T10:30:04.000Z"
+},
+"diesel": {
+"p": 203.9,
+"u": "2026-10-03T10:04:03.000Z"
+}
+},
+"426affa07cfe": {
+"e10": {
+"p": 176.9,
+"u": "2026-10-01T15:55:51.000Z"
+},
+"diesel": {
+"p": 199.9,
+"u": "2026-09-25T13:47:15.000Z"
+}
+},
+"434c6efc8078": {
+"e10": {
+"p": 176.9,
+"u": "2026-10-22T09:45:00.000Z"
+},
+"diesel": {
+"p": 199.9,
+"u": "2026-10-20T16:00:03.000Z"
+}
+},
+"43c6fc3dde7d": {
+"e10": {
+"p": 173.9,
+"u": "2026-10-29T15:00:11.666Z"
+},
+"diesel": {
+"p": 198.9,
+"u": "2026-10-29T15:00:11.658Z"
+}
+},
+"45ecd142cd46": {
+"e10": {
+"p": 168.9,
+"u": "2026-10-24T14:43:50.000Z"
+},
+"diesel": {
+"p": 194.9,
+"u": "2026-10-13T11:22:24.000Z"
+}
+},
+"5c7b47c38207": {
+"e10": {
+"p": 172.9,
+"u": "2026-10-23T22:57:19.000Z"
+},
+"diesel": {
+"p": 201.9,
+"u": "2026-10-12T22:58:30.000Z"
+}
+},
+"5ebbaa1cfb59": {
+"e10": {
+"p": 176.9,
+"u": "2026-10-19T10:25:32.969Z"
+},
+"diesel": {
+"p": 199.9,
+"u": "2026-10-14T09:45:18.525Z"
+}
+},
+"64ed22f64ed8": {
+"e10": {
+"p": 172.9,
+"u": "2026-10-25T21:48:03.000Z"
+},
+"diesel": {
+"p": 198.9,
+"u": "2026-10-25T21:48:03.000Z"
+}
+},
+"689ec9dc4972": {
+"e10": {
+"p": 173.9,
+"u": "2026-10-30T09:29:20.000Z"
+},
+"diesel": {
+"p": 199.9,
+"u": "2026-09-29T07:42:42.000Z"
+}
+},
+"69ee568b453b": {
+"e10": {
+"p": 174.9,
+"u": "2026-10-29T15:12:41.039Z"
+},
+"diesel": {
+"p": 198.9,
+"u": "2026-10-19T14:35:41.198Z"
+}
+},
+"6c2ae3ef4fae": {
+"e10": {
+"p": 173.9,
+"u": "2026-10-28T23:50:03.000Z"
+},
+"diesel": {
+"p": 201.9,
+"u": "2026-10-12T23:00:07.000Z"
+}
+},
+"6deec6965da1": {
+"e10": {
+"p": 172.9,
+"u": "2026-10-27T23:34:28.000Z"
+},
+"diesel": {
+"p": 199.9,
+"u": "2026-10-12T22:35:39.000Z"
+}
+},
+"75c9ec24027a": {
+"e10": {
+"p": 175.9,
+"u": "2026-10-26T11:38:42.000Z"
+},
+"diesel": {
+"p": 205.9,
+"u": "2026-10-26T11:38:42.000Z"
+}
+},
+"90f09abb33c1": {
+"e10": {
+"p": 177.9,
+"u": "2026-09-26T08:06:10.000Z"
+},
+"diesel": {
+"p": 201.9,
+"u": "2026-09-26T08:06:10.000Z"
+}
+},
+"92337e9f1abc": {
+"e10": {
+"p": 171.9,
+"u": "2026-10-30T09:49:32.000Z"
+},
+"diesel": {
+"p": 197.9,
+"u": "2026-10-30T09:49:25.000Z"
+}
+},
+"943a5c05d187": {
+"e10": {
+"p": 174.9,
+"u": "2026-10-29T11:40:07.791Z"
+},
+"diesel": {
+"p": 197.9,
+"u": "2026-10-13T09:10:08.252Z"
+}
+},
+"a16238b03e11": {
+"e10": {
+"p": 174.9,
+"u": "2026-10-29T05:15:42.000Z"
+},
+"diesel": {
+"p": 199.9,
+"u": "2026-10-17T05:15:40.000Z"
+}
+},
+"a3770319a2ed": {
+"e10": {
+"p": 173.9,
+"u": "2026-10-29T15:00:11.838Z"
+},
+"diesel": {
+"p": 198.9,
+"u": "2026-10-14T14:44:07.539Z"
+}
+},
+"aa45d70cbe65": {
+"e10": {
+"p": 174.7,
+"u": "2026-10-26T18:29:52.000Z"
+},
+"diesel": {
+"p": 197.7,
+"u": "2026-10-13T18:04:51.000Z"
+}
+},
+"ac60fbe8c8c1": {
+"e10": {
+"p": 173.9,
+"u": "2026-10-27T14:20:53.000Z"
+},
+"diesel": {
+"p": 199.9,
+"u": "2026-09-21T10:10:30.000Z"
+}
+},
+"b09465372f65": {
+"e10": {
+"p": 171.9,
+"u": "2026-10-29T23:01:42.000Z"
+},
+"diesel": {
+"p": 197.9,
+"u": "2026-10-17T22:13:39.000Z"
+}
+},
+"b2987c89cf1c": {
+"e10": {
+"p": 176.9,
+"u": "2026-10-29T16:15:02.000Z"
+},
+"diesel": {
+"p": 201.9,
+"u": "2026-10-22T09:45:00.000Z"
+}
+},
+"be1b19f2ae00": {
+"e10": {
+"p": 175.9,
+"u": "2026-10-26T16:55:09.385Z"
+},
+"diesel": {
+"p": 200.9,
+"u": "2026-09-29T14:20:42.964Z"
+}
+},
+"c77d00b837d0": {
+"e10": {
+"p": 198.9,
+"u": "2026-10-22T13:30:08.000Z"
+},
+"diesel": {
+"p": 222.9,
+"u": "2026-10-22T13:30:08.000Z"
+}
+},
+"c8c6222bc9e5": {
+"e10": {
+"p": 174.9,
+"u": "2026-10-28T22:05:33.000Z"
+},
+"diesel": {
+"p": 199.9,
+"u": "2026-10-23T21:06:37.000Z"
+}
+},
+"cbe7629f3f43": {
+"e10": {
+"p": 174.9,
+"u": "2026-10-27T08:00:05.000Z"
+},
+"diesel": {
+"p": 199.9,
+"u": "2026-10-15T14:39:33.000Z"
+}
+},
+"d678374ee37b": {
+"e10": {
+"p": 176.9,
+"u": "2026-10-29T14:41:17.000Z"
+},
+"diesel": {
+"p": 199.9,
+"u": "2026-10-27T12:54:56.000Z"
+}
+},
+"e0cb432683a1": {
+"e10": {
+"p": 172.9,
+"u": "2026-10-27T09:58:32.000Z"
+},
+"diesel": {
+"p": 198.9,
+"u": "2026-10-13T08:44:47.000Z"
+}
+},
+"f36d710c6038": {
+"e10": {
+"p": 176.9,
+"u": "2026-10-15T10:49:38.000Z"
+},
+"diesel": {
+"p": 199.9,
+"u": "2026-10-15T10:49:38.000Z"
+}
+},
+"f3bf133eaa02": {
+"diesel": {
+"p": 230,
+"u": "2026-04-10T18:42:54.000Z",
+"x": 1
+}
+},
+"fcda7dfe7e7e": {
+"e10": {
+"p": 171.9,
+"u": "2026-10-29T20:10:57.000Z"
+},
+"diesel": {
+"p": 197.9,
+"u": "2026-10-29T20:10:57.000Z"
+}
+}
+}
+}

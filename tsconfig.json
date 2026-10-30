@@ -19,7 +19,7 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": [
+  "include": ["src", 
     "scripts",
     "lambda"
   ]

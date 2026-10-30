@@ -92,6 +92,10 @@ Stage 2 (on `main` since 28 October): `scripts/lib/clean.ts` (the rules, no netw
 bank holidays, one commit to `main` through GitHub's API), `lambda/collector.ts` and `lambda/make-collector.ts`, `scripts/check-collect.ts`;
 `npm run build:lambda` makes `dist-lambda/collector/` and `dist-lambda/probe/`. Data on `main`: `data/stations.json`, `data/prices.json`,
 `data/bank-holidays.json`, `data/runs/YYYY-MM.jsonl`. John's steps: `design/aws-collector-steps-2026-10-28.md`.
+Stage 3 (branch `stage-3-search`): `scripts/build-outcodes.ts` (`npm run outcodes <Open Names folder>`) makes `data/outcodes.json`
+(every postcode district in Great Britain: latitude, longitude, main place, and the OS credit lines); `scripts/lib/grid.ts` (from
+Hindcaster, plus `fromBritishGrid`); `src/lib/search.ts` (the page's rules: postcodes, distances, open now, bank holidays, the
+eight, cheapest, words); `scripts/check-search.ts` with `scripts/fixtures/rg4-2026-10-30.json` (the real stations round RG4).
 No app yet.
 
 ## Log
@@ -731,3 +735,27 @@ repo's size. Next: John sets up the timetable (Part 5).
 John made the schedule `refueller-twice-daily` (EventBridge Scheduler, London, Europe/London, 10.15am and 4.15pm). Its first run
 saved `2481f55` "Data: 2026-10-30 10:15 UTC" (10.15am GMT, the clocks having gone back on 25 October): ok, 37 requests, 106 s
 (slower than the test's 30 s, still well inside the 5-minute limit), 7,533 stations kept. The collector now runs by itself.
+
+### 2026-10-30 — stage 3: postcodes and the search rules (branch `stage-3-search`)
+
+**John** approved the mock-ups ("ready to go onto the build").
+
+**What:** `data/outcodes.json` from OS Open Names (downloaded here from `api.os.uk`; checksum as listed): 2,863 postcode districts in
+Great Britain, each its postcodes' average position, as latitude and longitude, and its main place (RG4 Caversham, ZE1 Lerwick,
+TR21 Hugh Town), with the three credit lines from the download's licence file (OS, Royal Mail, National Statistics). `src/lib/search.ts`:
+the first half of a typed postcode (with or without a space; Northern Ireland and unknown districts explained); straight-line miles
+("0.4 miles", "12 miles", "less than 0.1 miles"); open now, until when, or "Closed until 7am tomorrow" / "Closed until Monday 7am",
+by UK clock time, with hours past midnight counting the next morning and bank-holiday hours on bank holidays (Scotland's dates for
+Scottish postcodes, Berwick's TD15 English); the eight nearest (temporarily closed ones left out); the cheapest of each fuel, never
+an unusual price, ties all marked; "Updated 3 days ago" and the 30-day mark; tidied names and addresses.
+
+**Found with the real data:** 64 stations' postcodes come without a space (`CW13HD`), so the first half is now found by dropping
+the last three characters; and the position check (a station more than 25 miles from the middle of its own postcode district is
+left out) wrongly caught three Shetland stations and one in Wester Ross, whose districts are huge, so the Highlands and Islands
+(ZE, HS, KW, IV, PA, PH) get 60 miles. It now leaves out 5 of 7,535 stations, placed 30 to 97 miles from their districts.
+
+**Checked:** `npm run check` (search: 12 checks, worked examples by hand, including GMT and BST, the night the clocks go forward,
+Christmas Day, St Andrew's Day and a Sunday-night bank-holiday Monday; the RG4 run on the fixed copy matches the mock-ups: Emmer
+Green 0.4 miles, four closed at 11.30pm, "Closed until 6am tomorrow" at MFG Thames Valley). **Four deliberate breakages each caught**
+(bank holidays ignored; the past-midnight rule dropped; an unusual price allowed to be cheapest; old at 30 days). Lint and type-check
+clean. Not merged.
