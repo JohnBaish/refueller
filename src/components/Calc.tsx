@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { fuelWord, loadChoices, milesBox, nearestSelling, readNumber, saveChoices, TYPICAL_MPG, verdict } from '../lib/calc.ts';
+import { cheaperFuels, fuelWord, loadChoices, milesBox, nearestSelling, readNumber, saveChoices, TYPICAL_MPG, verdict } from '../lib/calc.ts';
 import { loadRoads } from '../lib/load.ts';
 import { tidyName, type Row } from '../lib/search.ts';
 
@@ -13,7 +13,12 @@ type Roads = { state: 'loading' } | { state: 'ready'; miles: (id: string) => num
 // measured from, the same file for every visitor.
 export function CalcPanel({ row, rows, origin, centreId, roads, onClose }: { row: Row; rows: Row[]; origin: Origin; centreId?: string; roads: { folder: string } | null; onClose: () => void }) {
   const [choices, setChoices] = useState(loadChoices);
-  const fuel = choices.fuel;
+  // Opens on the fuel used last time if this station is cheaper for it, otherwise on the fuel it is cheaper for. Only
+  // pressing a fuel button changes the remembered one.
+  const [fuel, setFuel] = useState(() => {
+    const cheaper = cheaperFuels(row, rows);
+    return cheaper.includes(choices.fuel) || cheaper.length === 0 ? choices.fuel : cheaper[0];
+  });
   const [road, setRoad] = useState<Roads>({ state: 'loading' });
   const [miles, setMiles] = useState<{ text: string; typed: boolean } | null>(null);
 
@@ -81,7 +86,10 @@ export function CalcPanel({ row, rows, origin, centreId, roads, onClose }: { row
       </p>
       <div className="fuel-btns" role="group" aria-label="Fuel">
         {(['e10', 'diesel'] as const).map((f) => (
-          <button key={f} type="button" className="fuel-btn" aria-pressed={fuel === f} onClick={() => update({ ...choices, fuel: f })}>
+          <button key={f} type="button" className="fuel-btn" aria-pressed={fuel === f} onClick={() => {
+              setFuel(f);
+              update({ ...choices, fuel: f });
+            }}>
             {f === 'e10' ? 'Unleaded' : 'Diesel'}
           </button>
         ))}

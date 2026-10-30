@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useState, type ReactNode } from 'react';
 import { CalcPanel, type Origin } from './Calc.tsx';
+import { cheaperFuels } from '../lib/calc.ts';
 import { fromDetail, type PageIndex } from '../lib/pageTypes.ts';
 import { loadArea, loadIndex } from '../lib/load.ts';
 import { useIsNarrow } from '../lib/responsive.ts';
@@ -98,8 +99,9 @@ function OpenCell({ row }: { row: Row }) {
 
 // "Find stations near this one" (John, 30 October; first called "Centre on this station"): searches again from that
 // station's own position.
-// and "Worth driving here?" (PLAN Stage 7), which opens the calculator under the station.
-type Calc = { openId: string | null; toggle: (id: string) => void; panel: (r: Row) => ReactNode };
+// and "Worth driving here?" (PLAN Stage 7), which opens the calculator under the station: only on a station cheaper than the
+// nearest open one for at least one fuel (John, 30 October), as elsewhere it could only say there's nothing to work out.
+type Calc = { openId: string | null; toggle: (id: string) => void; offered: (r: Row) => boolean; panel: (r: Row) => ReactNode };
 
 function RowLinks({ row, centreId, calc }: { row: Row; centreId?: string; calc: Calc }) {
   const open = calc.openId === row.station.id;
@@ -110,9 +112,11 @@ function RowLinks({ row, centreId, calc }: { row: Row; centreId?: string; calc: 
           Find stations near this one
         </a>
       )}
-      <button type="button" className="centre-link link-btn" aria-expanded={open} onClick={() => calc.toggle(row.station.id)}>
-        Worth driving here?
-      </button>
+      {calc.offered(row) && (
+        <button type="button" className="centre-link link-btn" aria-expanded={open} onClick={() => calc.toggle(row.station.id)}>
+          Worth driving here?
+        </button>
+      )}
     </div>
   );
 }
@@ -308,6 +312,7 @@ export function Results({ target }: { target: Target }) {
   const calc: Calc = {
     openId: calcId,
     toggle: (id) => setCalcId((c) => (c === id ? null : id)),
+    offered: (r) => cheaperFuels(r, rows).length > 0,
     panel: (r) => <CalcPanel row={r} rows={rows} origin={origin} centreId={found.centreId} roads={found.index.roads} onClose={() => setCalcId(null)} />,
   };
 

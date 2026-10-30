@@ -1080,3 +1080,15 @@ and 390px with touch, light and dark: RG4's Reading Extra (not worth it at £50 
 mpg), diesel, the nearest station itself, same price (MFG Leander), a station view, HS1 and ZE2, no road file (empty box, then typed),
 choices kept after a reload, print hides it, no sideways scroll, no errors. Pictures `design/previews/calc-built-*.png`. Not merged.
 
+### 2026-10-30 — "Worth driving here?" only where it can help (branch `stage-7-calculator`)
+
+**John:** show the link only where it's useful. `cheaperFuels()` in `src/lib/calc.ts`: the link appears on a station only when it
+is cheaper than the nearest open station selling that fuel (at a usual price) for unleaded or diesel; the panel opens on the
+remembered fuel if that is one of them, otherwise on the one it is cheaper for (only pressing a fuel button changes the remembered
+fuel). A station closed now but cheaper still gets it (the panel says it's closed). **Checked:** `npm run check` (new check: the
+nearest itself, same price, cheaper for diesel only, an unusual price, closed but cheaper), lint, build; RG4 (3 of 8), SW1A (5),
+M1 (4) and TR21 (none) at 1200px and 390px with touch; no errors, no sideways scroll.
+
+**John also asked** whether full postcodes were due by now: no. Q4 was "district centres, for now", and full postcodes were left for
+later in the mock-up round of 30 October; they aren't yet in the agreed feature order.
+

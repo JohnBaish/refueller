@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { splitRoads } from './lib/pageData.ts';
-import { milesBox, money, nearestSelling, pounds, readNumber, ROAD_CREDIT, sums, verdict } from '../src/lib/calc.ts';
+import { cheaperFuels, milesBox, money, nearestSelling, pounds, readNumber, ROAD_CREDIT, sums, verdict } from '../src/lib/calc.ts';
 import type { Row, Station } from '../src/lib/search.ts';
 
 let failures = 0;
@@ -76,6 +76,29 @@ await check('compared with: the nearest open station selling the fuel at a usual
   const rows = [row('closed', false, { p: 160, u }), row('no-e10', true), row('unusual', true, { p: 120, u, x: 1 }), row('unknown-hours', null, { p: 175, u }), row('later', true, { p: 170, u })];
   assert.equal(nearestSelling(rows, 'e10')?.station.id, 'unknown-hours');
   assert.equal(nearestSelling(rows, 'diesel'), undefined);
+});
+
+await check('the link: only on a station cheaper than the nearest open one for a fuel', () => {
+  const u = '2026-10-30T09:00:00Z';
+  const row = (id: string, open: boolean, e10?: number, diesel?: number, x?: 1): Row =>
+    ({
+      station: { id } as Station,
+      miles: 0,
+      prices: { ...(e10 ? { e10: { p: e10, u, ...(x ? { x } : {}) } } : {}), ...(diesel ? { diesel: { p: diesel, u } } : {}) },
+      open: { open } as Row['open'],
+      cheapest: { e10: false, diesel: false },
+    });
+  const nearest = row('nearest', true, 174.9, 199.9);
+  const same = row('same', true, 174.9, 199.9);
+  const cheaperDiesel = row('cheaper-diesel', true, 176.9, 198.9);
+  const unusual = row('unusual', true, 120, undefined, 1);
+  const closedCheaper = row('closed', false, 170.9);
+  const rows = [nearest, same, cheaperDiesel, unusual, closedCheaper];
+  assert.deepEqual(cheaperFuels(nearest, rows), [], 'the nearest itself');
+  assert.deepEqual(cheaperFuels(same, rows), [], 'the same price');
+  assert.deepEqual(cheaperFuels(cheaperDiesel, rows), ['diesel']);
+  assert.deepEqual(cheaperFuels(unusual, rows), [], 'an unusual price');
+  assert.deepEqual(cheaperFuels(closedCheaper, rows), ['e10'], 'closed now but cheaper: still offered');
 });
 
 const roads = JSON.parse(readFileSync(new URL('../data/road-miles.json', import.meta.url), 'utf8'));

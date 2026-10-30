@@ -116,3 +116,14 @@ export const ROAD_CREDIT = 'Contains Ordnance Survey data © Crown copyright and
 export function nearestSelling(rows: Row[], fuel: Fuel): Row | undefined {
   return rows.find((r) => r.open.open !== false && r.prices[fuel] && !r.prices[fuel]!.x);
 }
+
+// The fuels for which this station is cheaper than the nearest open station selling that fuel at a usual price: the link
+// "Worth driving here?" appears only when there is at least one (John, 30 October), and the panel opens on one of them.
+export function cheaperFuels(row: Row, rows: Row[]): Fuel[] {
+  return (['e10', 'diesel'] as const).filter((f) => {
+    const here = row.prices[f];
+    const near = nearestSelling(rows, f);
+    return here && !here.x && near && near.station.id !== row.station.id && here.p < near.prices[f]!.p;
+  });
+}
+
