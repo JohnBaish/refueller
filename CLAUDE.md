@@ -930,3 +930,55 @@ stage 6), and again after each collection.
 
 From clockwheel `674122d`: §2 dark mode also sets finer text smoothing (Macs), §3 never bold
 Caprasimo. The page, when built, should include both. No app code yet.
+
+### 2026-10-30 — stage 6: favicon options (branch `stage-6-launch`)
+
+**What:** three options in `design/favicon-options/`, drawn to the house recipe (48×48, circle r=21, cream with a 2.5px terracotta
+ring or solid terracotta, ink and terracotta shapes): A, an ink fuel pump with a terracotta hose; B, a terracotta drop of fuel; C,
+A on solid terracotta. `design/favicon-options.html` (from Hindcaster's) shows them at 16, 32, 48 and 96px beside the Clockmaker,
+Backtimer, Flowcharter, Hindcaster and baish.net icons in a row of browser tabs; renders `design/previews/favicon-options*.png`
+(2x and 1x). Nothing wired in; waiting for John's choice.
+
+### 2026-10-30 — favicon A chosen and wired in (branch `stage-6-launch`)
+
+**John chose A** (the fuel pump). `public/favicon.svg` (a copy of `design/favicon-options/a-pump.svg`), linked from `index.html`;
+the build copies it into the site. Next: the link-preview wording, then the image.
+
+### 2026-10-30 — link-preview image drafted (branch `stage-6-launch`)
+
+**John:** tagline "Nearby fuel prices", to be updated when Refueller gains more features (noted in PLAN, Stage 6).
+`design/og-refueller.html` from Hindcaster's `og-hindcaster.html` (same layout, positions and fonts loaded by path): the
+favicon's pump drawn large on the pale disc, title "Refueller", tagline "Nearby fuel prices" (no full stop, as John wrote it).
+Rendered at 1200×630 to `design/previews/og-refueller.png`; Caprasimo 400 and Figtree 600 confirmed loaded. Waiting for John's
+approval before it goes in `public/` with the `og:`/`twitter:` tags.
+
+### 2026-10-30 — tagline tried as "Nearby petrol and diesel prices" (branch `stage-6-launch`)
+
+John asked to see "Nearby diesel and unleaded petrol prices" (rendered on one line and on two,
+`design/previews/og-refueller-one-line.png` and `-two-lines.png`), then preferred "Nearby petrol and diesel prices" (no full stop).
+`design/og-refueller.html`, `design/previews/og-refueller.png` and PLAN's note updated; it fits on one line with room to spare.
+Fonts confirmed loaded. Waiting for John's approval before wiring in.
+
+### 2026-10-30 — link preview and search set-up wired in (branch `stage-6-launch`)
+
+**John** approved the image. `public/og-refueller.png` (copied from the render); `index.html` gains the canonical link
+(`https://refueller.baish.net/`), a comment on what the tags are for, and `og:`/`twitter:` tags (title "Refueller", description
+"Nearby petrol and diesel prices", the image, `summary_large_image`). `public/robots.txt` (allow all, sitemap line) and
+`public/sitemap.xml` (the one address), plain files as the project serves only its own domain (SEO-HANDOVER item 8). The page
+title and search description were agreed on 30 October. The tags point at the final domain, so link previews only work once it
+is set up. **Checked:** build, `npm run check`, lint, type-check; `vite preview` at 1200px and 390px with touch: tab title,
+canonical, preview tags and favicon correct, no errors or sideways scroll; robots.txt, sitemap.xml, the image and the favicon
+all served with the right types.
+
+### 2026-10-30 — postcode example RG1; shorter footer on the postcode screen; stage 6 merged to `main`
+
+**John** (on his phone, the stage 6 preview): use Hindcaster's example postcode, "RG1 or RG1 8FR"; the postcode screen doesn't need
+the whole footer; otherwise merge. **What (`src/App.tsx`):** the box's example "RG1 or RG1 8FR", the messages "Please type a
+postcode, such as RG1 8FR." and "Try one like RG1 or RG1 8FR.", the hint "Only the first half (RG1) is used."; on the postcode
+screen the footer keeps only the project and privacy paragraph and the last line, and the Fuel Finder and postcode source lines
+appear with the results (where prices and positions are shown). **Also added (house style §8 and §12, missed before):**
+"Contact: workshop@baish.net." after "More free tools at www.baish.net.", as plain text. **Checked:** checks, lint, type-check,
+build; at 1200px and 390px with touch: the new example, both messages, the short footer on the postcode screen, the full footer
+on RG1's results (Reading), no errors, no sideways scroll. Picture `design/previews/page-start-phone-2026-10-30.png`. Then merged
+`stage-6-launch` into `main` at John's word (favicon, link preview and tags, canonical, robots.txt, sitemap.xml, these changes).
+**Next (John):** add `refueller.baish.net` to the Vercel project and switch on Web Analytics.

@@ -28,8 +28,8 @@ function remember(outcode: string) {
 }
 
 const PROBLEMS: Record<Exclude<PostcodeResult, { ok: true }>['problem'], (typed: string) => string> = {
-  empty: () => 'Please type a postcode, such as RG4 7HN.',
-  'not-a-postcode': () => 'That doesn’t look like a postcode. Try one like RG4 or RG4 7HN.',
+  empty: () => 'Please type a postcode, such as RG1 8FR.',
+  'not-a-postcode': () => 'That doesn’t look like a postcode. Try one like RG1 or RG1 8FR.',
   'northern-ireland': () => 'Refueller covers Great Britain only for now, so Northern Ireland postcodes aren’t included yet.',
   'not-found': (typed) => `We can’t find ${typed.trim().toUpperCase().split(/\s+/)[0]} among Great Britain’s postcodes. Check it, or try a nearby postcode.`,
 };
@@ -65,7 +65,7 @@ function SearchBox({ start, initial }: { start: boolean; initial: string }) {
           className="input"
           value={typed}
           onChange={(e) => setTyped(e.target.value)}
-          placeholder="RG4 or RG4 7HN"
+          placeholder="RG1 or RG1 8FR"
           aria-label="Postcode"
           autoCapitalize="characters"
           autoCorrect="off"
@@ -83,7 +83,7 @@ function SearchBox({ start, initial }: { start: boolean; initial: string }) {
           {problem}
         </p>
       )}
-      {start && !problem && <p className="hint">Only the first half (RG4) is used. Nothing you type leaves this page.</p>}
+      {start && !problem && <p className="hint">Only the first half (RG1) is used. Nothing you type leaves this page.</p>}
     </form>
   );
 }
@@ -183,18 +183,24 @@ export default function App() {
         <SafetyNet key={outcode ?? ''}>{outcode && <Results outcode={outcode} />}</SafetyNet>
         {!start && <About />}
         <footer className="footer-notice" data-noprint>
-          <p>
-            Prices from the Government’s Fuel Finder service. Contains public sector information licensed under the Open
-            Government Licence v3.0.{' '}
-            <a href={REPORT_URL} target="_blank" rel="noopener noreferrer">
-              Report a wrong price to Fuel Finder
-            </a>
-            .
-          </p>
-          <p>
-            Postcode positions: Contains OS data © Crown Copyright and database rights 2026. Contains Royal Mail data © Royal
-            Mail copyright and database right 2026. Contains National Statistics data © Crown copyright and database right 2026.
-          </p>
+          {/* The source lines only where prices are shown; the postcode screen keeps just the project and privacy lines
+              (John, 30 October). */}
+          {!start && (
+            <>
+              <p>
+                Prices from the Government’s Fuel Finder service. Contains public sector information licensed under the Open
+                Government Licence v3.0.{' '}
+                <a href={REPORT_URL} target="_blank" rel="noopener noreferrer">
+                  Report a wrong price to Fuel Finder
+                </a>
+                .
+              </p>
+              <p>
+                Postcode positions: Contains OS data © Crown Copyright and database rights 2026. Contains Royal Mail data © Royal
+                Mail copyright and database right 2026. Contains National Statistics data © Crown copyright and database right 2026.
+              </p>
+            </>
+          )}
           <p>
             Refueller is a free-to-use personal project by John Baish, not connected with the Fuel Finder service. We don’t
             record anything you do here, apart from anonymous visit statistics (no cookies, no personal data), showing us how
@@ -202,7 +208,7 @@ export default function App() {
             dark mode), so the page opens the same way next time.
           </p>
           <p>
-            More free tools at <a href="https://www.baish.net/">www.baish.net</a>.
+            More free tools at <a href="https://www.baish.net/">www.baish.net</a>. Contact: workshop@baish.net.
           </p>
         </footer>
       </main>
