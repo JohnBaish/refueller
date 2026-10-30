@@ -938,3 +938,11 @@ Backtimer, Flowcharter, Hindcaster and baish.net icons in a row of browser tabs;
 
 **John chose A** (the fuel pump). `public/favicon.svg` (a copy of `design/favicon-options/a-pump.svg`), linked from `index.html`;
 the build copies it into the site. Next: the link-preview wording, then the image.
+
+### 2026-10-30 — link-preview image drafted (branch `stage-6-launch`)
+
+**John:** tagline "Nearby fuel prices", to be updated when Refueller gains more features (noted in PLAN, Stage 6).
+`design/og-refueller.html` from Hindcaster's `og-hindcaster.html` (same layout, positions and fonts loaded by path): the
+favicon's pump drawn large on the pale disc, title "Refueller", tagline "Nearby fuel prices" (no full stop, as John wrote it).
+Rendered at 1200×630 to `design/previews/og-refueller.png`; Caprasimo 400 and Figtree 600 confirmed loaded. Waiting for John's
+approval before it goes in `public/` with the `og:`/`twitter:` tags.
