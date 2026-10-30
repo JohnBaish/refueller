@@ -747,3 +747,9 @@ screen's heading "Check fuel prices near you". **Closed stations stay in the lis
 the row a little faded); the heading is now "Eight nearest stations to RG4 (Caversham)" and the note says how many are closed
 (SPEC §4 item 4 changed). Full stop after "Report a wrong price". Pictures `design/previews/mock-2-*.png`. Sorting by column and
 full postcodes stay for later (SPEC Q10, Q4).
+
+### 2026-10-30 — mock-ups, round 3 (branch `stage-4-mockups`)
+
+John: centre the distance, price and opening columns under their headings (done; the station column stays left); the footer
+says "Prices from the Government's Fuel Finder service." (capital G, "service" not "scheme"), and "not connected with the Fuel
+Finder service" to match. Pictures `design/previews/mock-3-*.png`. John: "The rest looks really good."

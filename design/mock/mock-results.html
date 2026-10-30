@@ -37,7 +37,8 @@ h1, h2, h3 { font-family: Caprasimo, serif; font-weight: 400; margin: 0; }
 .notes { font-size: 12.5px; color: var(--color-neutral-700); margin: 6px 0 var(--space-3); }
 .table { width: 100%; }
 .table td { vertical-align: top; padding: 12px 8px; }
-.table th.num, .table td.num { text-align: right; }
+.table th.num, .table td.num, .table th.mid, .table td.mid { text-align: center; }
+.table td.num .price { display: inline-block; }
 .brand { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); }
 .sname { font-weight: 600; }
 .addr { font-size: 12.5px; color: var(--color-neutral-700); }
@@ -152,9 +153,9 @@ function resultsHead() {
   <p class="notes">Straight-line distances from the middle of RG4.${extra} Prices collected at ${collected}, as reported by each station; they may have changed since. <a href="#">Report a wrong price</a>.</p>`;
 }
 function table(list) {
-  return `<table class="table${cheapStyle !== 'tag' ? ' cheap-bold' : ''}"><thead><tr><th>Station</th><th class="num">Distance</th><th class="num">Unleaded (E10)</th><th class="num">Diesel</th><th>Open</th></tr></thead><tbody>` +
+  return `<table class="table${cheapStyle !== 'tag' ? ' cheap-bold' : ''}"><thead><tr><th>Station</th><th class="num">Distance</th><th class="num">Unleaded (E10)</th><th class="num">Diesel</th><th class="mid">Open</th></tr></thead><tbody>` +
     list.map((s) => `<tr class="${s.open === false ? 'closed' : ''}"><td><div class="brand">${s.brand}</div><div class="sname">${tidy(s.name)}</div><div class="addr">${addr(s)}</div></td>
-    <td class="num mono dist">${miles(s.miles)}</td><td class="num${cellClass(s,'e10')}">${priceHtml(s,'e10')}</td><td class="num${cellClass(s,'diesel')}">${priceHtml(s,'diesel')}</td><td class="openuntil">${untilText(s)}</td></tr>`).join('') + '</tbody></table>';
+    <td class="num mono dist">${miles(s.miles)}</td><td class="num${cellClass(s,'e10')}">${priceHtml(s,'e10')}</td><td class="num${cellClass(s,'diesel')}">${priceHtml(s,'diesel')}</td><td class="openuntil mid">${untilText(s)}</td></tr>`).join('') + '</tbody></table>';
 }
 function cards(list) {
   return `<div class="cards${cheapStyle !== 'tag' ? ' cheap-bold' : ''}">` + list.map((s) => `<div class="pcard${s.open === false ? ' closed' : ''}"><div class="pcard-top"><div><div class="brand">${s.brand}</div><div class="sname">${tidy(s.name)}</div></div><div class="dist mono">${miles(s.miles)}</div></div>
@@ -171,8 +172,8 @@ function illustration() {
   ${narrow ? cards(base) : table(base)}</div>`;
 }
 function footer() {
-  return `<div class="footer"><p>Prices from the government’s Fuel Finder scheme. Contains public sector information licensed under the Open Government Licence v3.0. <a href="#">Report a wrong price to Fuel Finder</a>.</p>
-  <p>Refueller is a free-to-use personal project by John Baish, not connected with the Fuel Finder scheme. We don’t record anything you do here, apart from anonymous visit statistics (no cookies, no personal data), showing us how the site is used. Your device, rather than the website, stores your last choices (postcode and light or dark mode), so the page opens the same way next time.</p>
+  return `<div class="footer"><p>Prices from the Government’s Fuel Finder service. Contains public sector information licensed under the Open Government Licence v3.0. <a href="#">Report a wrong price to Fuel Finder</a>.</p>
+  <p>Refueller is a free-to-use personal project by John Baish, not connected with the Fuel Finder service. We don’t record anything you do here, apart from anonymous visit statistics (no cookies, no personal data), showing us how the site is used. Your device, rather than the website, stores your last choices (postcode and light or dark mode), so the page opens the same way next time.</p>
   <p>More free tools at <a href="#">www.baish.net</a>.</p></div>`;
 }
 document.getElementById('app').innerHTML = view === 'start' ? header() + footer()
