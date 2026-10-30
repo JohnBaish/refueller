@@ -12,7 +12,8 @@
     "outcodes": "node scripts/build-outcodes.ts",
     "dev": "vite",
     "build": "npm run typecheck && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "road-miles": "node scripts/build-road-miles.ts"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
