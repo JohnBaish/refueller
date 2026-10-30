@@ -703,3 +703,13 @@ when something significant changes.
 From clockwheel `aa12cd6`: §10 describes the project tracker
 (`JohnBaish/baish.net-directory`) and when to update it; §16 adds the tracker to
 starting a new tool. No app code changed.
+
+### 2026-10-30 — collector set-up under way; GitHub key expiry (notes only)
+
+John is following `design/aws-collector-steps-2026-10-28.md`. The "Build Lambda packages" run #2 worked (both packages).
+Step 2 now describes the run page and its Artifacts list; Safari unzipped the download to `index.mjs`, so Claude told John to
+check it (about 21 KB, first line `// scripts/lib/collect.ts`) and use Finder's Compress to make a zip; step 5 now explains
+GitHub's new "Add permissions" box. **The collector's GitHub key expires 28 January 2027** (GitHub's 90-day default, which
+John kept); in PLAN's "Dates to remember" with the AWS free plan's end and the GitHub API version cut-off. The project tracker
+(`JohnBaish/baish.net-directory`) couldn't be updated from this session: adding that repo was refused by the session's
+permission check, so John was asked.

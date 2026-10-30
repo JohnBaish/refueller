@@ -32,8 +32,11 @@ and tell me what you see.
    - **Expiration:** a custom date one year from today (GitHub may limit how far ahead you can choose; pick the furthest
      it allows). **Write the date down and tell me it** (the date only), so I can note when it needs renewing.
    - **Repository access:** **Only select repositories**, then choose **JohnBaish/refueller** only.
-   - **Permissions:** under **Repository permissions**, set **Contents** to **Read and write**. Leave everything else as
-     it is (GitHub adds "Metadata: Read-only" by itself, which is fine).
+   - **Permissions:** in the **Permissions** box (it starts by saying "No repository permissions added yet"), check the
+     **Repositories** tab is chosen, then click **+ Add permissions** on the right. In the list that opens, find
+     **Contents** and tick it (typing "Contents" in its search box helps). Back in the Permissions box, Contents now
+     has an **Access** menu beside it: set it to **Read and write**. GitHub may add **Metadata: Read-only** by itself,
+     which is fine. Add nothing else, and leave the **Account** tab empty.
 6. Click **Generate token**. GitHub shows the key **once**. Copy it, and keep the page open until Part 3 step 12 is done.
    Don't paste it anywhere except AWS.
 

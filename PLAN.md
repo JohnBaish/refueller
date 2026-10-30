@@ -245,7 +245,7 @@ What it is: `scripts/lib/clean.ts` (the rules), `scripts/lib/collect.ts` (Fuel F
 commit to `main` through GitHub's API: `data/stations.json`, `data/prices.json`, `data/bank-holidays.json`,
 `data/runs/YYYY-MM.jsonl`), `lambda/collector.ts` and `lambda/make-collector.ts`, `scripts/check-collect.ts`; the
 "Build Lambda packages" workflow makes both packages. John's steps: `design/aws-collector-steps-2026-10-28.md` (a
-fine-grained GitHub key for this repo only, Contents read and write, about a year: **expiry date to record here**).
+fine-grained GitHub key for this repo only, Contents read and write, about a year): **expires 28 January 2027** (GitHub's 90-day default, made 30 October 2026; renew before then).
 Left for Stage 3: the check of each station's position against its postcode.
 
 *The original plan, kept for the record:*
@@ -347,10 +347,14 @@ worked example (net 38p, break-even about 2p a litre).
 
 ## Dates to remember
 
-None yet. The portal says to rotate client secrets regularly. Write here: the Fuel Finder
-secrets' expiry and rotation dates, the cron-job.org
-GitHub token's expiry, and the GitHub API version cut-off, as soon as each is
-known.
+- **28 January 2027:** the collector's GitHub key (`refueller-collector`, fine-grained, this repo only, Contents read and
+  write) expires. Renew it a week or two before, and put the new key into the AWS function's `REFUELLER_GITHUB_TOKEN`.
+- **Late April 2027:** the AWS free plan ends (six months from 27 October 2026, or sooner if the credit runs out).
+  Upgrade to the paid plan before then if Refueller is running, after checking the Lambda and Scheduler free limits.
+- **10 March 2028:** GitHub API version `2022-11-28`, used by the collector, is switched off (date from Hindcaster's notes).
+
+Still to find: the Fuel Finder secrets' expiry and rotation dates (the portal says to rotate client secrets regularly;
+none shown at registration).
 
 ## Ideas logged for later
 
