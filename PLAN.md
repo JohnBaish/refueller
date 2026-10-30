@@ -388,9 +388,9 @@ within a chosen distance; county or region pages for search.
    checking:
    - *No routing service:* a real road route would mean sending both postcodes to a routing company (against "nothing a
      visitor types goes to a third party") and, for most, a key and limits. Instead, worked out in the browser: a station
-     counts as "on the way" when going via it adds only a little straight-line distance (start to station to destination,
-     less start to destination; for example no more than 3 miles), and the list says so plainly ("roughly on the way, as
-     the crow flies"). It will sometimes be wrong where roads bend a long way from the straight line (estuaries, the
+     counts as on the way when going via it adds only a little straight-line distance (start to station to destination,
+     less start to destination; for example no more than 3 miles). Wording (John, 30 October): "may be close to the route",
+     with the rule explained in "About these figures". It will sometimes be wrong where roads bend a long way from the straight line (estuaries, the
      Highlands, crossing water), so the wording must make the approximation clear.
    - *What to show:* for each fuel, the three cheapest on the way with their extra distance, against the station nearest
      the start; and the three cheapest near the destination against the one nearest it. Ranking by price and extra distance

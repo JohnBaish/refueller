@@ -917,3 +917,11 @@ John: type a destination too, and see the three cheapest prices roughly on the w
 same at the other end. Added to PLAN "Ideas logged for later" (item 3) with notes: no routing service (it would send both
 postcodes to a third party), so "on the way" means a small extra straight-line distance, worked out in the browser and worded as
 an approximation; objective ranking, so within the Fair Use policy; data and the calculator to settle with a mock-up.
+
+### 2026-10-30 — stages 3 to 5 merged to `main`; wording agreed
+
+**John:** all the draft wording agreed ("About these figures", the postcode messages, the footer's "Postcode positions" line,
+the page title and search description); "cheapest on the way" to say "may be close to the route", explained in About (PLAN
+idea 3); merge, then on to stage 6. `stage-5-page` (with stages 3 and 4 in it) fast-forwarded into `main` after the checks,
+lint, type-check and build. Vercel now builds the page from `main` (on Vercel's own address; `refueller.baish.net` comes in
+stage 6), and again after each collection.
