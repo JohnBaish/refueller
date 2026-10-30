@@ -925,3 +925,11 @@ the page title and search description); "cheapest on the way" to say "may be clo
 idea 3); merge, then on to stage 6. `stage-5-page` (with stages 3 and 4 in it) fast-forwarded into `main` after the checks,
 lint, type-check and build. Vercel now builds the page from `main` (on Vercel's own address; `refueller.baish.net` comes in
 stage 6), and again after each collection.
+
+### 2026-10-30 — stage 6: favicon options (branch `stage-6-launch`)
+
+**What:** three options in `design/favicon-options/`, drawn to the house recipe (48×48, circle r=21, cream with a 2.5px terracotta
+ring or solid terracotta, ink and terracotta shapes): A, an ink fuel pump with a terracotta hose; B, a terracotta drop of fuel; C,
+A on solid terracotta. `design/favicon-options.html` (from Hindcaster's) shows them at 16, 32, 48 and 96px beside the Clockmaker,
+Backtimer, Flowcharter, Hindcaster and baish.net icons in a row of browser tabs; renders `design/previews/favicon-options*.png`
+(2x and 1x). Nothing wired in; waiting for John's choice.

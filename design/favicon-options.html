@@ -1,0 +1,27 @@
+<!doctype html>
+<!-- Design preview (not app code): the favicon options for Refueller beside the
+     other baish.net icons, at the sizes a browser really uses. -->
+<html lang="en-GB"><head><meta charset="utf-8"><title>Refueller: favicon options</title>
+<style>
+  body { margin: 0; padding: 24px; background: #f5ead8; font: 14px/1.4 -apple-system, sans-serif; color: #201e1d; }
+  h1 { font: 400 22px Georgia, serif; margin: 0 0 14px; }
+  .row { display: flex; align-items: center; gap: 28px; margin-bottom: 18px; }
+  .label { width: 230px; font-weight: 600; }
+  .label small { display: block; font-weight: 400; color: #645c50; }
+  img.s16 { width: 16px; height: 16px; } img.s32 { width: 32px; height: 32px; } img.s48 { width: 48px; height: 48px; } img.s96 { width: 96px; height: 96px; }
+  .tabs { display: flex; gap: 2px; background: #dcd3c4; padding: 6px 6px 0; border-radius: 8px 8px 0 0; width: 1010px; }
+  .tab { display: flex; align-items: center; gap: 7px; padding: 7px 12px; border-radius: 8px 8px 0 0; background: #e9e0d2; font-size: 12px; width: 140px; }
+  .tab.me { background: #f9f4ed; }
+  .tab img { flex: none; }
+</style></head><body>
+<h1>Refueller favicon options</h1>
+<div id="rows"></div>
+<script>
+  const own = [['a-pump', 'A · fuel pump', 'cream, terracotta ring'], ['b-drop', 'B · a drop of fuel', 'cream, terracotta ring'], ['c-pump-solid', 'C · as A, solid terracotta', 'like Backtimer']];
+  const family = ['clockmaker', 'backtimer', 'flowcharter', 'hindcaster', 'baish'];
+  document.getElementById('rows').innerHTML = own.map(([f, name, sub]) => `
+    <div class="row"><div class="label">${name}<small>${sub}</small></div>
+      <img class="s16" src="favicon-options/${f}.svg"><img class="s32" src="favicon-options/${f}.svg"><img class="s48" src="favicon-options/${f}.svg"><img class="s96" src="favicon-options/${f}.svg">
+      <div class="tabs">${family.map((o) => `<div class="tab"><img class="s16" src="favicon-options/${o}.svg">${o === 'baish' ? 'baish.net' : o[0].toUpperCase() + o.slice(1)}</div>`).join('')}
+        <div class="tab me"><img class="s16" src="favicon-options/${f}.svg">Refueller</div></div></div>`).join('');
+</script></body></html>
