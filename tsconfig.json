@@ -19,8 +19,10 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", 
+  "include": [
     "scripts",
-    "lambda"
+    "lambda",
+    "src/lib/search.ts",
+    "vite.config.ts"
   ]
 }

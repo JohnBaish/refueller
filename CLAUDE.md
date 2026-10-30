@@ -96,7 +96,13 @@ Stage 3 (branch `stage-3-search`): `scripts/build-outcodes.ts` (`npm run outcode
 (every postcode district in Great Britain: latitude, longitude, main place, and the OS credit lines); `scripts/lib/grid.ts` (from
 Hindcaster, plus `fromBritishGrid`); `src/lib/search.ts` (the page's rules: postcodes, distances, open now, bank holidays, the
 eight, cheapest, words); `scripts/check-search.ts` with `scripts/fixtures/rg4-2026-10-30.json` (the real stations round RG4).
-No app yet.
+Stage 5 (branch `stage-5-page`): the page, Vite + React + TypeScript (`npm run dev`, `npm run build`, `npm run preview`):
+`index.html` (dark mode set before drawing), `src/main.tsx` (visit statistics without the part after "#"), `src/App.tsx` (postcode
+screen or results, the district in the address after "#" and kept as `refueller.choice`; About these figures; footer; safety net),
+`src/components/Results.tsx` (table on a computer, cards on a phone), `src/components/ThemeSwitch.tsx` and `src/lib/theme.ts`
+(from Hindcaster; `refueller.theme`), `src/lib/load.ts`, `src/lib/pageTypes.ts`, `src/styles/` (organic.css and the page's
+global.css). `scripts/lib/pageData.ts` makes `public/data/` at every build (not kept in git): `index.json` (positions, postcode
+districts, bank holidays) and one file per postcode area; the page loads the index, then only the areas of the eight nearest.
 
 ## Log
 
@@ -792,3 +798,24 @@ Christmas Day, St Andrew's Day and a Sunday-night bank-holiday Monday; the RG4 r
 Green 0.4 miles, four closed at 11.30pm, "Closed until 6am tomorrow" at MFG Thames Valley). **Four deliberate breakages each caught**
 (bank holidays ignored; the past-midnight rule dropped; an unusual price allowed to be cheapest; old at 30 days). Lint and type-check
 clean. Not merged.
+
+### 2026-10-30 — stage 5: the page built (branch `stage-5-page`)
+
+**John:** "Let's go!" after Stage 3. The approved mock-ups (round 4) built as the real page, with Hindcaster's dark mode (following
+the device until switched). **Data:** the whole station list is about 460 KB compressed, too much for every phone visit, so the
+build splits it: `index.json` (7,480 station positions to four decimal places, the 2,863 districts, bank holidays; 108 KB
+compressed) and 121 postcode-area files of a few KB. A search loads the index, picks the eight nearest, then only their areas (RG4:
+one file; SW1A: four). Every visitor asks for the same files whatever they type. Temporarily closed stations (48) and those far from
+their postcode (5) are left out at build time. **Added since the mock-ups (drafts for John):** "About these figures" (three
+paragraphs: where prices come from and when they're collected; the fuels, the 100p to 300p range and the unusual rule; straight-line
+distances from the district's middle, what's left out, usual opening hours); the postcode messages (empty, not a postcode, Northern
+Ireland, not found); the OS credit lines in the footer ("Postcode positions: …", word for word from the licence file, and a check that
+they match `data/outcodes.json`); "Finding stations…" and "Sorry, the prices couldn't be loaded" with Try again; a note if the latest
+collection is more than a day old; draft page title and search description.
+
+**Checked:** lint, both type-checks, `npm run check` (13 search checks now); built and used in Chromium at 1200px and at 390px with
+touch, light and dark: the postcode screen, RG4 (the same eight as the mock-ups, prices from the 10.15am collection), ZE1 (Lerwick),
+QQ1 (not found), BT1 (Northern Ireland), typing "rg4 7hn" and "RG47HN", Back between two districts, reopening on the remembered
+district, the switch kept as `refueller.theme`: no sideways scroll; the only failed load is Vercel's statistics script, which exists
+only on Vercel. Pictures `design/previews/page-*.png`. **Couldn't be checked:** a real phone, and Vercel (no Vercel project for
+Refueller yet). Not merged.

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Refueller – fuel prices near you</title>
+    <meta name="description" content="Check unleaded and diesel prices at the eight nearest petrol stations to any postcode in Great Britain, with opening times, from the Government's Fuel Finder service. Free." />
+    <!-- Draft title, description and link-preview tags: wording, the canonical address and the preview picture come with
+         launch (PLAN Stage 6). -->
+    <!-- Dark mode: set before the page draws, so there's no flash of the wrong colours. A choice kept by the switch wins;
+         otherwise the device's own setting (HOUSE-STYLE §2). The same key and rule as src/lib/theme.ts. -->
+    <script>
+      (function () {
+        var t = null
+        try { t = localStorage.getItem('refueller.theme') } catch (e) {}
+        var device = false
+        try { device = window.matchMedia('(prefers-color-scheme: dark)').matches } catch (e) {}
+        if (t === 'dark' || (t !== 'light' && device)) document.documentElement.dataset.theme = 'dark'
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

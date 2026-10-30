@@ -1,0 +1,115 @@
+/* Refueller's page styles, on top of organic.css (from clockwheel by way of Hindcaster, HOUSE-STYLE §1). The layout is
+   the approved mock-ups (design/mock/mock-results.html, round 4, John, 30 October). */
+
+.mono { font-variant-numeric: tabular-nums; }
+body { margin: 0; background: var(--color-bg); color: var(--color-text); }
+a { color: var(--color-accent-700); }
+
+.nav { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) var(--space-6); background: var(--color-surface); }
+.nav-brand { color: inherit; text-decoration: none; }
+.col { max-width: 1100px; margin: 0 auto; padding: 0 var(--space-6) var(--space-6); }
+.page-head { padding: var(--space-6) 0 var(--space-4); }
+.page-head h2 { margin: 2px 0 0; font-size: 32px; line-height: 1.15; }
+.lead { color: var(--color-neutral-700); margin: 6px 0 0; max-width: 640px; }
+.muted { color: var(--color-neutral-700); }
+
+.search { display: flex; gap: var(--space-2); align-items: center; margin-top: var(--space-4); flex-wrap: wrap; }
+.search .input { font-size: 15px; width: 220px; padding: 10px 14px; text-transform: uppercase; }
+.search .input::placeholder { text-transform: none; }
+.hint { font-size: 12.5px; color: var(--color-neutral-700); margin: 6px 0 0; }
+.problem { margin: var(--space-2) 0 0; color: var(--color-accent-700); font-weight: 600; }
+
+.results-head h3 { font-size: 22px; margin: var(--space-4) 0 0; }
+.notes { font-size: 12.5px; color: var(--color-neutral-700); margin: 6px 0 var(--space-3); }
+
+.stations { width: 100%; table-layout: fixed; }
+.stations td { vertical-align: top; padding: 12px 8px; }
+.stations .c { text-align: center; }
+.stations col.station { width: 34%; }
+.brand { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); }
+.sname { font-weight: 600; }
+.addr { font-size: 12.5px; color: var(--color-neutral-700); }
+.dist { font-weight: 600; white-space: nowrap; }
+.price { font-size: 17px; font-weight: 600; white-space: nowrap; }
+.upd { font-size: 11.5px; color: var(--color-neutral-700); }
+/* A price more than 30 days old: only its "Updated …" line in terracotta (John, 30 October, "something gentler"). */
+.upd.old { color: var(--color-accent-700); }
+.cheap-tag { display: inline-block; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; background: var(--color-accent); color: var(--color-bg); border-radius: 999px; padding: 1px 8px; margin: 2px 0; font-weight: 600; }
+.unusual { font-size: 11.5px; color: var(--color-accent-700); }
+.none { color: var(--color-neutral-700); font-size: 13px; }
+.closed-tag { display: inline-block; font-size: 12px; background: var(--color-neutral-100); color: var(--color-neutral-800); border-radius: 999px; padding: 2px 10px; }
+tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 0.7; }
+
+.cards { display: flex; flex-direction: column; gap: var(--space-3); }
+.pcard { background: var(--color-surface); border-radius: 20px; padding: var(--space-3) var(--space-4); }
+.pcard-top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.pcard .grid { display: grid; grid-template-columns: 84px 1fr; row-gap: 8px; column-gap: 10px; margin-top: 10px; }
+.pcard .lbl { font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-neutral-700); padding-top: 4px; }
+
+.about { margin-top: var(--space-8); max-width: 760px; }
+.about h3 { font-size: 20px; margin: 0 0 var(--space-2); }
+.about p { margin: 0 0 var(--space-2); font-size: 14px; }
+
+.message { margin-top: var(--space-4); }
+.message .btn { margin-top: var(--space-2); }
+
+.footer-notice { margin-top: 64px; padding-top: var(--space-3); border-top: 1px solid var(--color-divider); font-size: 12px; line-height: 1.6; color: var(--color-neutral-700); text-align: center; }
+.footer-notice p { margin: 0 0 6px; }
+
+.nav-right { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
+.theme-switch { display: inline-flex; align-items: center; gap: 8px; flex: none; background: none; border: 0; padding: 4px 0; cursor: pointer; color: var(--color-neutral-700); font: inherit; }
+.theme-switch:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; border-radius: 999px; }
+.theme-switch-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.theme-switch-track { position: relative; width: 46px; height: 26px; border-radius: 999px; background: color-mix(in srgb, var(--color-text) 18%, transparent); transition: background 0.2s; }
+.theme-switch-knob { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--color-bg); box-shadow: 0 1px 3px #0004; display: grid; place-items: center; color: var(--color-accent); transition: transform 0.2s; }
+.theme-switch[aria-checked="true"] .theme-switch-track { background: var(--color-accent); }
+.theme-switch[aria-checked="true"] .theme-switch-knob { transform: translateX(20px); }
+.theme-switch svg { width: 12px; height: 12px; display: block; }
+@media (prefers-reduced-motion: reduce) {
+  .theme-switch-track, .theme-switch-knob { transition: none; }
+}
+
+@media (max-width: 720px) {
+  .nav { padding: var(--space-3) var(--space-4); }
+  .col { padding: 0 var(--space-4) var(--space-6); }
+  .page-head h2 { font-size: 28px; }
+  .search .input { font-size: 16px; flex: 1; min-width: 0; }
+  .search .btn { min-height: 44px; }
+  .theme-switch { min-height: 44px; }
+  .theme-switch-label { display: none; }
+}
+/* Any touch screen, whatever its width (an iPad gets the computer layout): 16px boxes, so iPhone and iPad don't zoom. */
+@media (pointer: coarse) {
+  .input { font-size: 16px; }
+}
+
+@media print {
+  [data-noprint] { display: none !important; }
+  tr, .pcard { break-inside: avoid; }
+}
+
+/* Dark mode: Hindcaster's agreed colours (HOUSE-STYLE §2), following the device unless the visitor switches
+   (src/lib/theme.ts). Screen only, so a printed page is always light. */
+@media screen {
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --color-bg: #2a2723;
+    --color-surface: #37332e;
+    --color-text: #e8dfcf;
+    --color-accent: #dd8a56;
+    --color-divider: color-mix(in srgb, #e8dfcf 16%, transparent);
+    --color-neutral-100: #423d36;
+    --color-neutral-700: #b0a593;
+    --color-neutral-800: #e3d9c7;
+    --color-accent-100: #4a2a14;
+    --color-accent-300: #b2622d;
+    --color-accent-600: #e8935d;
+    --color-accent-700: #f2a573;
+    --color-accent-800: #ffc6a5;
+    --color-accent-2-100: #2f3a20;
+    --color-accent-2-800: #d4e4b8;
+    --shadow-sm: 0 0 0 1px color-mix(in srgb, #e8dfcf 6%, transparent), 0 1px 2px #0006;
+    --shadow-md: 0 0 0 1px color-mix(in srgb, #e8dfcf 7%, transparent), 0 3px 10px #0008;
+    --shadow-lg: 0 0 0 1px color-mix(in srgb, #e8dfcf 8%, transparent), 0 12px 32px #000a;
+  }
+}

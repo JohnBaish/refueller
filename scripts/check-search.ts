@@ -196,5 +196,12 @@ await check('the eight: temporarily closed left out; an unusual price never mark
   assert.deepEqual(r.rows.map((x) => x.cheapest.e10), [false, true]);
 });
 
+await check('the page footer carries the credit lines from the Open Names licence file, word for word', () => {
+  const credits: string[] = JSON.parse(readFileSync(new URL('../data/outcodes.json', import.meta.url), 'utf8')).credits;
+  const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8').replace(/\s+/g, ' ');
+  assert.equal(credits.length, 3);
+  for (const c of credits) assert.ok(app.includes(c.endsWith('.') ? c : `${c}.`), c);
+});
+
 console.log(failures === 0 ? '\nAll search checks passed.' : `\n${failures} search check(s) FAILED.`);
 process.exitCode = failures === 0 ? 0 : 1;

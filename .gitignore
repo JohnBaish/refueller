@@ -31,3 +31,4 @@ dist-ssr
 # Lambda package (built by the "Build Lambda package" workflow)
 dist-lambda
 *.zip
+public/data

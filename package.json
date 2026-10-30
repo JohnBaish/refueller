@@ -5,16 +5,30 @@
   "type": "module",
   "scripts": {
     "lint": "oxlint",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.app.json",
     "check": "node scripts/check-probe.ts && node scripts/check-collect.ts && node scripts/check-search.ts && node scripts/check-lambda.ts",
     "probe": "node scripts/probe.ts",
     "build:lambda": "node scripts/build-lambda.mjs",
-    "outcodes": "node scripts/build-outcodes.ts"
+    "outcodes": "node scripts/build-outcodes.ts",
+    "dev": "vite",
+    "build": "npm run typecheck && vite build",
+    "preview": "vite preview"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
     "esbuild": "^0.28.2",
     "oxlint": "^1.79.0",
-    "typescript": "~6.0.2"
+    "typescript": "~6.0.2",
+    "vite": "^8.3.5"
+  },
+  "dependencies": {
+    "@fontsource/caprasimo": "^5.3.0",
+    "@fontsource/figtree": "^5.3.0",
+    "@vercel/analytics": "^2.0.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   }
 }
