@@ -1,5 +1,5 @@
 import { Component, useEffect, useState, type FormEvent, type ReactNode } from 'react';
-import { REPORT_URL, Results } from './components/Results.tsx';
+import { REPORT_URL, Results, type Target } from './components/Results.tsx';
 import { ThemeSwitch } from './components/ThemeSwitch.tsx';
 import { loadIndex } from './lib/load.ts';
 import { readPostcode, type PostcodeResult } from './lib/search.ts';
@@ -8,9 +8,13 @@ import { readPostcode, type PostcodeResult } from './lib/search.ts';
 // after "#" (#RG4: browsers never send that part, and the visit statistics drop it) and on this device as the last choice.
 const CHOICE = 'refueller.choice';
 
-function fromHash(): string | null {
-  const h = decodeURIComponent(location.hash.slice(1)).toUpperCase();
-  return /^[A-Z]{1,2}\d[A-Z\d]?$/.test(h) ? h : null;
+// The address after "#": a postcode district (#RG4) or a station (#station/RG/d20f21e97871, "Centre on this station").
+function fromHash(): Target | null {
+  const h = decodeURIComponent(location.hash.slice(1));
+  const st = /^station\/([A-Za-z]{1,2})\/([0-9a-f]{12})$/.exec(h);
+  if (st) return { kind: 'station', area: st[1].toUpperCase(), id: st[2] };
+  const o = h.toUpperCase();
+  return /^[A-Z]{1,2}\d[A-Z\d]?$/.test(o) ? { kind: 'postcode', outcode: o } : null;
 }
 function remembered(): string | null {
   try {
@@ -147,11 +151,17 @@ class SafetyNet extends Component<{ children: ReactNode }, { failed: boolean }> 
   }
 }
 
+const fromRemembered = (): Target | null => {
+  const o = remembered();
+  return o ? { kind: 'postcode', outcode: o } : null;
+};
+const hashOf = (t: Target) => (t.kind === 'postcode' ? t.outcode : `station/${t.area}/${t.id}`);
+
 export default function App() {
-  const [outcode, setOutcode] = useState<string | null>(() => fromHash() ?? remembered());
+  const [target, setTarget] = useState<Target | null>(() => fromHash() ?? fromRemembered());
   useEffect(() => {
     const onHash = () => {
-      setOutcode(fromHash());
+      setTarget(fromHash());
       window.scrollTo(0, 0);
     };
     window.addEventListener('hashchange', onHash);
@@ -159,10 +169,10 @@ export default function App() {
   }, []);
   // A remembered district opens with its address, so Back and sharing behave as if it had been typed.
   useEffect(() => {
-    if (outcode && !fromHash()) history.replaceState(null, '', `#${outcode}`);
-  }, [outcode]);
+    if (target && !fromHash()) history.replaceState(null, '', `#${hashOf(target)}`);
+  }, [target]);
 
-  const start = outcode === null;
+  const start = target === null;
   return (
     <>
       <nav className="nav" data-noprint>
@@ -178,9 +188,9 @@ export default function App() {
           <div className="card-kicker">Fuel prices</div>
           <h2>{start ? 'Check fuel prices near you' : 'Refueller'}</h2>
           {start && <p className="lead">Enter a postcode to see the eight nearest petrol stations, with their unleaded and diesel prices and opening times.</p>}
-          <SearchBox start={start} initial={outcode ?? ''} />
+          <SearchBox start={start} initial={target?.kind === 'postcode' ? target.outcode : ''} />
         </div>
-        <SafetyNet key={outcode ?? ''}>{outcode && <Results outcode={outcode} />}</SafetyNet>
+        <SafetyNet key={target ? hashOf(target) : ''}>{target && <Results target={target} />}</SafetyNet>
         {!start && <About />}
         <footer className="footer-notice" data-noprint>
           {/* The source lines only where prices are shown; the postcode screen keeps just the project and privacy lines

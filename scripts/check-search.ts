@@ -14,6 +14,8 @@ import {
   higherPricesUsual,
   hoursLookWrong,
   hoursProblem,
+  nearestFrom,
+  postcodeArea,
   openText,
   outcodeOf,
   positionAgrees,
@@ -260,6 +262,23 @@ await check('higher prices usual: Highlands and Islands and Scilly not marked un
   assert.deepEqual(row('island')[7], [208.8, u, 0], 'high island price: mark removed');
   assert.deepEqual(row('island')[8], [150, u, 1], 'low island price: still marked');
   assert.deepEqual(row('mainland')[8], [230, u, 1], 'mainland: still marked');
+});
+
+await check('centre on a station: the eight from its own position, itself first; areas from postcodes', () => {
+  assert.equal(postcodeArea('RG4 8RZ'), 'RG');
+  assert.equal(postcodeArea('B1 1AA'), 'B');
+  assert.equal(postcodeArea('CW13HD'), 'CW');
+  const u = '2026-10-30T09:00:00Z';
+  const [lat, lon] = outcodes.RG4;
+  const here = st({ id: 'aaaaaaaaaaaa', lat, lon });
+  const others = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => st({ id: `b${k}`.padEnd(12, '0'), lat: lat + k * 0.01, lon }));
+  const prices = Object.fromEntries([here, ...others].map((s, k) => [s.id, { e10: { p: 170 + k, u } }]));
+  const rows = nearestFrom(lat, lon, [...others, here], prices, outcodes, bank, at('2026-10-30T12:00:00Z'));
+  assert.equal(rows.length, 8);
+  assert.equal(rows[0].station.id, 'aaaaaaaaaaaa', 'the station itself first');
+  assert.equal(rows[0].miles, 0);
+  assert.equal(rows[0].cheapest.e10, true, 'and marked cheapest when it is');
+  assert.equal(rows[7].station.id, 'b70000000000', 'the ninth left out');
 });
 
 console.log(failures === 0 ? '\nAll search checks passed.' : `\n${failures} search check(s) FAILED.`);

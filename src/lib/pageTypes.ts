@@ -3,9 +3,11 @@ import type { BankHolidays, Outcodes, Price, Station } from './search.ts';
 
 // A station's details as the page needs them, in a short fixed order to keep the files small.
 // [name, brand, address lines joined by "|", postcode, hours ("|"-joined, one entry when every day is the same; "" when not
-//  given), bank-holiday type and hours ("type|hours" or ""), flags ("m" motorway, "s" supermarket), unleaded, diesel]
+//  given), bank-holiday type and hours ("type|hours" or ""), flags ("m" motorway, "s" supermarket), unleaded, diesel,
+//  the station's own code (the first 12 characters of Fuel Finder's, as in data/; it stays the same from one collection to the
+//  next, so a "Centre on this station" address keeps working)]
 // where a price is [pence, last updated as given, 1 if unusual] or 0 when the station doesn't sell that fuel.
-export type DetailRow = [string, string, string, string, string, string, string, PriceCell, PriceCell];
+export type DetailRow = [string, string, string, string, string, string, string, PriceCell, PriceCell, string];
 export type PriceCell = [number, string, 0 | 1] | 0;
 
 export type PageIndex = {
@@ -21,8 +23,8 @@ export type PageIndex = {
 };
 
 // The page's side of DetailRow: back into a Station and its prices (src/lib/search.ts types).
-export function fromDetail(row: DetailRow, lat: number, lon: number, id: string): { station: Station; prices: { e10?: Price; diesel?: Price } } {
-  const [name, brand, address, postcode, hours, bh, flags, e10, diesel] = row;
+export function fromDetail(row: DetailRow, lat: number, lon: number): { station: Station; prices: { e10?: Price; diesel?: Price } } {
+  const [name, brand, address, postcode, hours, bh, flags, e10, diesel, id] = row;
   const h = hours === '' ? null : hours.includes('|') ? hours.split('|') : Array(7).fill(hours);
   const [bhType, bhHours] = bh === '' ? ['', ''] : bh.split('|');
   const price = (c: PriceCell): Price | undefined => (c === 0 ? undefined : c[2] ? { p: c[0], u: c[1], x: 1 } : { p: c[0], u: c[1] });

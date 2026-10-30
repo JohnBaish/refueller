@@ -112,6 +112,8 @@ function addDays(date: string, n: number): string {
 
 // Scotland's bank holidays differ from England and Wales's. Decided by the station's postcode area (TD15, Berwick, is English).
 const SCOTTISH = /^(AB|DD|DG|EH|FK|G|HS|IV|KA|KW|KY|ML|PA|PH|ZE)\d|^TD(?!15$)\d/;
+// A postcode's area, the letters at the start ("RG" for RG4 8RZ); the page's data files are split by it.
+export const postcodeArea = (postcode: string) => /^[A-Z]+/.exec(outcodeOf(postcode))?.[0] || 'other';
 export const division = (postcode: string) => (SCOTTISH.test(outcodeOf(postcode)) ? 'scotland' : 'england-and-wales');
 
 const toMins = (hhmm: string) => Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3, 5));
@@ -284,6 +286,13 @@ export type Row = { station: Station; miles: number; prices: { e10?: Price; dies
 
 export function nearestEight(outcode: string, stations: Station[], prices: Prices, outcodes: Outcodes, bank: BankHolidays, ms: number) {
   const [lat, lon, place] = outcodes[outcode];
+  const rows = nearestFrom(lat, lon, stations, prices, outcodes, bank, ms);
+  return { place, rows, closedNow: rows.filter((r) => r.open.open === false).length };
+}
+
+// The eight nearest to any point: the middle of a postcode district, or a station's own position ("Centre on this station",
+// John, 30 October), with their opening states and the cheapest of each fuel marked.
+export function nearestFrom(lat: number, lon: number, stations: Station[], prices: Prices, outcodes: Outcodes, bank: BankHolidays, ms: number): Row[] {
   const rows: Row[] = stations
     .filter((s) => !s.temporarilyClosed && positionAgrees(s, outcodes))
     .map((s) => ({ station: s, miles: milesBetween(lat, lon, s.lat, s.lon), prices: prices[s.id] ?? {}, open: { open: null } as OpenState, cheapest: { e10: false, diesel: false } }))
@@ -299,5 +308,5 @@ export function nearestEight(outcode: string, stations: Station[], prices: Price
       if (p && !p.x && p.p === low) r.cheapest[fuel] = true;
     }
   }
-  return { place, rows, closedNow: rows.filter((r) => r.open.open === false).length };
+  return rows;
 }

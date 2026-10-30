@@ -994,3 +994,21 @@ dark colours. Checked for the other rule, no bold Caprasimo: nothing on the page
 **John:** the domain, Web Analytics, Search Console and the baish.net landing card wait until more features are built; he is not
 sure about the straight-line approach for "may be close to the route", to be discussed. PLAN Stage 6 and idea 3 updated. Next:
 John chooses which feature to build first.
+
+### 2026-10-30 — "Centre on this station" built (branch `feature-centre-station`)
+
+**John** agreed the order of work (centre on a station, then the calculator, then the 14-day graph, then "may be close to the
+route") and said go. **What:** a "Centre on this station" link under each station (table and phone cards; 44px tall on a phone)
+opens `#station/<area>/<code>`: the eight nearest to that station's own position, itself first with "This station" in place of a
+distance, and no link of its own. Heading "Eight nearest stations to Caversham Esso Express", notes "Straight-line distances from
+Caversham Esso Express." The address uses the station's own 12-character code, now carried as a tenth field in the area files
+(`DetailRow`), so it keeps working after each collection; a code no longer listed says "That station isn't listed any more. Try a
+postcode instead." `nearestFrom()` in `src/lib/search.ts` (nearestEight now uses it), `postcodeArea()` shared with
+`scripts/lib/pageData.ts`; `App.tsx` reads either kind of address. Nothing is sent anywhere: the address after "#" stays in the
+browser and the visit statistics drop it. Not remembered as the last choice (reopening the page still goes to the last postcode).
+Wording drafted, for John: "This station", the heading, the not-listed message.
+
+**Checked:** `npm run check` (new check: the eight from a station, itself first and cheapest, the ninth left out; areas from
+postcodes), lint, both type-checks, build; at 1200px and 390px with touch: RG4 shows eight links, the second opens Caversham Esso
+Express's eight (seven links), Back returns to RG4, a reload keeps the station, an unknown code gives the message, no errors, no
+sideways scroll. Pictures `design/previews/centre-*.png`.

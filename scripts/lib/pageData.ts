@@ -11,14 +11,13 @@
 // district (src/lib/search.ts, positionAgrees). Prices and their "last updated" times go through exactly as collected.
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { higherPricesUsual, outcodeOf, positionAgrees, type BankHolidays, type Outcodes, type Price, type Station } from '../../src/lib/search.ts';
+import { higherPricesUsual, positionAgrees, postcodeArea, type BankHolidays, type Outcodes, type Price, type Station } from '../../src/lib/search.ts';
 import type { DetailRow, PageIndex, PriceCell } from '../../src/lib/pageTypes.ts';
 
 export type { DetailRow, PageIndex, PriceCell };
 
 export const SOURCES = ['data/stations.json', 'data/prices.json', 'data/outcodes.json', 'data/bank-holidays.json'];
 
-const area = (postcode: string) => /^[A-Z]+/.exec(outcodeOf(postcode))?.[0] ?? '';
 const round4 = (n: number) => Math.round(n * 1e4) / 1e4;
 const cell = (p: Price | undefined): PriceCell => (p ? [p.p, p.u, p.x ? 1 : 0] : 0);
 // The collector marks a price "unusual" by the middle price for all Great Britain; a high price where higher prices are usual
@@ -40,7 +39,7 @@ export function makePageData(stations: Station[], prices: Record<string, { e10?:
       leftOut.farFromPostcode++;
       continue;
     }
-    const a = area(s.postcode) || 'other';
+    const a = postcodeArea(s.postcode);
     if (!byArea.has(a)) {
       byArea.set(a, []);
       areas.push(a);
@@ -53,7 +52,7 @@ export function makePageData(stations: Station[], prices: Record<string, { e10?:
     const p = higherPricesUsual(s.postcode) ? { e10: unmark(given.e10, meta.middle.e10), diesel: unmark(given.diesel, meta.middle.diesel) } : given;
     // Four decimal places (about 10 metres) is plenty for distances shown to a tenth of a mile, and keeps the index small.
     points.push([round4(s.lat), round4(s.lon), areas.indexOf(a), rows.length]);
-    rows.push([s.name, s.brand, s.address.join('|'), s.postcode, hours, bh, flags, cell(p.e10), cell(p.diesel)]);
+    rows.push([s.name, s.brand, s.address.join('|'), s.postcode, hours, bh, flags, cell(p.e10), cell(p.diesel), s.id]);
   }
   const index: PageIndex = {
     version: meta.collected.replace(/[^0-9TZ]/g, '').slice(0, 15),
