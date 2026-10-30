@@ -43,7 +43,9 @@ h1, h2, h3 { font-family: Caprasimo, serif; font-weight: 400; margin: 0; }
 .addr { font-size: 12.5px; color: var(--color-neutral-700); }
 .price { font-size: 17px; font-weight: 600; white-space: nowrap; }
 .upd { font-size: 11.5px; color: var(--color-neutral-700); white-space: nowrap; }
-.old { color: var(--color-accent-700); font-weight: 600; }
+.old { color: var(--color-accent-700); }
+.closed-tag { display: inline-block; font-size: 12px; background: var(--color-neutral-100); color: var(--color-neutral-800); border-radius: 999px; padding: 2px 10px; }
+tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 0.7; }
 .cheap-tag { display: inline-block; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; background: var(--color-accent); color: var(--color-bg); border-radius: 999px; padding: 1px 8px; margin-left: 6px; vertical-align: 2px; font-weight: 600; }
 .cheap-cell { background: color-mix(in srgb, var(--color-accent) 14%, transparent); border-radius: 10px; }
 .cheap-cell .price { color: var(--color-accent-700); }
@@ -117,40 +119,46 @@ function priceHtml(s, f) {
   const cheap = !p.x && p.p === cheapest[f];
   const tag = cheap && cheapStyle === 'tag' ? '<span class="cheap-tag">Cheapest</span>' : '';
   const old = isOld(p.u);
-  return `<div class="price mono">${p.p.toFixed(1)}p${tag}</div><div class="upd${old ? ' old' : ''}">${updated(p.u)}${old ? ' · may be out of date' : ''}</div>` +
+  return `<div class="price mono">${p.p.toFixed(1)}p${tag}</div><div class="upd${old ? ' old' : ''}">${updated(p.u)}</div>` +
     (p.x ? `<div class="unusual">Unusual price, may be a mistake. <a href="#">Report it</a></div>` : '');
 }
 const cellClass = (s, f) => { const p = s.prices?.[f]; return p && !p.x && p.p === cheapest[f] && cheapStyle !== 'tag' ? ' cheap-cell' : ''; };
 function untilText(s) {
   if (s.open === null) return 'Opening hours not given';
+  if (s.open === false) {
+    if (!s.next) return '<span class="closed-tag">Closed</span>';
+    const t = clock(s.next.time);
+    const when = s.next.days === 0 ? t : s.next.days === 1 ? `${t} tomorrow` : `${s.next.weekday} ${t}`;
+    return `<span class="closed-tag">Closed until ${when}</span>`;
+  }
   if (s.until === '24h' || s.until === '23:59') return s.until === '24h' ? 'Open 24 hours' : 'Open until midnight';
   return `Open until ${clock(s.until)}`;
 }
 const addr = (s) => `${[...new Set(s.address.map(tidy))].join(', ')}, ${s.postcode}`;
-const nowText = when === 'day' ? 'Friday at 12.30pm' : 'Friday at 11.30pm';
+const nowText = when === 'day' ? 'Friday 12.30pm' : 'Friday 11.30pm';
 const collected = '9.08am today';
 
 function header() {
-  return `<div class="head"><div class="card-kicker">Fuel prices</div><h2>${view === 'start' ? 'Find the cheapest fuel near you' : 'Refueller'}</h2>
-  <p class="lead">${view === 'start' ? 'Enter a postcode to see the eight nearest open petrol stations, with their unleaded and diesel prices.' : ''}</p>
+  return `<div class="head"><div class="card-kicker">Fuel prices</div><h2>${view === 'start' ? 'Check fuel prices near you' : 'Refueller'}</h2>
+  <p class="lead">${view === 'start' ? 'Enter a postcode to see the eight nearest petrol stations, with their unleaded and diesel prices and opening times.' : ''}</p>
   <div class="search"><input class="input" value="${view === 'start' ? '' : 'RG4'}" placeholder="RG4 or RG4 7HN" aria-label="Postcode"><button class="btn btn-primary">Go</button></div>
   ${view === 'start' ? '<div class="hint">Only the first half (RG4) is used. Nothing you type leaves this page.</div>' : ''}</div>`;
 }
 function resultsHead() {
-  const W = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
-  const n = state.closedNearer;
-  const extra = n > 0 ? ` ${n < 10 ? W[n] : n} nearer station${n === 1 ? ' is' : 's are'} closed at this time.` : '';
-  return `<div class="results-head"><h3>Eight nearest open stations to RG4 (Caversham)</h3></div>
-  <p class="notes">Open now (${nowText}).${extra} Straight-line distances from the middle of RG4. Prices collected at ${collected}, as reported by each station; they may have changed since. <a href="#">Report a wrong price</a></p>`;
+  const W = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight'];
+  const n = state.closedCount;
+  const extra = n > 0 ? ` ${W[n]} of them ${n === 1 ? 'is' : 'are'} closed now (${nowText}).` : '';
+  return `<div class="results-head"><h3>Eight nearest stations to RG4 (Caversham)</h3></div>
+  <p class="notes">Straight-line distances from the middle of RG4.${extra} Prices collected at ${collected}, as reported by each station; they may have changed since. <a href="#">Report a wrong price</a>.</p>`;
 }
 function table(list) {
   return `<table class="table${cheapStyle !== 'tag' ? ' cheap-bold' : ''}"><thead><tr><th>Station</th><th class="num">Distance</th><th class="num">Unleaded (E10)</th><th class="num">Diesel</th><th>Open</th></tr></thead><tbody>` +
-    list.map((s) => `<tr><td><div class="brand">${s.brand}</div><div class="sname">${tidy(s.name)}</div><div class="addr">${addr(s)}</div></td>
+    list.map((s) => `<tr class="${s.open === false ? 'closed' : ''}"><td><div class="brand">${s.brand}</div><div class="sname">${tidy(s.name)}</div><div class="addr">${addr(s)}</div></td>
     <td class="num mono dist">${miles(s.miles)}</td><td class="num${cellClass(s,'e10')}">${priceHtml(s,'e10')}</td><td class="num${cellClass(s,'diesel')}">${priceHtml(s,'diesel')}</td><td class="openuntil">${untilText(s)}</td></tr>`).join('') + '</tbody></table>';
 }
 function cards(list) {
-  return `<div class="cards${cheapStyle !== 'tag' ? ' cheap-bold' : ''}">` + list.map((s) => `<div class="pcard"><div class="pcard-top"><div><div class="brand">${s.brand}</div><div class="sname">${tidy(s.name)}</div></div><div class="dist mono">${miles(s.miles)}</div></div>
-  <div class="grid"><div class="lbl">Unleaded</div><div class="${cellClass(s,'e10')}">${priceHtml(s,'e10')}</div><div class="lbl">Diesel</div><div class="${cellClass(s,'diesel')}">${priceHtml(s,'diesel')}</div><div class="lbl">Open</div><div>${untilText(s)}</div><div class="lbl">Address</div><div class="addr">${addr(s)}</div></div></div>`).join('') + '</div>';
+  return `<div class="cards${cheapStyle !== 'tag' ? ' cheap-bold' : ''}">` + list.map((s) => `<div class="pcard${s.open === false ? ' closed' : ''}"><div class="pcard-top"><div><div class="brand">${s.brand}</div><div class="sname">${tidy(s.name)}</div></div><div class="dist mono">${miles(s.miles)}</div></div>
+  <div class="grid"><div class="lbl">Unleaded</div><div class="${cellClass(s,'e10')}">${priceHtml(s,'e10')}</div><div class="lbl">Diesel</div><div class="${cellClass(s,'diesel')}">${priceHtml(s,'diesel')}</div><div class="lbl">Open</div><div class="openv">${untilText(s)}</div><div class="lbl">Address</div><div class="addr">${addr(s)}</div></div></div>`).join('') + '</div>';
 }
 function illustration() {
   // Made-up variations of real stations, to show the special cases; labelled as such.
@@ -159,7 +167,7 @@ function illustration() {
   base[1].prices.e10 = { p: base[1].prices.e10.p, u: '2026-09-12T10:00:00Z' };
   delete base[2].prices.diesel;
   return `<div class="illus"><div class="illus-label">Illustration only: real stations with made-up problems, to show how each would look</div>
-  <p class="notes">1: an unusual price (more than 30p from the middle price), never marked cheapest. 2: a price more than 30 days old. 3: a station that doesn’t sell diesel.</p>
+  <p class="notes">1: an unusual price (more than 30p from the middle price), never marked cheapest. 2: a price more than 30 days old (its date in a stronger colour). 3: a station that doesn’t sell diesel.</p>
   ${narrow ? cards(base) : table(base)}</div>`;
 }
 function footer() {

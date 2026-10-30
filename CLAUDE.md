@@ -738,3 +738,12 @@ diesel). RG4's centre is Hindcaster's district centre (OS Open Names), turned in
 (capitals to ordinary case, BP and MFG kept); towns not repeated in addresses. All wording is draft, for John. Checked: both fonts
 loaded, no sideways scroll at 1200px or at 390px with touch. **Seen in the real data:** 30-day-old diesel prices are common near
 Reading. Not merged.
+
+### 2026-10-30 — mock-ups, round 2 (branch `stage-4-mockups`)
+
+**John:** "Updated 3 days ago" (not the date); the "Cheapest" tag (not shading); a gentler mark for prices more than 30 days old
+(now just the "Updated …" line in terracotta, no "may be out of date"); station names in ordinary capitals, yes; the postcode
+screen's heading "Check fuel prices near you". **Closed stations stay in the list** with "Closed until 7am tomorrow" (a grey pill,
+the row a little faded); the heading is now "Eight nearest stations to RG4 (Caversham)" and the note says how many are closed
+(SPEC §4 item 4 changed). Full stop after "Report a wrong price". Pictures `design/previews/mock-2-*.png`. Sorting by column and
+full postcodes stay for later (SPEC Q10, Q4).
