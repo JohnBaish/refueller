@@ -362,3 +362,24 @@ Not to be worked on yet: a "More fuels" choice (super unleaded, premium
 diesel, HVO); a map; price history from our own snapshots; filters (motorway
 services, supermarkets, 24 hours); Northern Ireland; the cheapest station
 within a chosen distance; county or region pages for search.
+
+**Asked for by John (30 October 2026), to come after launch:**
+
+1. **A 14-day price graph for a station:** how its unleaded and diesel prices have changed over the last 14 days,
+   beside the average of the eight stations shown. Notes from checking:
+   - *Fair Use policy:* nothing in it forbids history or comparisons. What applies: comparisons must be "based on
+     objective criteria" and not "misleading", prices shown "in an unbiased manner", timestamps not altered. An
+     average of the same eight stations, with each price drawn as reported and stepping at its own "price set"
+     time, meets that. The graph should say what the average is of, and treat a station with no price for a fuel
+     plainly (left out of that fuel's average, and said so), so no trader looks better or worse than the data shows.
+   - *Where the history comes from:* every collection is already a commit to `data/prices.json` on `main`, from 30
+     October 2026, so the build can rebuild 14 days of prices from git history (about 28 collections). Nothing new to
+     collect. Until 14 days have passed, the graph has less to show.
+   - *Size:* 14 days for every station would roughly double the page's area files, so it should load only when a
+     visitor opens a station's graph (still the same files for every visitor, so nothing about a search reaches the
+     server).
+   - Follow the house rules for charts (HOUSE-STYLE §5; the dataviz skill), and agree a mock-up first.
+2. **"Centre on this station":** a button on each station that searches again from that station's own position (not
+   its postcode district, whose middle can be a mile or more away), so a visitor heading that way can see if anything
+   further on is cheaper. Worked out in the browser like every search; the address after "#" would need a form for a
+   station, e.g. `#station/<id>`.

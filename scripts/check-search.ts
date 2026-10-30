@@ -11,6 +11,7 @@ import {
   nearestEight,
   openState,
   hoursLookWrong,
+  hoursProblem,
   openText,
   outcodeOf,
   positionAgrees,
@@ -109,17 +110,31 @@ await check('hours that look wrong: 12-hour slips and evening-only days; genuine
   assert.equal(hoursLookWrong(st({ hours: week('22:00-06:00') })), false, 'open overnight');
   assert.equal(hoursLookWrong(st()), false);
   assert.equal(hoursLookWrong(st({ hours: week('24h') })), false);
+  // The explanation under "More" (John, 30 October).
+  assert.equal(
+    hoursProblem(whittington),
+    'The station gives its hours on Mondays, Tuesdays, Thursdays and Fridays as 6pm to 10pm, but on Wednesdays as 6am to 10pm. 6pm is exactly 12 hours after 6am, so 6pm may have been entered by mistake.',
+  );
+  assert.equal(
+    hoursProblem(st({ hours: [...week('18:30-21:30').slice(0, 6), '07:00-16:30'] })),
+    'The station gives its hours on Mondays to Saturdays as 6.30pm to 9.30pm. Very few petrol stations open only in the evening, so these hours may have been entered by mistake.',
+  );
+  assert.equal(
+    hoursProblem(st({ hours: ['06:00-10:00', ...week('06:00-22:00').slice(1)], bankHoliday: { type: 'bank holiday', hours: '06:00-22:00' } })),
+    'The station gives its hours on Mondays as 6am to 10am, but on Tuesdays to Sundays and bank holidays as 6am to 10pm. 10am is exactly 12 hours before 10pm, so 10am may have been entered by mistake.',
+  );
+  assert.equal(hoursProblem(st()), null);
 });
 
-await check('updated: hours and days, and old after 30 whole days', () => {
+await check('updated: hours and days, and old after 45 whole days', () => {
   const now = at('2026-10-30T12:30:00Z');
   assert.equal(updatedText('2026-10-30T12:00:00Z', now), 'Price set less than an hour ago');
   assert.equal(updatedText('2026-10-30T11:00:00Z', now), 'Price set 1 hour ago');
   assert.equal(updatedText('2026-10-29T15:30:00Z', now), 'Price set 21 hours ago');
   assert.equal(updatedText('2026-10-29T12:00:00Z', now), 'Price set 1 day ago');
   assert.equal(updatedText('2026-09-26T12:00:00Z', now), 'Price set 34 days ago');
-  assert.equal(isOld('2026-09-30T10:00:00Z', now), false, '30 days');
-  assert.equal(isOld('2026-09-29T10:00:00Z', now), true, '31 days');
+  assert.equal(isOld('2026-09-15T10:00:00Z', now), false, '45 days');
+  assert.equal(isOld('2026-09-14T10:00:00Z', now), true, '46 days');
 });
 
 await check('open: ordinary hours, closing time, and closed until the next opening', () => {

@@ -119,18 +119,49 @@ export type OpenState =
   | { open: false; next: { days: number; time: string; weekday: string } | null }
   | { open: null; wrong?: true }; // hours not given, or (wrong) given but implausible
 
-// Hours that can't be right, almost always a 12-hour slip (John, 30 October: "Opening hours look wrong", no more detail; never
-// corrected, as the Fair Use policy says alter nothing). A station's hours look wrong when any day, bank holidays included:
-//   - opens at 6pm or later and closes the same evening (Whittington Garage 6pm-10pm; Asda Harwich 6.30pm-9.30pm on weekdays);
+// Hours that can't be right, almost always a 12-hour slip (John, 30 October: "Opening hours look wrong", with a "More" button
+// that explains which rule caught them; never corrected, as the Fair Use policy says alter nothing). Caught when any day, bank
+// holidays included:
 //   - opens exactly 12 hours later than another day that closes at the same time (6pm-10pm beside 6am-10pm);
-//   - closes exactly 12 hours earlier than another day that opens at the same time (6am-10am beside 6am-10pm).
-// Genuinely short hours, such as an island shop's 12-2pm, aren't caught.
-export function hoursLookWrong(s: Station): boolean {
-  const spans = [...(s.hours ?? []), s.bankHoliday?.hours ?? '']
-    .filter((h) => /^\d\d:\d\d-\d\d:\d\d$/.test(h))
-    .map((h) => h.split('-').map(toMins) as [number, number]);
-  return spans.some(([o, c]) => (o >= 18 * 60 && c > o) || spans.some(([o2, c2]) => (o === o2 + 720 && c === c2) || (o === o2 && c === c2 - 720)));
+//   - closes exactly 12 hours earlier than another day that opens at the same time (6am-10am beside 6am-10pm);
+//   - opens at 6pm or later and closes the same evening (Asda Harwich 6.30pm-9.30pm on weekdays).
+// Genuinely short hours, such as an island shop's 12-2pm, aren't caught. Returns the explanation shown under "More", or null.
+const PLURAL = ['Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays', 'Sundays', 'bank holidays'];
+function daysText(days: number[]): string {
+  const week = days.filter((d) => d < 7);
+  const names =
+    week.length >= 3 && week[week.length - 1] - week[0] === week.length - 1 ? [`${PLURAL[week[0]]} to ${PLURAL[week[week.length - 1]]}`] : week.map((d) => PLURAL[d]);
+  if (days.includes(7)) names.push(PLURAL[7]);
+  return names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0];
 }
+export function hoursProblem(s: Station): string | null {
+  const given = [...(s.hours ?? []), s.bankHoliday?.hours ?? ''];
+  const spans = given.map((h) => (/^\d\d:\d\d-\d\d:\d\d$/.test(h) ? (h.split('-').map(toMins) as [number, number]) : null));
+  const on = (h: string) => given.flatMap((g, i) => (g === h ? [i] : []));
+  const range = (h: string) => h.split('-').map(clockText).join(' to ');
+  const time = (m: number) => clockText(`${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`);
+  for (const [i, a] of spans.entries()) {
+    if (!a) continue;
+    for (const [j, b] of spans.entries()) {
+      if (!b || i === j) continue;
+      const late = a[0] === b[0] + 720 && a[1] === b[1];
+      const early = a[0] === b[0] && a[1] === b[1] - 720;
+      if (!late && !early) continue;
+      const odd = late ? a[0] : a[1];
+      const usual = late ? b[0] : b[1];
+      return (
+        `The station gives its hours on ${daysText(on(given[i]))} as ${range(given[i])}, but on ${daysText(on(given[j]))} as ${range(given[j])}. ` +
+        `${time(odd)} is exactly 12 hours ${late ? 'after' : 'before'} ${time(usual)}, so ${time(odd)} may have been entered by mistake.`
+      );
+    }
+  }
+  for (const [i, a] of spans.entries()) {
+    if (a && a[0] >= 18 * 60 && a[1] > a[0])
+      return `The station gives its hours on ${daysText(on(given[i]))} as ${range(given[i])}. Very few petrol stations open only in the evening, so these hours may have been entered by mistake.`;
+  }
+  return null;
+}
+export const hoursLookWrong = (s: Station) => hoursProblem(s) !== null;
 
 // Open now, and until when; or closed, and when it next opens (looking up to a week ahead). Hours that run past midnight
 // ("22:00-02:00") count on the next morning too.
@@ -198,8 +229,9 @@ export function updatedText(iso: string, ms: number): string {
   return `Price set ${hours} hour${hours === 1 ? '' : 's'} ago`;
 }
 
-// More than 30 days old (John, 28 October: marked, never hidden).
-export const isOld = (iso: string, ms: number) => Math.floor((ms - Date.parse(iso)) / 86_400_000) > 30;
+// More than 45 days old (John, 28 October: marked, never hidden; 30 October: 45 days, not 30, as a price that hasn't changed may
+// still be right).
+export const isOld = (iso: string, ms: number) => Math.floor((ms - Date.parse(iso)) / 86_400_000) > 45;
 
 // Fuel Finder gives most names in capitals. Shown in ordinary capitalisation (John, 30 October), except: a name or address line
 // that already has small letters is left exactly as the station typed it ("PC&AT Hudson"); words with no vowel are taken as

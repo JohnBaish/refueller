@@ -34,10 +34,14 @@ a { color: var(--color-accent-700); }
 .dist { font-weight: 600; white-space: nowrap; }
 .price { font-size: 17px; font-weight: 600; white-space: nowrap; }
 .upd { font-size: 11.5px; color: var(--color-neutral-700); }
-/* A price more than 30 days old: only its "Price set …" line in terracotta (John, 30 October, "something gentler"). */
-.upd.old { color: var(--color-accent-700); }
+/* Notes, not faults: a price set more than 45 days ago, and an unusual price. In blue, as orange marks the cheapest (John,
+   30 October). */
+:root { --color-note: #3f5f8a; }
+.upd.old { color: var(--color-note); }
 .cheap-tag { display: inline-block; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; background: var(--color-accent); color: var(--color-bg); border-radius: 999px; padding: 1px 8px; margin: 2px 0; font-weight: 600; }
-.unusual { font-size: 11.5px; color: var(--color-accent-700); }
+.unusual { font-size: 11.5px; color: var(--color-note); }
+.more-btn { background: none; border: 0; padding: 2px 4px; font: inherit; font-size: 12.5px; color: var(--color-accent-700); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.more-text { font-size: 12.5px; color: var(--color-neutral-700); text-align: left; margin: 4px 0 0; }
 .none { color: var(--color-neutral-700); font-size: 13px; }
 .closed-tag { display: inline-block; font-size: 12px; background: var(--color-neutral-100); color: var(--color-neutral-800); border-radius: 999px; padding: 2px 10px; }
 tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 0.7; }
@@ -80,6 +84,7 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
   .search .input { font-size: 16px; flex: 1; min-width: 0; }
   .search .btn { min-height: 44px; }
   .theme-switch { min-height: 44px; }
+  .more-btn { min-height: 44px; min-width: 44px; }
   .theme-switch-label { display: none; }
 }
 /* Any touch screen, whatever its width (an iPad gets the computer layout): 16px boxes, so iPhone and iPad don't zoom. */
@@ -97,6 +102,7 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
 @media screen {
   :root[data-theme="dark"] {
     color-scheme: dark;
+    --color-note: #9fb8dc;
     --color-bg: #2a2723;
     --color-surface: #37332e;
     --color-text: #e8dfcf;

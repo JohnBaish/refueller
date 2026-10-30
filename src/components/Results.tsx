@@ -4,6 +4,7 @@ import { loadArea, loadIndex } from '../lib/load.ts';
 import { useIsNarrow } from '../lib/responsive.ts';
 import {
   clockText,
+  hoursProblem,
   isOld,
   milesBetween,
   milesText,
@@ -71,8 +72,20 @@ function PriceCell({ p, cheapest, fuel, now }: { p?: Price; cheapest: boolean; f
 }
 
 function OpenCell({ row }: { row: Row }) {
+  const [more, setMore] = useState(false);
   const text = openText(row.open);
-  return row.open.open === false ? <span className="closed-tag">{text}</span> : <>{text}</>;
+  if (row.open.open === false) return <span className="closed-tag">{text}</span>;
+  if (row.open.open !== null || !row.open.wrong) return <>{text}</>;
+  // Hours that look wrong: "More" explains which rule caught them (John, 30 October).
+  return (
+    <>
+      <div>{text}</div>
+      <button type="button" className="more-btn" aria-expanded={more} onClick={() => setMore((m) => !m)}>
+        {more ? 'Less' : 'More'}
+      </button>
+      {more && <p className="more-text">{hoursProblem(row.station)}</p>}
+    </>
+  );
 }
 
 function Table({ rows, now }: { rows: Row[]; now: number }) {

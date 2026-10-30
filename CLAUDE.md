@@ -863,3 +863,21 @@ restored), lint, both type-checks, build; PE33, KT12 and CO12 at 1200px and 390p
 House", Whittington and Asda Harwich "Opening hours look wrong", no "Updated" left, no sideways scroll, no errors.
 **Noticed, not changed:** Whittington Garage's address repeats "King's Lynn, PE33 9TF" (its first line holds the whole
 address); trader typos such as "Holden Renualt" are shown as given.
+
+### 2026-10-30 — 45 days, a note colour, "More" for hours, the graph in the plan (branch `stage-5-page`)
+
+**John:** old prices marked after 45 days, not 30 (an unchanged price may be right); a colour other than orange for the
+notes, as orange marks the cheapest; the hours bullet reworded ("the hours given by the station are unlikely to be right
+(often 6pm given for 6am)." and nothing after); a "More" button explaining which rule caught a station's hours; and the
+14-day price graph added to the plan (with a check against the Fair Use policy).
+
+**What:** `isOld` is more than 45 days. `--color-note` (slate blue `#3f5f8a`, dark `#9fb8dc`; contrast 4.9:1 on the light
+cards, 6.2:1 on the dark) for "Price set …" over 45 days and the "Unusual price" note; plum was the other option shown
+(`design/previews/note-colour-options.png`). `hoursProblem()` returns the plain-English reason (the 12-hour comparison when
+there is one, else the evening-only rule; days grouped, "Mondays to Saturdays", "bank holidays"); `hoursLookWrong` uses it.
+`OpenCell` shows "More"/"Less" under "Opening hours look wrong" (44px tap target on phones) and the reason beneath. About
+reworded to match. PLAN "Ideas logged for later": the 14-day graph and "Centre on this station", with notes.
+
+**Checked:** `npm run check` (new: the three kinds of explanation, 45/46 days), lint, both type-checks, build; PE33 and RG9 at
+1200px light and dark and 390px with touch: More opens and closes, reason as above, no sideways scroll, no errors.
+**Noticed for John:** several "unusual" prices are genuine island prices (Scilly 209p, Hebrides 208.8p and 232.8p, Raasay).

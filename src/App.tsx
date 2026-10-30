@@ -107,15 +107,15 @@ function About() {
         <li>
           <strong>Cheapest</strong> marks the lowest unleaded and the lowest diesel price among the stations shown.
         </li>
-        <li>“Price set …” turns orange when the price was set more than 30 days ago, so it’s worth checking.</li>
+        <li>“Price set …” is shown in blue when the price was set more than 45 days ago.</li>
         <li>
-          An orange “Unusual price” note means the price is more than 30p away from the middle price across Great Britain,
+          A blue “Unusual price” note means the price is more than 30p away from the middle price across Great Britain,
           and may be a mistake. It is never marked as the cheapest.
         </li>
         <li>A grey “Closed until …” means the station is closed now; its row is shown fainter.</li>
         <li>
-          “Opening hours look wrong” means the hours the station gave can’t be right (often 6pm given for 6am), so check
-          before you go.
+          “Opening hours look wrong” means the hours given by the station are unlikely to be right (often 6pm given for
+          6am).
         </li>
       </ul>
       <p>
