@@ -383,3 +383,19 @@ within a chosen distance; county or region pages for search.
    its postcode district, whose middle can be a mile or more away), so a visitor heading that way can see if anything
    further on is cheaper. Worked out in the browser like every search; the address after "#" would need a form for a
    station, e.g. `#station/<id>`.
+3. **Cheapest on the way (John, 30 October):** type where you're going as well as where you are, and see the three cheapest
+   prices roughly on the way, compared with the station nearest the start, and the same at the other end. Notes from
+   checking:
+   - *No routing service:* a real road route would mean sending both postcodes to a routing company (against "nothing a
+     visitor types goes to a third party") and, for most, a key and limits. Instead, worked out in the browser: a station
+     counts as "on the way" when going via it adds only a little straight-line distance (start to station to destination,
+     less start to destination; for example no more than 3 miles), and the list says so plainly ("roughly on the way, as
+     the crow flies"). It will sometimes be wrong where roads bend a long way from the straight line (estuaries, the
+     Highlands, crossing water), so the wording must make the approximation clear.
+   - *What to show:* for each fuel, the three cheapest on the way with their extra distance, against the station nearest
+     the start; and the three cheapest near the destination against the one nearest it. Ranking by price and extra distance
+     is objective, so it sits within the Fair Use policy.
+   - *Data:* a long journey crosses many postcode areas, so either more area files load, or the index carries each
+     station's two prices (it would grow a little). Decide with a mock-up.
+   - The calculator (stage 7) fits here: whether the cheaper price pays for the extra miles.
+

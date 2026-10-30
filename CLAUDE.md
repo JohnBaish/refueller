@@ -910,3 +910,10 @@ only a mix of capitals and small letters is left as typed, and a line all in sma
 ("Trewellard Garage Petrol Station", "R S Morphet Ltd"). 118 names and address lines on 30 October, all read through: sensible,
 apart from what the stations' own typing can't tell us ("je garner" shows as "Je Garner", probably J E Garner).
 `npm run check` (new checks), lint, type-check, build.
+
+### 2026-10-30 — idea: cheapest on the way (notes only)
+
+John: type a destination too, and see the three cheapest prices roughly on the way against the station nearest the start, and the
+same at the other end. Added to PLAN "Ideas logged for later" (item 3) with notes: no routing service (it would send both
+postcodes to a third party), so "on the way" means a small extra straight-line distance, worked out in the browser and worded as
+an approximation; objective ranking, so within the Fair Use policy; data and the calculator to settle with a mock-up.
