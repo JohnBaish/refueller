@@ -988,3 +988,9 @@ on RG1's results (Reading), no errors, no sideways scroll. Picture `design/previ
 Merging stage 6 met the other session's house-style entry (clockwheel `674122d`) in this file; both entries kept. As that entry
 asks, `src/styles/global.css` now has the finer text smoothing in dark mode (HOUSE-STYLE §2), in the screen-only block after the
 dark colours. Checked for the other rule, no bold Caprasimo: nothing on the page sets the heading font bold (it is 400 everywhere).
+
+### 2026-10-30 — launch steps held back; more features first (notes only)
+
+**John:** the domain, Web Analytics, Search Console and the baish.net landing card wait until more features are built; he is not
+sure about the straight-line approach for "may be close to the route", to be discussed. PLAN Stage 6 and idea 3 updated. Next:
+John chooses which feature to build first.

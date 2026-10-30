@@ -316,6 +316,11 @@ Branch: `stage-5-page`
 
 ## Stage 6 — launch
 
+**Status, 30 October 2026:** done and merged: favicon, link-preview image and tags, canonical, robots.txt, sitemap.xml.
+**Held back by John until more features are built** ("some of the fancy stuff" first): the `refueller.baish.net` domain,
+Web Analytics, Search Console, the baish.net landing card with the hub's description, and the overview PDF. Until then the
+page is only on Vercel's own address.
+
 Branch: `stage-6-launch`
 
 Favicon options and a link-preview image (shown to John before wiring in,
@@ -393,7 +398,8 @@ within a chosen distance; county or region pages for search.
      visitor types goes to a third party") and, for most, a key and limits. Instead, worked out in the browser: a station
      counts as on the way when going via it adds only a little straight-line distance (start to station to destination,
      less start to destination; for example no more than 3 miles). Wording (John, 30 October): "may be close to the route",
-     with the rule explained in "About these figures". It will sometimes be wrong where roads bend a long way from the straight line (estuaries, the
+     with the rule explained in "About these figures". John is not sure about the straight-line ("as the crow flies")
+     approach (30 October): to be discussed before any mock-up. It will sometimes be wrong where roads bend a long way from the straight line (estuaries, the
      Highlands, crossing water), so the wording must make the approximation clear.
    - *What to show:* for each fuel, the three cheapest on the way with their extra distance, against the station nearest
      the start; and the three cheapest near the destination against the one nearest it. Ranking by price and extra distance
