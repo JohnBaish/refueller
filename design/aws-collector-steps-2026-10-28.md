@@ -14,8 +14,12 @@ and tell me what you see.
 
 1. On GitHub, open the repo's **Actions** tab, choose **Build Lambda packages** on the left, then **Run workflow** (branch
    `main`), then the green **Run workflow** button.
-2. When it finishes (green tick, about a minute), open the run and scroll to **Artifacts**. Download
-   **refueller-collector-lambda**.
+2. When it finishes (green tick, about a minute), click the run's name in the list ("Build Lambda packages").
+   That opens the run's own page, headed "Build Lambda packages #…" with a **Summary** box (Status: Success,
+   Artifacts: 2). On that page, either click the **2** under **Artifacts**, or scroll down past **Annotations**
+   to the **Artifacts** list. It shows two files; click **refueller-collector-lambda** to download it (the other,
+   refueller-probe-lambda, isn't needed). A yellow warning under Annotations about "Node.js 20 is deprecated" is
+   about GitHub's own tools, not ours, and can be ignored.
 3. In Downloads, right-click it and choose **Extract all**, then **Extract**. In the folder that opens is **refueller-collector**
    (a "Compressed (zipped) Folder"). That's the file to upload. Don't extract that one.
 
