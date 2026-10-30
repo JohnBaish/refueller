@@ -713,3 +713,15 @@ GitHub's new "Add permissions" box. **The collector's GitHub key expires 28 Janu
 John kept); in PLAN's "Dates to remember" with the AWS free plan's end and the GitHub API version cut-off. The project tracker
 (`JohnBaish/baish.net-directory`) couldn't be updated from this session: adding that repo was refused by the session's
 permission check, so John was asked.
+
+### 2026-10-30 — the collector's first real run: green (notes only)
+
+John made the function `refueller-collector` and pressed Test (09:08 UTC, 30.5 s, 37 Fuel Finder requests). **Saved commit `75d892d`
+"Data: 2026-10-30 09:08 UTC"** with `data/stations.json` (7,535 stations, 2.4 MB), `data/prices.json` (887 KB), `data/bank-holidays.json`
+and `data/runs/2026-10.jsonl`; together 626 KB compressed. Fetched 8,146 stations and 8,141 price records; left out 591 outside Great
+Britain and 20 with neither fuel; none closed, none out of range; 48 temporarily closed; 3 with hours not given; middle prices E10
+172.7p, diesel 199.9p; **16 unusual prices**, most of them old ones (last updated February to July) or 299.9p entries. Checked from
+the repo: no Northern Ireland, Isle of Man or Channel Islands postcodes; nothing secret in any file. **Correction:** the probe's
+"about 6,200 in Great Britain" counted by the unreliable `country` field; by postcode it is 7,535 (8,146 less 591 and 20).
+**For later (Stage 5):** the page should load a smaller file made at build time; and `prices.json` changes every run, so watch the
+repo's size. Next: John sets up the timetable (Part 5).
