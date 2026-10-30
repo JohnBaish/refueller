@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fromBritishGrid, toBritishGrid } from './lib/grid.ts';
+import { makePageData } from './lib/pageData.ts';
 import {
   clockText,
   division,
@@ -10,6 +11,7 @@ import {
   milesText,
   nearestEight,
   openState,
+  higherPricesUsual,
   hoursLookWrong,
   hoursProblem,
   openText,
@@ -240,6 +242,22 @@ await check('the page footer carries the credit lines from the Open Names licenc
   const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8').replace(/\s+/g, ' ');
   assert.equal(credits.length, 3);
   for (const c of credits) assert.ok(app.includes(c.endsWith('.') ? c : `${c}.`), c);
+});
+
+await check('higher prices usual: Highlands and Islands and Scilly not marked unusual when high; low still marked', () => {
+  for (const pc of ['ZE2 9AR', 'HS1 2AA', 'KW15 1AA', 'IV51 9JS', 'PA77 6UP', 'PA20 0AA', 'PH33 6AA', 'KA27 8AA', 'TR21 0JY']) assert.equal(higherPricesUsual(pc), true, pc);
+  for (const pc of ['PA1 1AA', 'PA19 1AA', 'PH1 1AA', 'PH18 5AA', 'TR1 1AA', 'TR20 8AA', 'TR26 1AA', 'KA1 1AA', 'RG9 5QL', 'AB10 1AA']) assert.equal(higherPricesUsual(pc), false, pc);
+  const [lat, lon] = outcodes.HS1;
+  const island = st({ id: 'island', postcode: 'HS1 2AA', lat, lon });
+  const [rlat, rlon] = outcodes.RG9;
+  const mainland = st({ id: 'mainland', postcode: 'RG9 5QL', lat: rlat, lon: rlon });
+  const u = '2026-10-30T09:00:00Z';
+  const prices = { island: { e10: { p: 208.8, u, x: 1 as const }, diesel: { p: 150, u, x: 1 as const } }, mainland: { diesel: { p: 230, u, x: 1 as const } } };
+  const { index, byArea } = makePageData([island, mainland], prices, outcodes, bank, { collected: u, middle: { e10: 171.9, diesel: 199.9 }, unusualPence: 30 });
+  const row = (id: string) => { const [, , a, i] = index.points[[island, mainland].findIndex((x) => x.id === id)]; return byArea.get(index.areas[a])![i]; };
+  assert.deepEqual(row('island')[7], [208.8, u, 0], 'high island price: mark removed');
+  assert.deepEqual(row('island')[8], [150, u, 1], 'low island price: still marked');
+  assert.deepEqual(row('mainland')[8], [230, u, 1], 'mainland: still marked');
 });
 
 console.log(failures === 0 ? '\nAll search checks passed.' : `\n${failures} search check(s) FAILED.`);

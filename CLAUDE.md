@@ -881,3 +881,24 @@ reworded to match. PLAN "Ideas logged for later": the 14-day graph and "Centre o
 **Checked:** `npm run check` (new: the three kinds of explanation, 45/46 days), lint, both type-checks, build; PE33 and RG9 at
 1200px light and dark and 390px with touch: More opens and closes, reason as above, no sideways scroll, no errors.
 **Noticed for John:** several "unusual" prices are genuine island prices (Scilly 209p, Hebrides 208.8p and 232.8p, Raasay).
+
+### 2026-10-30 — high prices on the islands not marked unusual (branch `stage-5-page`)
+
+**John:** slate blue agreed; if there's a good reason a price isn't unusual, don't mark it at all, and say in About which ones are
+let off and why ("unless …").
+
+**What:** `higherPricesUsual(postcode)` in `src/lib/search.ts`: the Highlands and Islands (ZE, HS, KW, IV; PA20 and above, not
+Paisley's PA1-19; PH19 and above, not Perth's PH1-18; KA27-28 Arran and Cumbrae) and the Isles of Scilly (TR21-25). At build
+time `scripts/lib/pageData.ts` removes the collector's "unusual" mark from a price above the GB middle there, so it is shown
+plainly and can be the cheapest; a price far below the middle is still marked. The collector (on AWS) is unchanged, so
+`data/prices.json` still carries the mark. On 30 October this lets off 7 prices at 5 stations (Scilly, Skerries, Raasay, Tiree,
+Cluanie Inn), out of 181 stations in those areas. About's "Unusual price" bullet now ends "…, and may be a mistake, unless the
+station is in the Highlands and Islands of Scotland or on the Isles of Scilly, where higher prices are usual: there, a higher
+price isn't marked. An unusual price is never marked as the cheapest." (draft, for John).
+
+**Checked:** `npm run check` (new: the areas, including Paisley, Perth, Penzance and Truro left out, and the build step: a high
+island price unmarked, a low one and a mainland one still marked; making the rule unmark low prices instead made it fail; the
+check was first added after the file's summary line and so not counted, then moved), lint, both type-checks, build. Typed RG9 5QL,
+TQ1 4AH, PE33 9TF, IV51 9JS, TR21 0JY and PA77 6UP at 1200px and 390px with touch: an unusual note only at RG9, the blue 45-day
+line at TQ1, "More" at PE33, none of the island prices marked; no sideways scroll, no errors.
+**Found:** every unusual price outside those areas on 30 October is also more than 45 days old.

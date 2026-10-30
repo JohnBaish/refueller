@@ -110,7 +110,9 @@ function About() {
         <li>“Price set …” is shown in blue when the price was set more than 45 days ago.</li>
         <li>
           A blue “Unusual price” note means the price is more than 30p away from the middle price across Great Britain,
-          and may be a mistake. It is never marked as the cheapest.
+          and may be a mistake, unless the station is in the Highlands and Islands of Scotland or on the Isles of Scilly,
+          where higher prices are usual: there, a higher price isn’t marked. An unusual price is never marked as the
+          cheapest.
         </li>
         <li>A grey “Closed until …” means the station is closed now; its row is shown fainter.</li>
         <li>

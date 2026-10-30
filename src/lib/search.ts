@@ -68,6 +68,16 @@ export function outcodeOf(postcode: string): string {
 // On 30 October this left out 5 of 7,535 stations, each placed 30 to 97 miles from its postcode district.
 export const POSITION_CHECK_MILES = 25;
 export const POSITION_CHECK_MILES_REMOTE = 60;
+// Where higher prices are usual, so a high price there isn't marked "unusual" (John, 30 October: "unless …", said in About):
+// the Highlands and Islands of Scotland (ZE, HS, KW, IV, Argyll's PA20 and above, Highland's PH19 and above, Arran and
+// Cumbrae's KA27-28) and the Isles of Scilly (TR21-25). A price far below the middle is still marked anywhere.
+export function higherPricesUsual(postcode: string): boolean {
+  const m = /^([A-Z]+)(\d+)/.exec(outcodeOf(postcode));
+  if (!m) return false;
+  const [a, n] = [m[1], Number(m[2])];
+  return ['ZE', 'HS', 'KW', 'IV'].includes(a) || (a === 'PA' && n >= 20) || (a === 'PH' && n >= 19) || (a === 'KA' && (n === 27 || n === 28)) || (a === 'TR' && n >= 21 && n <= 25);
+}
+
 const REMOTE = /^(ZE|HS|KW|IV|PA|PH)\d/;
 export function positionAgrees(s: Station, outcodes: Outcodes): boolean {
   const o = outcodeOf(s.postcode);

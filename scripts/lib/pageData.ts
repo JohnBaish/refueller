@@ -7,11 +7,11 @@
 // The page loads the index, finds the eight nearest stations, then loads only the areas those eight are in. Every visitor
 // loads the same files whatever they type, so nothing about a search reaches the server.
 //
-// Left out here, once for all visitors: temporarily closed stations, and stations placed far from their own postcode
+// Also here: high prices in the Highlands and Islands and on Scilly aren't marked unusual. Left out here, once for all visitors: temporarily closed stations, and stations placed far from their own postcode
 // district (src/lib/search.ts, positionAgrees). Prices and their "last updated" times go through exactly as collected.
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { outcodeOf, positionAgrees, type BankHolidays, type Outcodes, type Price, type Station } from '../../src/lib/search.ts';
+import { higherPricesUsual, outcodeOf, positionAgrees, type BankHolidays, type Outcodes, type Price, type Station } from '../../src/lib/search.ts';
 import type { DetailRow, PageIndex, PriceCell } from '../../src/lib/pageTypes.ts';
 
 export type { DetailRow, PageIndex, PriceCell };
@@ -21,6 +21,10 @@ export const SOURCES = ['data/stations.json', 'data/prices.json', 'data/outcodes
 const area = (postcode: string) => /^[A-Z]+/.exec(outcodeOf(postcode))?.[0] ?? '';
 const round4 = (n: number) => Math.round(n * 1e4) / 1e4;
 const cell = (p: Price | undefined): PriceCell => (p ? [p.p, p.u, p.x ? 1 : 0] : 0);
+// The collector marks a price "unusual" by the middle price for all Great Britain; a high price where higher prices are usual
+// (src/lib/search.ts, higherPricesUsual) loses that mark here, so it is shown plainly and can be the cheapest.
+const unmark = (p: Price | undefined, middle: number | null): Price | undefined =>
+  p && p.x && typeof middle === 'number' && p.p > middle ? { p: p.p, u: p.u } : p;
 
 export function makePageData(stations: Station[], prices: Record<string, { e10?: Price; diesel?: Price }>, outcodes: Outcodes, bank: BankHolidays, meta: { collected: string; middle: PageIndex['middle']; unusualPence: number }) {
   const leftOut = { temporarilyClosed: 0, farFromPostcode: 0 };
@@ -45,7 +49,8 @@ export function makePageData(stations: Station[], prices: Record<string, { e10?:
     const hours = s.hours === null ? '' : new Set(s.hours).size === 1 ? s.hours[0] : s.hours.join('|');
     const bh = s.bankHoliday ? `${s.bankHoliday.type}|${s.bankHoliday.hours ?? ''}` : '';
     const flags = `${s.motorway ? 'm' : ''}${s.supermarket ? 's' : ''}`;
-    const p = prices[s.id] ?? {};
+    const given = prices[s.id] ?? {};
+    const p = higherPricesUsual(s.postcode) ? { e10: unmark(given.e10, meta.middle.e10), diesel: unmark(given.diesel, meta.middle.diesel) } : given;
     // Four decimal places (about 10 metres) is plenty for distances shown to a tenth of a mile, and keeps the index small.
     points.push([round4(s.lat), round4(s.lon), areas.indexOf(a), rows.length]);
     rows.push([s.name, s.brand, s.address.join('|'), s.postcode, hours, bh, flags, cell(p.e10), cell(p.diesel)]);
