@@ -2,6 +2,7 @@ import { Component, useEffect, useState, type FormEvent, type ReactNode } from '
 import { REPORT_URL, Results, type Target } from './components/Results.tsx';
 import { ThemeSwitch } from './components/ThemeSwitch.tsx';
 import { loadIndex } from './lib/load.ts';
+import { ROAD_CREDIT } from './lib/calc.ts';
 import { readPostcode, type PostcodeResult } from './lib/search.ts';
 
 // The page has two states: the postcode screen, and a postcode district's results. The district is kept in the address
@@ -129,6 +130,14 @@ function About() {
         Finder lists as temporarily closed are left out, and so are a few whose position on the map is far from their own
         postcode. Opening times are each station’s usual hours, including bank holidays, and may differ on the day.
       </p>
+      <p>
+        <strong>Worth driving here?</strong> compares a station with the nearest open station in the list selling the same
+        fuel. It works out how much fuel your money buys at the nearer station, how much less it would cost at this one, and
+        how much fuel the extra miles there and back would use, from your car’s miles per gallon (36 for petrol and 43 for
+        diesel to start with, typical figures; change them to your car’s). The extra miles are by road, from the same starting
+        point as the list, using Ordnance Survey’s map of every road; they don’t allow for one-way streets or turns, so a sat
+        nav may give a little more. Where there’s no road figure, type your own. It doesn’t count your time or wear on the car.
+      </p>
     </section>
   );
 }
@@ -209,13 +218,14 @@ export default function App() {
                 Postcode positions: Contains OS data © Crown Copyright and database rights 2026. Contains Royal Mail data © Royal
                 Mail copyright and database right 2026. Contains National Statistics data © Crown copyright and database right 2026.
               </p>
+              <p>Road distances: {ROAD_CREDIT}.</p>
             </>
           )}
           <p>
             Refueller is a free-to-use personal project by John Baish, not connected with the Fuel Finder service. We don’t
             record anything you do here, apart from anonymous visit statistics (no cookies, no personal data), showing us how
-            the site is used. Your device, rather than the website, stores your last choices (postcode district and light or
-            dark mode), so the page opens the same way next time.
+            the site is used. Your device, rather than the website, stores your last choices (postcode district, light or
+            dark mode, and the calculator’s fuel, amount and miles per gallon), so the page opens the same way next time.
           </p>
           <p>
             More free tools at <a href="https://www.baish.net/">www.baish.net</a>. Contact: workshop@baish.net.

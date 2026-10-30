@@ -34,6 +34,27 @@ a { color: var(--color-accent-700); }
 /* "Find stations near this one" (John, 30 October): a small link under the station, like the "More" button. */
 .centre-link { display: inline-block; margin-top: 4px; font-size: 12.5px; color: var(--color-accent-700); text-underline-offset: 3px; }
 .pcard .centre-link { margin-top: 10px; }
+.row-links { display: flex; flex-wrap: wrap; column-gap: 14px; }
+.link-btn { background: none; border: 0; padding: 0; font: inherit; font-size: 12.5px; text-decoration: underline; cursor: pointer; }
+
+/* "Worth driving here?" (PLAN Stage 7): the calculator's panel under a station, as in the mock-ups (design/previews/calc-*). */
+.calc { background: var(--color-bg); border: 1px solid var(--color-divider); border-radius: 16px; padding: var(--space-3) var(--space-4); margin: 4px 0 8px; text-align: left; }
+.pcard .calc { margin-top: 10px; padding: var(--space-3); }
+.calc-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.calc-head h4 { margin: 0; font-size: 18px; }
+.calc-say { font-size: 13px; color: var(--color-neutral-700); margin: 4px 0 var(--space-2); }
+.fuel-btns { display: flex; gap: 8px; margin-bottom: var(--space-3); }
+.fuel-btn { font: inherit; font-weight: 600; font-size: 14px; padding: 6px 16px; border-radius: 999px; border: 1px solid var(--color-divider); background: var(--color-surface); color: var(--color-text); cursor: pointer; }
+.fuel-btn[aria-pressed="true"] { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-bg); }
+.fuel-btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.calc-fields { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-8); align-items: flex-start; }
+.calc-field { display: flex; flex-direction: column; gap: 4px; }
+.calc-lbl { font-size: 12.5px; color: var(--color-neutral-700); }
+.calc-box { display: flex; align-items: center; gap: 8px; font-size: 15px; }
+.calc-box .input { width: 76px; padding: 8px 12px; font-size: 15px; }
+.calc-hint { font-size: 11.5px; color: var(--color-neutral-700); max-width: 220px; }
+.calc-verdict { margin: var(--space-3) 0 4px; font-size: 15px; }
+.calc-small { font-size: 12.5px; color: var(--color-neutral-700); margin: 4px 0 0; }
 .dist { font-weight: 600; white-space: nowrap; }
 .price { font-size: 17px; font-weight: 600; white-space: nowrap; }
 .upd { font-size: 11.5px; color: var(--color-neutral-700); }
@@ -90,6 +111,9 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
   .more-btn { min-height: 44px; min-width: 44px; }
   .centre-link { display: inline-flex; align-items: center; min-height: 44px; }
   .pcard .centre-link { margin-top: 2px; }
+  .fuel-btn { min-height: 44px; }
+  .calc-fields { flex-direction: column; row-gap: var(--space-4); }
+  .calc-box .input { font-size: 16px; }
   .theme-switch-label { display: none; }
 }
 /* Any touch screen, whatever its width (an iPad gets the computer layout): 16px boxes, so iPhone and iPad don't zoom. */
@@ -100,6 +124,7 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
 @media print {
   [data-noprint] { display: none !important; }
   tr, .pcard { break-inside: avoid; }
+  .calc, .calc-row, .row-links { display: none !important; }
 }
 
 /* Dark mode: Hindcaster's agreed colours (HOUSE-STYLE §2), following the device unless the visitor switches

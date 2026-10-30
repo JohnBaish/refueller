@@ -103,6 +103,11 @@ screen or results, the district in the address after "#" and kept as `refueller.
 (from Hindcaster; `refueller.theme`), `src/lib/load.ts`, `src/lib/pageTypes.ts`, `src/styles/` (organic.css and the page's
 global.css). `scripts/lib/pageData.ts` makes `public/data/` at every build (not kept in git): `index.json` (positions, postcode
 districts, bank holidays) and one file per postcode area; the page loads the index, then only the areas of the eight nearest.
+Stage 7 (branch `stage-7-calculator`): "Worth driving here?". `scripts/build-road-miles.ts` (`npm run road-miles <Open Roads data
+folder>`, about 90 s, needs `NODE_OPTIONS=--max-old-space-size=8192`) makes `data/road-miles.json` from every road in OS Open Roads:
+tenths of a mile from each postcode district middle and each station to its 12 nearest stations. `scripts/lib/pageData.ts` splits it
+into `public/data/roads-<built>/<area>.json`. `src/lib/calc.ts` (the sums, wording, remembered choices as `refueller.calc`),
+`src/components/Calc.tsx` (the panel), `scripts/check-calc.ts`.
 
 ## Log
 
@@ -1045,3 +1050,33 @@ Figures worked out from the day's real prices and a road network of every road r
 "Not worth it" (88p of fuel against 57p saved; worth it at 3.1p a litre cheaper); £90 at 50 mpg, "Worth it" (£1.03 saved, 64p of fuel,
 39p better off). The sums checked against the handover's example (38p, 2.05p). Main roads alone proved too coarse for such short
 trips; the findings added to `design/road-routing-feasibility-2026-10-30.md`. Panel styles injected in the browser only; no app code.
+
+### 2026-10-30 — stage 7: the calculator built (branch `stage-7-calculator`)
+
+**John:** "Go for it" on the agreed design (PLAN Stage 7).
+
+**Road miles:** worked out once, here, not on visitors' phones: `scripts/build-road-miles.ts` reads every road in OS Open Roads
+(October 2026: 3.4 million junctions, 4 million links) and finds the shortest route from each of the 2,863 postcode district middles
+and 7,535 stations to their 12 nearest stations (90 seconds in all). `data/road-miles.json` is 2.4 MB (1 MB compressed); the page
+loads only one area's part, when a panel opens (RG: 6 KB compressed). RG4 agrees with the feasibility test (Emmer Green 0.6 miles,
+Reading Extra 2.5). 745 of 34,356 district figures and 1,028 of 90,420 station figures have no road route, almost all on islands
+(PA 49, IV 19, PO 11, KW 9: ferries); there the miles box starts empty and asks. One-way streets aren't known, so figures may be a
+little short.
+
+**The panel:** "Worth driving here?" beside "Find stations near this one" opens it under the station (one at a time). It compares
+with the first open station in the list (nearest as the crow flies) selling the fuel at a usual price; extra miles = twice the
+difference in road miles from where the list is measured, one decimal under 5 miles. Cases: doesn't sell it; unusual price; nothing
+to compare; this is the nearest; same price or dearer. Fuel, £ and mpg remembered (`refueller.calc`). Hidden when printing.
+
+**Drafts for John (Claude's):** the case sentences; "About even:" when the two round to the same; the About paragraph; the footer
+line "Road distances: Contains Ordnance Survey data © Crown copyright and database right 2026." (word for word from the licence file,
+checked); the privacy sentence now lists the calculator's choices. **Two small changes from the mock-ups:** "better off" is worked
+from the rounded figures so it adds up (£1.03 less 60p is 43p, not 42p); and the break-even is rounded up, as it says "at least"
+(1.24p shows as 1.3p, not 1.2p). The fuel buttons are in Figtree, not the mock-up's Caprasimo (house style: no bold Caprasimo).
+
+**Checked:** `npm run check` (new: `scripts/check-calc.ts`, the handover's example 38p and 2.1p, the mock-ups' figures, wording,
+typing, the station compared with, the credit, RG4's road figures, the area split), lint, type-check, build. In Chromium at 1200px
+and 390px with touch, light and dark: RG4's Reading Extra (not worth it at £50 and 36 mpg; worth it, 43p better off, at £90 and 50
+mpg), diesel, the nearest station itself, same price (MFG Leander), a station view, HS1 and ZE2, no road file (empty box, then typed),
+choices kept after a reload, print hides it, no sideways scroll, no errors. Pictures `design/previews/calc-built-*.png`. Not merged.
+

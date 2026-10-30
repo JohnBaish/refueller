@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState, type ReactNode } from 'react';
+import { CalcPanel, type Origin } from './Calc.tsx';
 import { fromDetail, type PageIndex } from '../lib/pageTypes.ts';
 import { loadArea, loadIndex } from '../lib/load.ts';
 import { useIsNarrow } from '../lib/responsive.ts';
@@ -97,18 +98,28 @@ function OpenCell({ row }: { row: Row }) {
 
 // "Find stations near this one" (John, 30 October; first called "Centre on this station"): searches again from that
 // station's own position.
-function CentreLink({ row, centreId }: { row: Row; centreId?: string }) {
-  if (row.station.id === centreId) return null;
+// and "Worth driving here?" (PLAN Stage 7), which opens the calculator under the station.
+type Calc = { openId: string | null; toggle: (id: string) => void; panel: (r: Row) => ReactNode };
+
+function RowLinks({ row, centreId, calc }: { row: Row; centreId?: string; calc: Calc }) {
+  const open = calc.openId === row.station.id;
   return (
-    <a className="centre-link" href={stationHash(row.station)}>
-      Find stations near this one
-    </a>
+    <div className="row-links">
+      {row.station.id !== centreId && (
+        <a className="centre-link" href={stationHash(row.station)}>
+          Find stations near this one
+        </a>
+      )}
+      <button type="button" className="centre-link link-btn" aria-expanded={open} onClick={() => calc.toggle(row.station.id)}>
+        Worth driving here?
+      </button>
+    </div>
   );
 }
 
 const distanceText = (row: Row, centreId?: string) => (row.station.id === centreId ? 'This station' : milesText(row.miles));
 
-function Table({ rows, now, centreId }: { rows: Row[]; now: number; centreId?: string }) {
+function Table({ rows, now, centreId, calc }: { rows: Row[]; now: number; centreId?: string; calc: Calc }) {
   return (
     <div className="table-box">
       <table className="table stations">
@@ -130,24 +141,31 @@ function Table({ rows, now, centreId }: { rows: Row[]; now: number; centreId?: s
         </thead>
         <tbody>
           {rows.map((r) => (
-            <tr key={r.station.id} className={r.open.open === false ? 'closed' : undefined}>
-              <td>
-                <div className="brand">{r.station.brand}</div>
-                <div className="sname">{tidyName(r.station.name)}</div>
-                <div className="addr">{tidyAddress(r.station)}</div>
-                <CentreLink row={r} centreId={centreId} />
-              </td>
-              <td className="c mono dist">{distanceText(r, centreId)}</td>
-              <td className="c">
-                <PriceCell p={r.prices.e10} cheapest={r.cheapest.e10} fuel="e10" now={now} />
-              </td>
-              <td className="c">
-                <PriceCell p={r.prices.diesel} cheapest={r.cheapest.diesel} fuel="diesel" now={now} />
-              </td>
-              <td className="c">
-                <OpenCell row={r} />
-              </td>
-            </tr>
+            <Fragment key={r.station.id}>
+              <tr className={r.open.open === false ? 'closed' : undefined}>
+                <td>
+                  <div className="brand">{r.station.brand}</div>
+                  <div className="sname">{tidyName(r.station.name)}</div>
+                  <div className="addr">{tidyAddress(r.station)}</div>
+                  <RowLinks row={r} centreId={centreId} calc={calc} />
+                </td>
+                <td className="c mono dist">{distanceText(r, centreId)}</td>
+                <td className="c">
+                  <PriceCell p={r.prices.e10} cheapest={r.cheapest.e10} fuel="e10" now={now} />
+                </td>
+                <td className="c">
+                  <PriceCell p={r.prices.diesel} cheapest={r.cheapest.diesel} fuel="diesel" now={now} />
+                </td>
+                <td className="c">
+                  <OpenCell row={r} />
+                </td>
+              </tr>
+              {calc.openId === r.station.id && (
+                <tr className="calc-row">
+                  <td colSpan={5}>{calc.panel(r)}</td>
+                </tr>
+              )}
+            </Fragment>
           ))}
         </tbody>
       </table>
@@ -155,7 +173,7 @@ function Table({ rows, now, centreId }: { rows: Row[]; now: number; centreId?: s
   );
 }
 
-function Cards({ rows, now, centreId }: { rows: Row[]; now: number; centreId?: string }) {
+function Cards({ rows, now, centreId, calc }: { rows: Row[]; now: number; centreId?: string; calc: Calc }) {
   return (
     <div className="cards">
       {rows.map((r) => (
@@ -183,7 +201,8 @@ function Cards({ rows, now, centreId }: { rows: Row[]; now: number; centreId?: s
             <div className="lbl">Address</div>
             <div className="addr">{tidyAddress(r.station)}</div>
           </div>
-          <CentreLink row={r} centreId={centreId} />
+          <RowLinks row={r} centreId={centreId} calc={calc} />
+          {calc.openId === r.station.id && calc.panel(r)}
         </div>
       ))}
     </div>
@@ -236,12 +255,14 @@ export function Results({ target }: { target: Target }) {
   const [found, setFound] = useState<Found | null>(null);
   const [failed, setFailed] = useState<'' | 'load' | 'not-listed'>('');
   const [attempt, setAttempt] = useState(0);
+  const [calcId, setCalcId] = useState<string | null>(null);
   const key = target.kind === 'postcode' ? target.outcode : `${target.area}/${target.id}`;
 
   useEffect(() => {
     let live = true;
     setFailed('');
     setFound(null);
+    setCalcId(null);
     find(target, Date.now())
       .then((f) => live && setFound(f))
       .catch((e) => live && setFailed(e instanceof NotListed ? 'not-listed' : 'load'));
@@ -282,6 +303,13 @@ export function Results({ target }: { target: Target }) {
   const nowUk = ukNow(now);
   const nowText = `${['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][nowUk.day]} ${clockText(`${String(Math.floor(nowUk.mins / 60)).padStart(2, '0')}:${String(nowUk.mins % 60).padStart(2, '0')}`)}`;
   const stale = now - Date.parse(found.index.collected) > 24 * 3_600_000;
+  const origin: Origin = target.kind === 'postcode' ? { area: /^[A-Z]+/.exec(target.outcode)?.[0] ?? '', key: target.outcode } : { area: target.area, key: target.id };
+  // One panel open at a time.
+  const calc: Calc = {
+    openId: calcId,
+    toggle: (id) => setCalcId((c) => (c === id ? null : id)),
+    panel: (r) => <CalcPanel row={r} rows={rows} origin={origin} centreId={found.centreId} roads={found.index.roads} onClose={() => setCalcId(null)} />,
+  };
 
   return (
     <>
@@ -300,7 +328,7 @@ export function Results({ target }: { target: Target }) {
         </a>
         .
       </p>
-      {narrow ? <Cards rows={rows} now={now} centreId={found.centreId} /> : <Table rows={rows} now={now} centreId={found.centreId} />}
+      {narrow ? <Cards rows={rows} now={now} centreId={found.centreId} calc={calc} /> : <Table rows={rows} now={now} centreId={found.centreId} calc={calc} />}
     </>
   );
 }

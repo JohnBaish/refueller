@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "oxlint",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.app.json",
-    "check": "node scripts/check-probe.ts && node scripts/check-collect.ts && node scripts/check-search.ts && node scripts/check-lambda.ts",
+    "check": "node scripts/check-probe.ts && node scripts/check-collect.ts && node scripts/check-search.ts && node scripts/check-calc.ts && node scripts/check-lambda.ts",
     "probe": "node scripts/probe.ts",
     "build:lambda": "node scripts/build-lambda.mjs",
     "outcodes": "node scripts/build-outcodes.ts",

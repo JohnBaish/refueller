@@ -4,19 +4,21 @@
 //   index.json        everything the search needs: each station's position and postcode area, the postcode districts,
 //                     the bank holidays and when the prices were collected (about 100 KB compressed);
 //   <area>.json       the details of each postcode area's stations (names, addresses, hours, prices), a few KB each.
+//   roads-<built>/<area>.json  the calculator's road miles (data/road-miles.json) from that area's postcode districts and
+//                     stations, loaded only when a "Worth driving here?" panel opens (about 6 KB compressed for RG).
 // The page loads the index, finds the eight nearest stations, then loads only the areas those eight are in. Every visitor
 // loads the same files whatever they type, so nothing about a search reaches the server.
 //
 // Also here: high prices in the Highlands and Islands and on Scilly aren't marked unusual. Left out here, once for all visitors: temporarily closed stations, and stations placed far from their own postcode
 // district (src/lib/search.ts, positionAgrees). Prices and their "last updated" times go through exactly as collected.
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { higherPricesUsual, positionAgrees, postcodeArea, type BankHolidays, type Outcodes, type Price, type Station } from '../../src/lib/search.ts';
-import type { DetailRow, PageIndex, PriceCell } from '../../src/lib/pageTypes.ts';
+import type { DetailRow, PageIndex, PriceCell, RoadFile } from '../../src/lib/pageTypes.ts';
 
 export type { DetailRow, PageIndex, PriceCell };
 
-export const SOURCES = ['data/stations.json', 'data/prices.json', 'data/outcodes.json', 'data/bank-holidays.json'];
+export const SOURCES = ['data/stations.json', 'data/prices.json', 'data/outcodes.json', 'data/bank-holidays.json', 'data/road-miles.json'];
 
 const round4 = (n: number) => Math.round(n * 1e4) / 1e4;
 const cell = (p: Price | undefined): PriceCell => (p ? [p.p, p.u, p.x ? 1 : 0] : 0);
@@ -64,8 +66,25 @@ export function makePageData(stations: Station[], prices: Record<string, { e10?:
     areas,
     points,
     leftOut,
+    roads: null,
   };
   return { index, byArea };
+}
+
+// The road miles (data/road-miles.json, scripts/build-road-miles.ts) split by the postcode area of where they start from,
+// so the calculator loads only one small file: a district's area ("RG4" is in RG), or a station's own postcode area.
+type RoadMiles = { credit: string; built: string; districts: RoadFile; stations: RoadFile };
+export function splitRoads(roads: RoadMiles, stations: Station[]) {
+  const areaOf = new Map(stations.map((s) => [s.id, postcodeArea(s.postcode)]));
+  const byArea = new Map<string, RoadFile>();
+  const add = (area: string | undefined, key: string, row: Record<string, number>) => {
+    if (!area) return; // a station no longer listed
+    if (!byArea.has(area)) byArea.set(area, {});
+    byArea.get(area)![key] = row;
+  };
+  for (const [k, row] of Object.entries(roads.districts)) add(/^[A-Z]+/.exec(k)?.[0], k, row);
+  for (const [k, row] of Object.entries(roads.stations)) add(areaOf.get(k), k, row);
+  return byArea;
 }
 
 // Writes public/data/index.json and public/data/<version>/<area>.json (public/data is not kept in git: it's made from data/).
@@ -81,7 +100,13 @@ export function writePageData(root: string) {
   const out = join(root, 'public', 'data');
   rmSync(out, { recursive: true, force: true });
   mkdirSync(join(out, index.version), { recursive: true });
-  writeFileSync(join(out, 'index.json'), JSON.stringify(index));
   for (const [a, rows] of byArea) writeFileSync(join(out, index.version, `${a}.json`), JSON.stringify(rows));
+  if (existsSync(join(root, 'data/road-miles.json'))) {
+    const roads: RoadMiles = read('data/road-miles.json');
+    index.roads = { folder: `roads-${roads.built}`, credit: roads.credit };
+    mkdirSync(join(out, index.roads.folder));
+    for (const [a, file] of splitRoads(roads, st.stations)) writeFileSync(join(out, index.roads.folder, `${a}.json`), JSON.stringify(file));
+  }
+  writeFileSync(join(out, 'index.json'), JSON.stringify(index));
   return index;
 }

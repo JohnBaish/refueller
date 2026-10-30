@@ -20,7 +20,14 @@ export type PageIndex = {
   areas: string[]; // postcode areas, e.g. "RG"
   points: [number, number, number, number][]; // latitude, longitude, area (index into `areas`), row in that area's file
   leftOut: { temporarilyClosed: number; farFromPostcode: number };
+  // Road miles for the calculator (data/road-miles.json): the folder of per-area files, e.g. "roads-2026-10-30", and the OS
+  // credit line; null when the table is missing.
+  roads: { folder: string; credit: string } | null;
 };
+
+// One postcode area's road miles: from each postcode district middle (key "RG4") and each station (its 12-character code)
+// in that area to its 12 nearest stations, in tenths of a mile.
+export type RoadFile = Record<string, Record<string, number>>;
 
 // The page's side of DetailRow: back into a Station and its prices (src/lib/search.ts types).
 export function fromDetail(row: DetailRow, lat: number, lon: number): { station: Station; prices: { e10?: Price; diesel?: Price } } {

@@ -334,7 +334,7 @@ with the hub's description updated, and the overview PDF
 **Link-preview tagline:** "Nearby petrol and diesel prices" (John, 30 October), on the image (`design/og-refueller.html`) and in the
 `og:`/`twitter:` descriptions. **Update it when Refueller gains more features** (the calculator, "may be close to the route").
 
-## Stage 7 — the calculator (next, after John's go on 30 October 2026)
+## Stage 7 — the calculator (built 30 October 2026 on `stage-7-calculator`, waiting for John's look)
 
 Branch: `stage-7-calculator`
 
