@@ -964,3 +964,16 @@ title and search description were agreed on 30 October. The tags point at the fi
 is set up. **Checked:** build, `npm run check`, lint, type-check; `vite preview` at 1200px and 390px with touch: tab title,
 canonical, preview tags and favicon correct, no errors or sideways scroll; robots.txt, sitemap.xml, the image and the favicon
 all served with the right types.
+
+### 2026-10-30 — postcode example RG1; shorter footer on the postcode screen; stage 6 merged to `main`
+
+**John** (on his phone, the stage 6 preview): use Hindcaster's example postcode, "RG1 or RG1 8FR"; the postcode screen doesn't need
+the whole footer; otherwise merge. **What (`src/App.tsx`):** the box's example "RG1 or RG1 8FR", the messages "Please type a
+postcode, such as RG1 8FR." and "Try one like RG1 or RG1 8FR.", the hint "Only the first half (RG1) is used."; on the postcode
+screen the footer keeps only the project and privacy paragraph and the last line, and the Fuel Finder and postcode source lines
+appear with the results (where prices and positions are shown). **Also added (house style §8 and §12, missed before):**
+"Contact: workshop@baish.net." after "More free tools at www.baish.net.", as plain text. **Checked:** checks, lint, type-check,
+build; at 1200px and 390px with touch: the new example, both messages, the short footer on the postcode screen, the full footer
+on RG1's results (Reading), no errors, no sideways scroll. Picture `design/previews/page-start-phone-2026-10-30.png`. Then merged
+`stage-6-launch` into `main` at John's word (favicon, link preview and tags, canonical, robots.txt, sitemap.xml, these changes).
+**Next (John):** add `refueller.baish.net` to the Vercel project and switch on Web Analytics.
