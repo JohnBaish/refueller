@@ -113,6 +113,9 @@ Price history (on `main` since 31 October): `scripts/build-history.ts` and `.git
 Full postcodes (on `main` since 31 October): `scripts/build-postcodes.ts` (`npm run postcodes <Open Names folder>`) makes
 `data/postcodes/<area>.json` (every postcode's position, 16 MB); `scripts/lib/pageData.ts` copies them to
 `public/data/postcodes-<made>/`; `src/lib/postcodes.ts` decodes a district; the address after "#" is `RG4` or `RG4-7HN`.
+Journey planner (on `main` since 31 October): `scripts/build-route-roads.ts` (`npm run route-roads <Open Roads data folder>`) makes
+`data/route-roads.json` (main roads, copied to `public/data/route-<made>.json`); `src/lib/route.ts` (routes, extra miles and minutes, the
+eight, the ends, the address `#route/RG1/BS1[/via]`), `src/components/Journey.tsx`, `scripts/check-route.ts`.
 
 ## Log
 
@@ -1338,3 +1341,8 @@ way") says "0.4 miles from RG1" for the ends; "Extra miles" is still the detour 
 (drafts). **Checked:** `npm run check` (new: the end choice, Costco left out, a tie, no duplicate), type-check, lint, build; RG1 to PE38,
 RG1 to BS1 and CF10 to BS1 at 1200px and 390px with touch, light and dark: the three groups, no errors, no sideways scroll. Picture
 `design/previews/journey-ends-RG1-PE38-*.png`. Not merged.
+
+### 2026-10-31 — journey planner merged to `main`
+
+John said merge; "Extra miles" stays on the end stations (helpful, John). `feature-journey` merged into `main` after bringing in its data
+commits; checks, lint, type-check and build clean first. Live from Vercel's next build. All the drafted journey wording stands.
