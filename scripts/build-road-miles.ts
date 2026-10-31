@@ -25,7 +25,7 @@ type Point = { easting: number; northing: number };
 
 // --- Reading OS Open Roads (the dBase table and the shapes beside it) ----------------------------------------------------
 
-function dbfFields(buf: Buffer) {
+export function dbfFields(buf: Buffer) {
   const headerLength = buf.readUInt16LE(8);
   const recordLength = buf.readUInt16LE(10);
   const fields = new Map<string, { offset: number; length: number }>();
@@ -40,7 +40,7 @@ function dbfFields(buf: Buffer) {
 }
 
 // The first and last point of each road link, in record order.
-function* linkEnds(shp: Buffer): Generator<[number, number, number, number] | null> {
+export function* linkEnds(shp: Buffer): Generator<[number, number, number, number] | null> {
   for (let at = 100; at + 8 <= shp.length; ) {
     const length = shp.readInt32BE(at + 4) * 2;
     const body = at + 8;

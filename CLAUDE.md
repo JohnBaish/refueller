@@ -1285,3 +1285,30 @@ you'd reach them). Not merged.
 John said merge (and confirmed the sitemap was already there: `public/sitemap.xml` and `robots.txt` since 30 October; he is adding
 the sitemap in Search Console). `costco-members` merged into `main` after bringing in its data commits; checks, lint, type-check and
 build clean first. The lowest price anyone can buy being marked too stands, as John said merge after reading it.
+
+### 2026-10-31 — "Find cheaper fuel near the route" built (branch `feature-journey`)
+
+**John:** option b; merge the Costco change (done) and continue. Built with the draft wording from the mock-ups (all for John to
+confirm). **Roads:** `scripts/build-route-roads.ts` (`npm run route-roads <Open Roads data folder>`, about 25 s) makes
+`data/route-roads.json`: motorways, A and B roads from OS Open Roads, chains joined, each link's length and a rough driving time
+(motorway 62 mph … roundabouts 15, as in the mock-ups), 76,543 points and 113,204 links, 2.8 MB (1.2 MB compressed), with the OS credit
+read from the download's licence file (UTF-8: a first build read it as Latin-1 and garbled the ©, which the new check caught).
+`scripts/lib/pageData.ts` copies it to `public/data/route-<made>.json`; the page loads it only when a journey is planned. **The page:**
+`src/lib/route.ts` (the network, nearest main-road point, quickest route by the rough speeds with its miles, extra miles for every station,
+a "via" as two legs, the eight cheapest within three extra miles at a usual price then in the order you'd reach them, the Costco badge
+rule, today's hours, the address `#route/RG1/BS1[/via]`) and `src/components/Journey.tsx` (form with From, Via, To; table on a computer,
+cards on a phone; Unleaded/Diesel, sharing the calculator's remembered fuel; messages for a mistyped or Northern Ireland postcode, a full
+postcode not found, no road route (a ferry), too far from a main road). `src/App.tsx`: the journey page, "Planning a journey? Find cheaper
+fuel near the route." at the bottom (above the footer on the postcode screen, below the list on results; hidden in print), an About
+paragraph, and the footer's privacy line now says "the fuel you chose, and the calculator's amount and miles per gallon". A journey is
+not remembered as the last choice. Also: the Costco badge in the computer table now puts "(Members only)" on a second line inside the
+badge (one line overflowed the narrow price column).
+
+**Checked:** `npm run check` (new `scripts/check-route.ts`: speeds, chain joining, the road file and its credit, Reading to Bristol
+77.6 miles by the M4 with Marlborough more than 3 miles off it, Cardiff to Bristol 43.1, a via, no road to Scilly, the eight and their
+order, the badges, the words, the address; making the list cheapest-first made the order check fail, then restored), lint, both
+type-checks, build. In Chromium at 1200px and 390px with touch, light and dark: the way in on the postcode screen and below RG4's list,
+typing RG1 and BS1 (worked out in about 1.1 s, the same eight as option b), diesel, a via (RG1 8FR to BS1 via OX1, 101 miles), RG1 7ZZ
+not found, Cardiff to Bristol with both badges, Truro to Scilly (no road), a Northern Ireland postcode, nothing typed in any request,
+no errors, no sideways scroll. Pictures `design/previews/journey-built-*.png`, `costco-badge-computer-two-lines.png`. **Couldn't be
+checked:** a real phone's speed with the 1.2 MB road file. Not merged.

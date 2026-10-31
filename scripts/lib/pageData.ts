@@ -6,6 +6,7 @@
 //   <area>.json       the details of each postcode area's stations (names, addresses, hours, prices), a few KB each.
 //   roads-<built>/<area>.json  the calculator's road miles (data/road-miles.json) from that area's postcode districts and
 //                     stations, loaded only when a "Worth driving here?" panel opens (about 6 KB compressed for RG).
+//   route-<made>.json the main roads (data/route-roads.json), loaded only when someone plans a journey (about 1.2 MB compressed).
 // The page loads the index, finds the eight nearest stations, then loads only the areas those eight are in. Every visitor
 // loads the same files whatever they type, so nothing about a search reaches the server.
 //
@@ -19,7 +20,7 @@ import { trim, windowFor, withPrice, type Hist } from '../../src/lib/history.ts'
 
 export type { DetailRow, PageIndex, PriceCell };
 
-export const SOURCES = ['data/postcodes/README.md', 'data/stations.json', 'data/prices.json', 'data/outcodes.json', 'data/bank-holidays.json', 'data/road-miles.json', 'data/history.json'];
+export const SOURCES = ['data/postcodes/README.md', 'data/stations.json', 'data/prices.json', 'data/outcodes.json', 'data/bank-holidays.json', 'data/road-miles.json', 'data/history.json', 'data/route-roads.json'];
 
 const round4 = (n: number) => Math.round(n * 1e4) / 1e4;
 const cell = (p: Price | undefined): PriceCell => (p ? [p.p, p.u, p.x ? 1 : 0] : 0);
@@ -83,6 +84,7 @@ export function makePageData(stations: Station[], prices: Record<string, { e10?:
     roads: null,
     history: null,
     postcodes: null,
+    route: null,
   };
   return { index, byArea };
 }
@@ -137,6 +139,12 @@ export function writePageData(root: string) {
     index.postcodes = { folder: `postcodes-${made}` };
     mkdirSync(join(out, index.postcodes.folder));
     for (const f of readdirSync(pc).filter((f) => f.endsWith('.json'))) copyFileSync(join(pc, f), join(out, index.postcodes.folder, f));
+  }
+  // The main roads for "Find cheaper fuel near the route" (scripts/build-route-roads.ts), named by the date they were made.
+  if (existsSync(join(root, 'data/route-roads.json'))) {
+    const roads = read('data/route-roads.json');
+    index.route = { file: `route-${roads.made}.json`, credit: roads.credit };
+    copyFileSync(join(root, 'data/route-roads.json'), join(out, index.route.file));
   }
   writeFileSync(join(out, 'index.json'), JSON.stringify(index));
   return index;

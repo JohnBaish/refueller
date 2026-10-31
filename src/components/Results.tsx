@@ -38,7 +38,7 @@ export const REPORT_URL = 'https://www.fuel-finder.service.gov.uk/motorist/price
 const WORDS = ['no', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight'];
 
 // The current time, moved on every minute, so "Open until …" and "Same price for …" stay right while the page is open.
-function useNow(): number {
+export function useNow(): number {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const t = window.setInterval(() => setNow(Date.now()), 60_000);
@@ -48,7 +48,7 @@ function useNow(): number {
 }
 
 // "10.15am today", "4.15pm yesterday", "10.15am on October 28th".
-function collectedText(iso: string, now: number): string {
+export function collectedText(iso: string, now: number): string {
   const t = Date.parse(iso);
   const when = ukNow(t);
   const time = clockText(`${String(Math.floor(when.mins / 60)).padStart(2, '0')}:${String(when.mins % 60).padStart(2, '0')}`);
@@ -83,14 +83,14 @@ function Rank({ me, all }: { me: number; all: number[] }) {
   );
 }
 
-function PriceCell({ p, cheapest, fuel, now, all, members }: { p?: Price; cheapest: boolean; fuel: 'e10' | 'diesel'; now: number; all: number[]; members?: boolean }) {
+export function PriceCell({ p, cheapest, fuel, now, all, members }: { p?: Price; cheapest: boolean; fuel: 'e10' | 'diesel'; now: number; all: number[]; members?: boolean }) {
   if (!p) return <span className="none">Doesn’t sell {fuel === 'e10' ? 'unleaded' : 'diesel'}</span>;
   return (
     <>
       <div className="price mono">{p.p.toFixed(1)}p</div>
       {cheapest && (
         <div>
-          {members ? <span className="cheap-tag members-tag">Cheapest (Members only)</span> : <span className="cheap-tag">Cheapest</span>}
+          {members ? <span className="cheap-tag members-tag">Cheapest <span className="members-part">(Members only)</span></span> : <span className="cheap-tag">Cheapest</span>}
         </div>
       )}
       <div className={`upd${isOld(p.u, now) ? ' old' : ''}`}>{updatedText(p.u, now)}</div>

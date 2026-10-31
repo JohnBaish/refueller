@@ -1,6 +1,7 @@
 // Loading the page's data files (scripts/lib/pageData.ts). Every visitor asks for the same files whatever they type: the
 // index, then the postcode areas the eight nearest stations are in. Nothing about a search is in any request.
 import type { DetailRow, PageIndex, RoadFile } from './pageTypes.ts';
+import type { RouteFile } from './route.ts';
 
 let index: Promise<PageIndex> | null = null;
 const areas = new Map<string, Promise<DetailRow[]>>();
@@ -67,4 +68,20 @@ export function loadPostcodes(folder: string, area: string): Promise<Record<stri
     );
   }
   return postcodeFiles.get(key)!;
+}
+
+// The main roads for "Find cheaper fuel near the route", loaded only when someone plans a journey (about 1.2 MB compressed; the
+// browser keeps it, as its name changes only when the roads are rebuilt).
+const routeFiles = new Map<string, Promise<RouteFile>>();
+export function loadRouteRoads(file: string): Promise<RouteFile> {
+  if (!routeFiles.has(file)) {
+    routeFiles.set(
+      file,
+      json<RouteFile>(`/data/${encodeURIComponent(file)}`).catch((e) => {
+        routeFiles.delete(file);
+        throw e;
+      }),
+    );
+  }
+  return routeFiles.get(file)!;
 }

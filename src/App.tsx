@@ -1,9 +1,11 @@
 import { Component, useEffect, useState, type FormEvent, type ReactNode } from 'react';
+import { JourneyForm, JourneyResults } from './components/Journey.tsx';
 import { REPORT_URL, Results, type Target } from './components/Results.tsx';
 import { ThemeSwitch } from './components/ThemeSwitch.tsx';
 import { loadIndex } from './lib/load.ts';
 import { ROAD_CREDIT } from './lib/calc.ts';
 import { fullHash } from './lib/postcodes.ts';
+import { readRouteHash, routeHash, type RouteTarget } from './lib/route.ts';
 import { readPostcode, type PostcodeResult } from './lib/search.ts';
 
 // The page has two states: the postcode screen, and the results for a postcode or district. It is kept in the address after "#"
@@ -11,8 +13,12 @@ import { readPostcode, type PostcodeResult } from './lib/search.ts';
 const CHOICE = 'refueller.choice';
 
 // The address after "#": a postcode district (#RG4) or a station (#station/RG/d20f21e97871, "Find stations near this one").
-function fromHash(): Target | null {
+// Or a journey (#route/RG1/BS1, src/lib/route.ts), which isn't remembered as the last choice.
+type AppTarget = Target | RouteTarget;
+function fromHash(): AppTarget | null {
   const h = decodeURIComponent(location.hash.slice(1));
+  const route = readRouteHash(h);
+  if (route) return route;
   const st = /^station\/([A-Za-z]{1,2})\/([0-9a-f]{12})$/.exec(h);
   if (st) return { kind: 'station', area: st[1].toUpperCase(), id: st[2] };
   return postcodeTarget(h);
@@ -157,6 +163,13 @@ function About() {
         shown. Fuel Finder gives only each station’s current price and when it was set, so the history is Refueller’s own
         record, taken at each collection. A price that changed twice between collections shows only its latest change.
       </p>
+      <p>
+        <strong>Find cheaper fuel near the route</strong> works out the quickest route between the places you type, on your
+        device, from Ordnance Survey’s map of motorways, A roads and B roads, using rough speeds for each kind of road. It lists
+        the eight cheapest stations that add no more than three miles to the journey, there and back, in the order you’d reach
+        them. One-way streets and turns aren’t known and minor roads are left out, so the distances are a guide. Opening hours
+        are today’s, as Refueller can’t know when you’ll get there.
+      </p>
     </section>
   );
 }
@@ -183,10 +196,17 @@ const fromRemembered = (): Target | null => {
   const o = remembered();
   return o ? postcodeTarget(o) : null;
 };
-const hashOf = (t: Target) => (t.kind === 'postcode' ? (t.inward ? fullHash(t.outcode, t.inward) : t.outcode) : `station/${t.area}/${t.id}`);
+const hashOf = (t: AppTarget) => (t.kind === 'route' ? routeHash(t) : t.kind === 'postcode' ? (t.inward ? fullHash(t.outcode, t.inward) : t.outcode) : `station/${t.area}/${t.id}`);
+
+// The way in to the journey planner: at the bottom, as it is secondary (John, 31 October).
+const JourneyLink = () => (
+  <p className="journey-link" data-noprint>
+    Planning a journey? <a href="#route">Find cheaper fuel near the route.</a>
+  </p>
+);
 
 export default function App() {
-  const [target, setTarget] = useState<Target | null>(() => fromHash() ?? fromRemembered());
+  const [target, setTarget] = useState<AppTarget | null>(() => fromHash() ?? fromRemembered());
   useEffect(() => {
     const onHash = () => {
       setTarget(fromHash());
@@ -201,6 +221,7 @@ export default function App() {
   }, [target]);
 
   const start = target === null;
+  const route = target?.kind === 'route' ? target : null;
   return (
     <>
       <nav className="nav" data-noprint>
@@ -212,13 +233,28 @@ export default function App() {
         </div>
       </nav>
       <main className="col">
-        <div className="page-head">
-          <div className="card-kicker">Fuel prices</div>
-          <h2>{start ? 'Check fuel prices near you' : 'Refueller'}</h2>
-          {start && <p className="lead">Enter a postcode to see the eight nearest petrol stations, with their unleaded and diesel prices and opening times.</p>}
-          <SearchBox start={start} initial={target?.kind === 'postcode' ? `${target.outcode}${target.inward ? ` ${target.inward}` : ''}` : ''} />
-        </div>
-        <SafetyNet key={target ? hashOf(target) : ''}>{target && <Results target={target} />}</SafetyNet>
+        {route ? (
+          <div className="page-head">
+            <div className="card-kicker">Fuel prices</div>
+            <h2>Find cheaper fuel near the route</h2>
+            <p className="lead">
+              Type where you’re starting and where you’re going. Refueller finds the cheapest stations that add no more than three
+              miles to your journey.
+            </p>
+            <JourneyForm target={route} />
+          </div>
+        ) : (
+          <div className="page-head">
+            <div className="card-kicker">Fuel prices</div>
+            <h2>{start ? 'Check fuel prices near you' : 'Refueller'}</h2>
+            {start && <p className="lead">Enter a postcode to see the eight nearest petrol stations, with their unleaded and diesel prices and opening times.</p>}
+            <SearchBox start={start} initial={target?.kind === 'postcode' ? `${target.outcode}${target.inward ? ` ${target.inward}` : ''}` : ''} />
+          </div>
+        )}
+        <SafetyNet key={target ? hashOf(target) : ''}>
+          {route ? <JourneyResults target={route} /> : target && target.kind !== 'route' && <Results target={target} />}
+        </SafetyNet>
+        {!route && <JourneyLink />}
         {!start && <About />}
         <footer className="footer-notice" data-noprint>
           {/* The source lines only where prices are shown; the postcode screen keeps just the project and privacy lines
@@ -244,7 +280,7 @@ export default function App() {
             Refueller is a free-to-use personal project by John Baish, not connected with the Fuel Finder service. We don’t
             record anything you do here, apart from anonymous visit statistics (no cookies, no personal data), showing us how
             the site is used. Your device, rather than the website, stores your last choices (postcode, light or
-            dark mode, and the calculator’s fuel, amount and miles per gallon), so the page opens the same way next time.
+            dark mode, the fuel you chose, and the calculator’s amount and miles per gallon), so the page opens the same way next time.
           </p>
           <p>
             More free tools at <a href="https://www.baish.net/">www.baish.net</a>. Contact: workshop@baish.net.
