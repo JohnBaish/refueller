@@ -1176,3 +1176,11 @@ key points above (John). No app code changed.
 From clockwheel `9edeea5`: tracker changes go straight to the tracker's `main`, John's standing
 permission even when a session was given its own branch (§10 and the tracker line in the key points
 above). No app code changed.
+
+### 2026-10-31 — the "Price history" workflow's first run: green (notes only)
+
+After the 10.15am collection (`919224b`, "Data: 2026-10-31 10:15 UTC", 10:17:12 UTC), the workflow ran by itself (run 41192127166,
+success) and committed `9be7484` "History: 2026-10-31 10:17 UTC" eleven seconds later: `recordedFrom` 30 October 09:08, `collected`
+31 October 10:15, 1,723 stations with earlier prices (was 1,076 with three collections). Vercel built it (success); the page builds
+from it here too.
+
