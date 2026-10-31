@@ -109,8 +109,8 @@ function About() {
       <h3>About these figures</h3>
       <p>
         Prices and opening times come from the Government’s Fuel Finder service, which petrol stations are required to keep
-        up to date. Refueller collects them twice a day, at about 10.15am and 4.15pm. Under each price is how long ago the
-        station set it. Stations report a price when it changes, so an older price may well still be right.
+        up to date. Refueller collects them twice a day, at about 10.15am and 4.15pm. Under each price is how long it has
+        stayed the same. Stations report a price when it changes, so an older price may well still be right.
       </p>
       <p>
         Only unleaded (E10) and standard diesel are shown. A price below 100p or above 300p a litre is taken as a mistake and
@@ -121,7 +121,8 @@ function About() {
         <li>
           <strong>Cheapest</strong> marks the lowest unleaded and the lowest diesel price among the stations shown.
         </li>
-        <li>“Price set …” is shown in blue when the price was set more than 45 days ago.</li>
+        <li>“Same price for …” is shown in blue when the price has been the same for more than 45 days.</li>
+        <li>The small chart under each price shows where it sits among the stations shown, from lowest to highest.</li>
         <li>
           A blue “Unusual price” note means the price is more than 30p away from the middle price across Great Britain,
           and may be a mistake, unless the station is in the Highlands and Islands of Scotland or on the Isles of Scilly,

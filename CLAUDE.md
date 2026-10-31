@@ -1216,3 +1216,16 @@ Not merged.
 John said merge. `feature-full-postcodes` fast-forwarded into `main` (no new data commits since); checks, lint and build clean first.
 All the drafted wording stands, including the calculator's notes.
 
+### 2026-10-31 — where each price sits, and "Same price for …" (branch `feature-price-position`)
+
+**John:** option A of the mock-ups (bars by pence above the lowest), wording as mocked up; and "Same price for 35 days" in place of
+"Price set 35 days ago". **What:** `rankPrices()` and `rankText()` in `src/lib/search.ts`; `Rank` in `src/components/Results.tsx`, under
+the "Same price for …" line of every price: one bar per usual price among the eight, lowest first, each as tall as its pence above the
+lowest, this station's (and any tied) in the graph's terracotta, with "Lowest of eight" or "2.0p above the lowest" beneath (worked in tenths
+of a penny). Unusual prices and stations not selling the fuel are left out (so "Lowest of five" where only five sell diesel); no chart with
+fewer than two prices or on an unusual price. `updatedText` now says "Same price for less than an hour / 3 hours / 1 day / 34 days" (digits
+kept, as before). About: "Under each price is how long it has stayed the same."; the blue bullet "“Same price for …” is shown in blue when the
+price has been the same for more than 45 days."; and the agreed line on the chart. **Checked:** `npm run check` (new: the order, the words,
+ties, a 0.1p gap, unusual left out), lint, both type-checks, build; RG4, TR21 and ZE1 at 1200px and 390px with touch, light and dark: 16 charts
+at RG4, terracotta in each theme, no "Price set" left, no errors, no sideways scroll. Pictures `design/previews/rank-built-*.png`. Not merged.
+

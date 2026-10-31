@@ -231,16 +231,36 @@ export function openText(state: OpenState): string {
   return `Closed until ${state.next.weekday} ${t}`;
 }
 
-// "Price set less than an hour ago", "Price set 3 hours ago", "Price set 1 day ago", "Price set 34 days ago" (John, 30 October: in the
-// data a new time nearly always comes with a new price, so this is when the price was set).
+// "Same price for less than an hour", "Same price for 3 hours", "Same price for 1 day", "Same price for 34 days" (John, 31
+// October; was "Price set … ago"). The time is when the station last reported the price; in the data a new time nearly always
+// comes with a new price (1,371 of 1,373 on 30 October), so this is how long the price has stayed the same.
 export function updatedText(iso: string, ms: number): string {
   const ago = ms - Date.parse(iso);
   if (!Number.isFinite(ago)) return '';
   const days = Math.floor(ago / 86_400_000);
-  if (days >= 1) return `Price set ${days} day${days === 1 ? '' : 's'} ago`;
+  if (days >= 1) return `Same price for ${days} day${days === 1 ? '' : 's'}`;
   const hours = Math.floor(ago / 3_600_000);
-  if (hours < 1) return 'Price set less than an hour ago';
-  return `Price set ${hours} hour${hours === 1 ? '' : 's'} ago`;
+  if (hours < 1) return 'Same price for less than an hour';
+  return `Same price for ${hours} hour${hours === 1 ? '' : 's'}`;
+}
+
+// Where a price sits among the stations shown (John, 31 October, option A of the mock-ups): every usual price for that fuel,
+// lowest first (an unusual price is left out, as it is never marked cheapest). No chart with fewer than two.
+export function rankPrices(rows: Row[], fuel: 'e10' | 'diesel'): number[] {
+  return rows
+    .map((r) => r.prices[fuel])
+    .filter((p): p is Price => !!p && !p.x)
+    .map((p) => p.p)
+    .sort((a, b) => a - b);
+}
+
+const RANK_WORDS = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight'];
+
+// "Lowest of eight" (ties too), "2.0p above the lowest". Worked in tenths of a penny, so 0.1p differences aren't lost to rounding.
+export function rankText(me: number, all: number[]): string {
+  const tenths = Math.round(me * 10) - Math.round(all[0] * 10);
+  if (tenths <= 0) return `Lowest of ${RANK_WORDS[all.length] ?? all.length}`;
+  return `${(tenths / 10).toFixed(1)}p above the lowest`;
 }
 
 // More than 45 days old (John, 28 October: marked, never hidden; 30 October: 45 days, not 30, as a price that hasn't changed may

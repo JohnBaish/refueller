@@ -15,6 +15,8 @@ import {
   nearestFrom,
   openText,
   postcodeArea,
+  rankPrices,
+  rankText,
   tidyAddress,
   tidyName,
   ukNow,
@@ -34,7 +36,7 @@ export const REPORT_URL = 'https://www.fuel-finder.service.gov.uk/motorist/price
 
 const WORDS = ['no', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight'];
 
-// The current time, moved on every minute, so "Open until …" and "Price set … ago" stay right while the page is open.
+// The current time, moved on every minute, so "Open until …" and "Same price for …" stay right while the page is open.
 function useNow(): number {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -59,7 +61,28 @@ function collectedText(iso: string, now: number): string {
   return `${time} on ${months[m - 1]} ${d}${ord}`;
 }
 
-function PriceCell({ p, cheapest, fuel, now }: { p?: Price; cheapest: boolean; fuel: 'e10' | 'diesel'; now: number }) {
+// The small chart under a price (John, 31 October, option A): one bar per usual price among the stations shown, lowest first,
+// each as tall as its pence above the lowest; this station's bar (or bars, if tied) in terracotta, with the words beneath so the
+// colour isn't the only clue.
+function Rank({ me, all }: { me: number; all: number[] }) {
+  const w = 8, gap = 2, H = 22;
+  const lo = all[0];
+  const span = Math.max(all[all.length - 1] - lo, 0.1);
+  const text = rankText(me, all);
+  return (
+    <div className="rank">
+      <svg className="rank-bars" width={all.length * (w + gap) - gap} height={H} aria-hidden="true">
+        {all.map((p, k) => {
+          const h = 2 + ((p - lo) / span) * (H - 2);
+          return <rect key={k} x={k * (w + gap)} y={H - h} width={w} height={h} rx={2} className={p === me ? 'me' : undefined} />;
+        })}
+      </svg>
+      <div className="rank-t">{text}</div>
+    </div>
+  );
+}
+
+function PriceCell({ p, cheapest, fuel, now, all }: { p?: Price; cheapest: boolean; fuel: 'e10' | 'diesel'; now: number; all: number[] }) {
   if (!p) return <span className="none">Doesn’t sell {fuel === 'e10' ? 'unleaded' : 'diesel'}</span>;
   return (
     <>
@@ -70,6 +93,7 @@ function PriceCell({ p, cheapest, fuel, now }: { p?: Price; cheapest: boolean; f
         </div>
       )}
       <div className={`upd${isOld(p.u, now) ? ' old' : ''}`}>{updatedText(p.u, now)}</div>
+      {!p.x && all.length >= 2 && <Rank me={p.p} all={all} />}
       {p.x && (
         <div className="unusual">
           Unusual price, may be a mistake.{' '}
@@ -133,6 +157,7 @@ function RowLinks({ row, centreId, calc }: { row: Row; centreId?: string; calc: 
 const distanceText = (row: Row, centreId?: string) => (row.station.id === centreId ? 'This station' : milesText(row.miles));
 
 function Table({ rows, now, centreId, calc }: { rows: Row[]; now: number; centreId?: string; calc: Calc }) {
+  const ranks = { e10: rankPrices(rows, 'e10'), diesel: rankPrices(rows, 'diesel') };
   return (
     <div className="table-box">
       <table className="table stations">
@@ -164,10 +189,10 @@ function Table({ rows, now, centreId, calc }: { rows: Row[]; now: number; centre
                 </td>
                 <td className="c mono dist">{distanceText(r, centreId)}</td>
                 <td className="c">
-                  <PriceCell p={r.prices.e10} cheapest={r.cheapest.e10} fuel="e10" now={now} />
+                  <PriceCell p={r.prices.e10} cheapest={r.cheapest.e10} fuel="e10" now={now} all={ranks.e10} />
                 </td>
                 <td className="c">
-                  <PriceCell p={r.prices.diesel} cheapest={r.cheapest.diesel} fuel="diesel" now={now} />
+                  <PriceCell p={r.prices.diesel} cheapest={r.cheapest.diesel} fuel="diesel" now={now} all={ranks.diesel} />
                 </td>
                 <td className="c">
                   <OpenCell row={r} />
@@ -187,6 +212,7 @@ function Table({ rows, now, centreId, calc }: { rows: Row[]; now: number; centre
 }
 
 function Cards({ rows, now, centreId, calc }: { rows: Row[]; now: number; centreId?: string; calc: Calc }) {
+  const ranks = { e10: rankPrices(rows, 'e10'), diesel: rankPrices(rows, 'diesel') };
   return (
     <div className="cards">
       {rows.map((r) => (
@@ -201,11 +227,11 @@ function Cards({ rows, now, centreId, calc }: { rows: Row[]; now: number; centre
           <div className="grid">
             <div className="lbl">Unleaded</div>
             <div>
-              <PriceCell p={r.prices.e10} cheapest={r.cheapest.e10} fuel="e10" now={now} />
+              <PriceCell p={r.prices.e10} cheapest={r.cheapest.e10} fuel="e10" now={now} all={ranks.e10} />
             </div>
             <div className="lbl">Diesel</div>
             <div>
-              <PriceCell p={r.prices.diesel} cheapest={r.cheapest.diesel} fuel="diesel" now={now} />
+              <PriceCell p={r.prices.diesel} cheapest={r.cheapest.diesel} fuel="diesel" now={now} all={ranks.diesel} />
             </div>
             <div className="lbl">Open</div>
             <div className="openv">

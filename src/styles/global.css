@@ -88,6 +88,13 @@ a { color: var(--color-accent-700); }
    30 October). */
 :root { --color-note: #3f5f8a; }
 .upd.old { color: var(--color-note); }
+/* Where the price sits among the stations shown (31 October): grey bars, this station's in the graph's terracotta. */
+.rank { margin-top: 4px; }
+.rank-bars { display: block; margin: 0 auto; overflow: visible; }
+.rank-bars rect { fill: var(--color-neutral-400); }
+.rank-bars rect.me { fill: var(--g-me); }
+.rank-t { font-size: 11px; color: var(--color-neutral-700); margin-top: 2px; }
+.pcard .rank-bars { margin-left: 0; }
 .cheap-tag { display: inline-block; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; background: var(--color-accent); color: var(--color-bg); border-radius: 999px; padding: 1px 8px; margin: 2px 0; font-weight: 600; }
 .unusual { font-size: 11.5px; color: var(--color-note); }
 .more-btn { background: none; border: 0; padding: 2px 4px; font: inherit; font-size: 12.5px; color: var(--color-accent-700); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }

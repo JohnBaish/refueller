@@ -26,9 +26,12 @@ import {
   tidyAddress,
   tidyName,
   updatedText,
+  rankPrices,
+  rankText,
   type BankHolidays,
   type Outcodes,
   type Station,
+  type Row,
 } from '../src/lib/search.ts';
 
 let failures = 0;
@@ -138,13 +141,25 @@ await check('hours that look wrong: 12-hour slips and evening-only days; genuine
 
 await check('updated: hours and days, and old after 45 whole days', () => {
   const now = at('2026-10-30T12:30:00Z');
-  assert.equal(updatedText('2026-10-30T12:00:00Z', now), 'Price set less than an hour ago');
-  assert.equal(updatedText('2026-10-30T11:00:00Z', now), 'Price set 1 hour ago');
-  assert.equal(updatedText('2026-10-29T15:30:00Z', now), 'Price set 21 hours ago');
-  assert.equal(updatedText('2026-10-29T12:00:00Z', now), 'Price set 1 day ago');
-  assert.equal(updatedText('2026-09-26T12:00:00Z', now), 'Price set 34 days ago');
+  assert.equal(updatedText('2026-10-30T12:00:00Z', now), 'Same price for less than an hour');
+  assert.equal(updatedText('2026-10-30T11:00:00Z', now), 'Same price for 1 hour');
+  assert.equal(updatedText('2026-10-29T15:30:00Z', now), 'Same price for 21 hours');
+  assert.equal(updatedText('2026-10-29T12:00:00Z', now), 'Same price for 1 day');
+  assert.equal(updatedText('2026-09-26T12:00:00Z', now), 'Same price for 34 days');
   assert.equal(isOld('2026-09-15T10:00:00Z', now), false, '45 days');
   assert.equal(isOld('2026-09-14T10:00:00Z', now), true, '46 days');
+});
+
+await check('price position: usual prices lowest first, words for the lowest and pence above it', () => {
+  const row = (e10?: number, x = false) => ({ prices: e10 === undefined ? {} : { e10: { p: e10, u: '2026-10-30T10:00:00Z', x } } }) as unknown as Row;
+  const rows = [row(175.9), row(172.9), row(), row(299.9, true), row(172.9), row(176.0)];
+  const all = rankPrices(rows, 'e10');
+  assert.deepEqual(all, [172.9, 172.9, 175.9, 176.0], 'unusual and missing prices left out');
+  assert.equal(rankText(172.9, all), 'Lowest of four', 'ties at the lowest are both lowest');
+  assert.equal(rankText(175.9, all), '3.0p above the lowest');
+  assert.equal(rankText(173.0, [172.9, 173.0]), '0.1p above the lowest', 'tenths not lost to rounding');
+  assert.equal(rankText(1, [1, 1, 1, 1, 1, 1, 1, 1]), 'Lowest of eight');
+  assert.deepEqual(rankPrices([row()], 'e10'), []);
 });
 
 await check('open: ordinary hours, closing time, and closed until the next opening', () => {
