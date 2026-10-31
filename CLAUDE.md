@@ -12,7 +12,7 @@ Read these first, in this order:
    the numbered open questions).
 2. `PLAN.md`: the staged build. Work one stage at a time, on its branch.
 3. `HOUSE-STYLE.md`: the shared look and ways of working. Copied from
-   `JohnBaish/clockwheel`; last re-copied 2026-10-30 (at clockwheel commit `674122d`).
+   `JohnBaish/clockwheel`; last re-copied 2026-10-31 (at clockwheel commit `1335025`).
    Clockwheel holds the master copy. If it has changed since, re-copy it and
    note that here. The same goes for `SEO-HANDOVER.md` and
    `.claude/skills/fresh-look/` (the `/fresh-look` review).
@@ -47,7 +47,7 @@ Key points from the house style, repeated because they matter most:
 - Check in a real browser at 1200px and at 390px with touch emulation, and
   say what couldn't be checked.
 - Add a dated entry below for every change.
-- **Project tracker:** when something significant changes (a stage finished, a decision made, something goes live or is parked), update this project's file and its line in `INDEX.md` in `JohnBaish/baish.net-directory`, following that repo's README.
+- **Project tracker:** when something significant changes (a stage finished, a decision made, something goes live or is parked), update this project's file and its line in `INDEX.md` in `JohnBaish/baish.net-directory`, following that repo's README. Before committing there, run `node site/check-tracker.mjs` in that repo and fix anything it lists.
 
 Refueller-specific points:
 
@@ -1165,3 +1165,8 @@ John said merge. `feature-price-history` fast-forwarded into `main` (no data com
 first. On `main` now: the graph, its record and the "Price history" workflow, "Find stations near this one" hidden, and panels scrolling
 into view. The workflow first runs after the 10.15am collection; to check then.
 
+### 2026-10-31 — house style re-copied (notes only, straight to `main`)
+
+From clockwheel `1335025`: §10 asks sessions to run `node site/check-tracker.mjs` in
+`JohnBaish/baish.net-directory` before committing tracker changes, as does the tracker line in the
+key points above (John). No app code changed.

@@ -397,8 +397,13 @@ and add its tags. Nothing else needs fixing or remaking first.
   in `INDEX.md`, and the outside services in `SERVICES.md`. Its
   `README.md` has the rules. When something significant changes (a stage
   finished, a decision made, something goes live or is parked), update
-  the project's file and its `INDEX.md` line, straight to `main`. Each
-  tool's `CLAUDE.md` says so in its key points.
+  the project's file and its `INDEX.md` line, straight to `main`. Before
+  committing there, run `node site/check-tracker.mjs` in that repo
+  (nothing to install) and fix anything it lists: the `INDEX.md` line
+  must keep its exact pattern, `- [Name](projects/name.md) · status ·
+  Next: … · Updated …`, with one of five status words (idea, planning,
+  building, live, paused), or the tracker website can't read it (John,
+  2026-10-31). Each tool's `CLAUDE.md` says so in its key points.
 - **Accuracy:** never stand in made-up figures for real ones; anything made
   up is labelled "Illustration only", and test data comes from real
   examples. Work facts out (weekdays, clock-change dates, sunrise times,
