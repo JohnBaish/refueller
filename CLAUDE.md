@@ -1229,3 +1229,8 @@ price has been the same for more than 45 days."; and the agreed line on the char
 ties, a 0.1p gap, unusual left out), lint, both type-checks, build; RG4, TR21 and ZE1 at 1200px and 390px with touch, light and dark: 16 charts
 at RG4, terracotta in each theme, no "Price set" left, no errors, no sideways scroll. Pictures `design/previews/rank-built-*.png`. Not merged.
 
+
+### 2026-10-31 — price position chart and "Same price for …" merged to `main`
+
+John said merge. `feature-price-position` merged into `main` after bringing in its data commits; checks, lint and build clean first.
+No workflow or collector file changed.
