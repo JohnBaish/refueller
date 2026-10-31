@@ -99,7 +99,9 @@ function OpenCell({ row }: { row: Row }) {
 }
 
 // "Find stations near this one" (John, 30 October; first called "Centre on this station"): searches again from that
-// station's own position.
+// station's own position. Hidden on 31 October (John: it adds clutter, and the other two are better; to think about much later,
+// PLAN idea 2). Everything behind it stays: set SHOW_FIND_NEAR to true to bring the link back. A #station/… address still works.
+const SHOW_FIND_NEAR = false;
 // "Worth driving here?" (PLAN Stage 7), which opens the calculator under the station: only on a station cheaper than the
 // nearest open one for at least one fuel (John, 30 October), as elsewhere it could only say there's nothing to work out;
 // and "Price history" (31 October), on every station. One panel open at a time.
@@ -110,7 +112,7 @@ function RowLinks({ row, centreId, calc }: { row: Row; centreId?: string; calc: 
   const isOpen = (kind: PanelKind) => calc.open?.id === row.station.id && calc.open.kind === kind;
   return (
     <div className="row-links">
-      {row.station.id !== centreId && (
+      {SHOW_FIND_NEAR && row.station.id !== centreId && (
         <a className="centre-link" href={stationHash(row.station)}>
           Find stations near this one
         </a>

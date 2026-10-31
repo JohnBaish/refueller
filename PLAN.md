@@ -410,6 +410,10 @@ within a chosen distance; county or region pages for search.
    its postcode district, whose middle can be a mile or more away), so a visitor heading that way can see if anything
    further on is cheaper. Worked out in the browser like every search; the address after "#" would need a form for a
    station, e.g. `#station/<id>`.
+   **Built and merged 30 October as "Find stations near this one"; link hidden 31 October (John):** it adds clutter, and the
+   other two features ("Worth driving here?" and "Price history") are better. John would like to give it more thought much
+   later on. All the work stays in the code: `SHOW_FIND_NEAR` in `src/components/Results.tsx` brings the link back, and
+   `#station/<area>/<code>` addresses still open a station's eight.
 3. **Cheapest on the way (John, 30 October):** type where you're going as well as where you are, and see the three cheapest
    prices roughly on the way, compared with the station nearest the start, and the same at the other end. Notes from
    checking:

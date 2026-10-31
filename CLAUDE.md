@@ -1143,3 +1143,11 @@ mock-ups' sentences, the average's start and values, the page-data column), lint
 label by pointing (computer) and by tapping (phone; first try failed, as phones send "mouse leave" after a tap; fixed), one panel at a
 time, print hides it, no sideways scroll, no errors. **Not checked:** the workflow on GitHub (needs `main`). Not merged.
 
+### 2026-10-31 — "Find stations near this one" hidden (branch `feature-price-history`)
+
+**John:** retire the link for now (clutter; the calculator and the graph are better); keep all the work; note in the plan to think
+about it much later. `SHOW_FIND_NEAR = false` in `src/components/Results.tsx` hides it; everything behind it stays, and a
+`#station/<area>/<code>` address still opens a station's eight. PLAN idea 2 updated. **Checked:** build, lint, checks; RG4 at 1200px
+and 390px with touch: no "Find stations" links, eight "Price history", three "Worth driving here?"; a station address still works; on
+a phone the two remaining links now share one line (`design/previews/links-without-find-phone.png`); no errors, no sideways scroll.
+
