@@ -320,6 +320,9 @@ Branch: `stage-5-page`
 **Held back by John until more features are built** ("some of the fancy stuff" first): the `refueller.baish.net` domain,
 Web Analytics, Search Console, the baish.net landing card with the hub's description, and the overview PDF. Until then the
 page is only on Vercel's own address.
+**31 October 2026:** the domain is live (John): `refueller.baish.net` added to the Vercel project (Valid Configuration) and a CNAME
+at names.co.uk; checked with Google's lookup tool and opened on John's phone. Web Analytics, Search Console, the landing card and
+the overview PDF still held back.
 
 Branch: `stage-6-launch`
 

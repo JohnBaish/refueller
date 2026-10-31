@@ -1234,3 +1234,12 @@ at RG4, terracotta in each theme, no "Price set" left, no errors, no sideways sc
 
 John said merge. `feature-price-position` merged into `main` after bringing in its data commits; checks, lint and build clean first.
 No workflow or collector file changed.
+
+### 2026-10-31 — refueller.baish.net is live (notes only)
+
+John added `refueller.baish.net` to the Vercel project and a CNAME record at names.co.uk (target
+`c677880cb8da824c.vercel-dns-017.com`, the value Vercel gave). Google's lookup tool showed the CNAME and two Vercel addresses;
+Vercel shows Valid Configuration. At first John's phone said "server can't be found" (it had remembered the address not existing,
+from before the record was there); it opened soon after. `refueller.vercel.app` still works too. The page's canonical and preview
+tags already pointed at this address. Still held back (John, 30 October): Web Analytics, Search Console, the baish.net landing card
+and the overview PDF. Not checked by Claude: this session's network blocks the site and public DNS lookups.
