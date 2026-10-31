@@ -166,7 +166,8 @@ function About() {
       <p>
         <strong>Find cheaper fuel near the route</strong> works out the quickest route between the places you type, on your
         device, from Ordnance Survey’s map of motorways, A roads and B roads, using rough speeds for each kind of road. It lists
-        the eight cheapest stations that add no more than three miles to the journey, there and back, in the order you’d reach
+        the eight cheapest stations that add no more than three miles and about six minutes to the journey, there and back (a short
+        detour through a busy town can take much longer than its miles suggest), in the order you’d reach
         them. One-way streets and turns aren’t known and minor roads are left out, so the distances are a guide. Opening hours
         are today’s, as Refueller can’t know when you’ll get there.
       </p>
@@ -238,8 +239,8 @@ export default function App() {
             <div className="card-kicker">Fuel prices</div>
             <h2>Find cheaper fuel near the route</h2>
             <p className="lead">
-              Type where you’re starting and where you’re going. Refueller finds the cheapest stations that add no more than three
-              miles to your journey.
+              Type where you’re starting and where you’re going. Refueller finds the cheapest stations that add no more than three miles and about six
+              minutes to your journey.
             </p>
             <JourneyForm target={route} />
           </div>

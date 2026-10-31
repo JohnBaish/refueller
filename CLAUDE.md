@@ -1312,3 +1312,17 @@ typing RG1 and BS1 (worked out in about 1.1 s, the same eight as option b), dies
 not found, Cardiff to Bristol with both badges, Truro to Scilly (no road), a Northern Ireland postcode, nothing typed in any request,
 no errors, no sideways scroll. Pictures `design/previews/journey-built-*.png`, `costco-badge-computer-two-lines.png`. **Couldn't be
 checked:** a real phone's speed with the 1.2 MB road file. Not merged.
+
+### 2026-10-31 — journey planner: odd results for Reading to Downham Market, fixed (branch `feature-journey`)
+
+**John:** RG1 to PE38 gave odd results, making him wonder whether option b was right. **Found:** two faults in the route sums, not in
+option b. (1) "Near the route" was judged by extra miles only, so stations in London (Egham, Southall, Queensbury) counted: about 2.5
+miles but about 10 minutes off the M25, by cutting through town. (2) The rough speeds made town A roads too quick, so Reading to
+Manchester went through the middle of Birmingham. **Fix (`src/lib/route.ts`):** a 15-second delay for every junction passed
+(`JUNCTION_SECONDS`), so routes keep to the motorways round towns (Reading to Manchester now goes round Birmingham); and a station must
+add no more than 3 miles **and about 6 minutes** (`ROUTE_EXTRA_MINUTES`; the straight-line join to a station taken at 20 mph). Wording
+updated to say "3 miles and about 6 minutes" (lead, notes, About). Results now: RG1 to PE38, 126 miles, eight spread from Slough to Ely
+(Slough, Kings Langley, Hatfield, Stevenage ×2, Royston ×2, Ely); RG1 to BS1 77.8 miles; CF10 to BS1 42.1. **Checked:** `npm run check`
+(new town check; setting the junction delay to 0, or dropping the minutes limit, each made checks fail, then restored), lint, both
+type-checks, build; RG1 to PE38 in Chromium at 1200px and 390px with touch: no errors, no sideways scroll. Picture
+`design/previews/journey-built-RG1-PE38-computer.png`. Not merged.

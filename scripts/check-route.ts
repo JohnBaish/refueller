@@ -58,11 +58,22 @@ await check('real routes as in the mock-ups: Reading to Bristol by the M4, Cardi
   const marlborough = toPlace(51.41992, -1.72523);
   const rb = journey(net, [at('RG1'), at('BS1')], [fleming, marlborough]);
   assert.ok(rb.ok);
-  close(rb.miles, 77.6, 0.2);
+  close(rb.miles, 77.8, 0.2);
   assert.ok(rb.extra[1] > 3, `Marlborough is off the quickest route (${rb.extra[1].toFixed(1)} extra miles)`);
   const cb = journey(net, [at('CF10'), at('BS1')], []);
   assert.ok(cb.ok);
-  close(cb.miles, 43.1, 0.2);
+  close(cb.miles, 42.1, 0.2);
+});
+
+await check('towns: a detour through London or Birmingham counts by its time, not just its miles (John, RG1 to PE38)', () => {
+  const southall = toPlace(51.5813, -0.3593);
+  const smallHeath = toPlace(52.47334, -1.86689);
+  const pe = journey(net, [at('RG1'), at('PE38')], [southall]);
+  assert.ok(pe.ok);
+  assert.ok(pe.extra[0] <= 3 && pe.minutes[0] > 6, `Southall: ${pe.extra[0].toFixed(1)} miles, ${pe.minutes[0].toFixed(1)} minutes`);
+  const m = journey(net, [at('RG1'), at('M1')], [smallHeath]);
+  assert.ok(m.ok);
+  assert.ok(m.minutes[0] > 6, `Reading to Manchester goes round Birmingham, not through it (Small Heath ${m.minutes[0].toFixed(1)} minutes off)`);
 });
 
 await check('via: the journey goes through it, and is longer than going direct', () => {
@@ -79,7 +90,7 @@ await check('no road: the Isles of Scilly are reached only by sea or air', () =>
 
 const st = (id: string, over: Partial<Station> = {}): Station => ({ id, name: id.toUpperCase(), brand: 'X', address: ['A ROAD'], postcode: 'RG1 1AA', lat: 51.45, lon: -0.97, hours: null, bankHoliday: null, ...over });
 const u = '2026-10-31T10:00:00Z';
-const row = (id: string, p: number | null, along: number, extra: number, over: Partial<Station> = {}, x = false): RouteRow => ({ station: st(id, over), prices: p === null ? {} : { e10: { p, u, ...(x ? { x: 1 as const } : {}) } }, along, extra });
+const row = (id: string, p: number | null, along: number, extra: number, over: Partial<Station> = {}, x = false, minutes = 2): RouteRow => ({ station: st(id, over), prices: p === null ? {} : { e10: { p, u, ...(x ? { x: 1 as const } : {}) } }, along, extra, minutes });
 
 await check('the eight: the cheapest within three extra miles, at a usual price, then in the order you reach them', () => {
   const rows = [
@@ -87,6 +98,7 @@ await check('the eight: the cheapest within three extra miles, at a usual price,
     row('b', 160, 50, 3.5), // too far off the route
     row('c', 150, 60, 0.5, {}, true), // unusual
     row('d', 168, 70, 2.9),
+    row('f', 140, 15, 2.5, {}, false, 10), // few miles, but ten minutes through a town
     row('e', null, 5, 0.1), // doesn't sell it
     ...Array.from({ length: 8 }, (_, i) => row(`z${i}`, 175 + i, 20 + i, 1)),
   ];

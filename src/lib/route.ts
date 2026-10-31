@@ -10,9 +10,15 @@ import { toBritishGrid } from '../../scripts/lib/grid.ts';
 import { clockText, hoursLookWrong, hoursOn, membersOnly, ukNow, type BankHolidays, type Price, type Station } from './search.ts';
 
 export const ROUTE_EXTRA_MILES = 3;
+// And no more than this many extra minutes, by the rough speeds: a detour through a town can add few miles but much time (Reading to
+// Downham Market counted Southall and Queensbury, 2.5 miles but about 10 minutes off the M25).
+export const ROUTE_EXTRA_MINUTES = 6;
 export const ROUTE_SHOWN = 8;
 const METRES_PER_MILE = 1609.344;
-const SNAP_LIMIT = 30_000; // a place further than 30 km from any main road can't be routed
+const SNAP_LIMIT = 30_000;
+// A delay for every junction passed (seconds), so a route through a town's many junctions costs what it should: without it, Reading to
+// Manchester went through the middle of Birmingham rather than round it on the M42.
+export const JUNCTION_SECONDS = 15; // a place further than 30 km from any main road can't be routed
 
 export type RouteFile = { n: number[]; e: number[]; credit: string; made: string };
 export type Place = { easting: number; northing: number };
@@ -77,7 +83,7 @@ export function snap(net: Network, p: Place): { node: number; metres: number } |
 }
 
 // From one point to every other: the quickest route by the rough speeds, giving the metres along it (Infinity where none).
-export function tree(net: Network, start: number): Float64Array {
+export function tree(net: Network, start: number): { dist: Float64Array; time: Float64Array } {
   const n = net.head.length;
   const time = new Float64Array(n).fill(Infinity);
   const dist = new Float64Array(n).fill(Infinity);
@@ -111,7 +117,7 @@ export function tree(net: Network, start: number): Float64Array {
     if (t > time[u]) continue;
     for (let k = net.head[u]; k >= 0; k = net.next[k]) {
       const v = net.to[k];
-      const nt = t + net.seconds[k];
+      const nt = t + net.seconds[k] + JUNCTION_SECONDS;
       if (nt < time[v]) {
         time[v] = nt;
         dist[v] = dist[u] + net.metres[k];
@@ -126,10 +132,10 @@ export function tree(net: Network, start: number): Float64Array {
       }
     }
   }
-  return dist;
+  return { dist, time };
 }
 
-export type Journey = { ok: true; miles: number; along: Float64Array; extra: Float64Array } | { ok: false; problem: 'far-from-road' | 'no-road' };
+export type Journey = { ok: true; miles: number; along: Float64Array; extra: Float64Array; minutes: Float64Array } | { ok: false; problem: 'far-from-road' | 'no-road' };
 
 // The journey through `places` (start, optional via, end), and for every station point its miles along the journey and its extra
 // miles (NaN where it can't be reached by road).
@@ -138,40 +144,44 @@ export function journey(net: Network, places: Place[], stations: Place[]): Journ
   if (ends.some((e) => !e)) return { ok: false, problem: 'far-from-road' };
   const e = ends as { node: number; metres: number }[];
   const trees = e.map((x) => tree(net, x.node));
-  const legs: { direct: number; offset: number }[] = [];
+  // The straight-line joins to and from the main roads are taken at 20 mph (town streets), for the times only.
+  const joinSeconds = (m: number) => m / (20 * 0.44704);
+  const legs: { direct: number; directTime: number; offset: number }[] = [];
   let offset = 0;
   for (let i = 0; i + 1 < e.length; i++) {
-    const direct = trees[i][e[i + 1].node] + e[i].metres + e[i + 1].metres;
+    const direct = trees[i].dist[e[i + 1].node] + e[i].metres + e[i + 1].metres;
     if (!Number.isFinite(direct)) return { ok: false, problem: 'no-road' };
-    legs.push({ direct, offset });
+    legs.push({ direct, directTime: trees[i].time[e[i + 1].node], offset });
     offset += direct;
   }
   const along = new Float64Array(stations.length).fill(NaN);
   const extra = new Float64Array(stations.length).fill(NaN);
+  const minutes = new Float64Array(stations.length).fill(NaN);
   stations.forEach((p, s) => {
     const at = snap(net, p);
     if (!at) return;
     legs.forEach((leg, i) => {
-      const to = trees[i][at.node] + e[i].metres + at.metres;
-      const from = trees[i + 1][at.node] + e[i + 1].metres + at.metres;
-      const x = Math.max(0, to + from - leg.direct);
-      if (Number.isFinite(x) && !(x >= extra[s] * METRES_PER_MILE)) {
-        extra[s] = x / METRES_PER_MILE;
-        along[s] = (leg.offset + to) / METRES_PER_MILE;
-      }
+      // The station counts against the leg where it adds least time.
+      const t = trees[i].time[at.node] + trees[i + 1].time[at.node] + 2 * joinSeconds(at.metres) - leg.directTime;
+      if (!Number.isFinite(t) || t / 60 >= minutes[s]) return;
+      const to = trees[i].dist[at.node] + e[i].metres + at.metres;
+      const from = trees[i + 1].dist[at.node] + e[i + 1].metres + at.metres;
+      minutes[s] = Math.max(0, t) / 60;
+      extra[s] = Math.max(0, to + from - leg.direct) / METRES_PER_MILE;
+      along[s] = (leg.offset + to) / METRES_PER_MILE;
     });
   });
-  return { ok: true, miles: offset / METRES_PER_MILE, along, extra };
+  return { ok: true, miles: offset / METRES_PER_MILE, along, extra, minutes };
 }
 
 export const toPlace = (lat: number, lon: number): Place => toBritishGrid(lat, lon);
 
-export type RouteRow = { station: Station; prices: { e10?: Price; diesel?: Price }; along: number; extra: number };
+export type RouteRow = { station: Station; prices: { e10?: Price; diesel?: Price }; along: number; extra: number; minutes: number };
 
 // The eight cheapest within three extra miles at a usual price, then in the order you'd reach them; and how many were within the
 // three miles. Ties in price go to the smaller detour.
 export function routeEight(candidates: RouteRow[], fuel: 'e10' | 'diesel') {
-  const within = candidates.filter((c) => c.extra <= ROUTE_EXTRA_MILES && c.prices[fuel] && !c.prices[fuel]!.x);
+  const within = candidates.filter((c) => c.extra <= ROUTE_EXTRA_MILES && c.minutes <= ROUTE_EXTRA_MINUTES && c.prices[fuel] && !c.prices[fuel]!.x);
   const eight = within
     .slice()
     .sort((a, b) => a.prices[fuel]!.p - b.prices[fuel]!.p || a.extra - b.extra)
