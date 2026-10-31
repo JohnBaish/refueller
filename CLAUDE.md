@@ -1099,3 +1099,13 @@ later in the mock-up round of 30 October; they aren't yet in the agreed feature 
 postcodes added to PLAN "Ideas logged for later" (item 4), next after the 14-day graph, with the wording with and without the
 second half still to work out.
 
+### 2026-10-31 — the history check ran: Fuel Finder holds no earlier prices (notes only)
+
+John built the package from `probe-price-history` and ran `{"history": true}` on `refueller-probe` from his phone. Result in
+`design/probe-result-history-2026-10-31.md`: the "changed since 17 October" call returned 6,204 stations, each once, every price and
+"set" time identical to the current call. **No history is available from Fuel Finder;** the 14-day graph has to build on our own
+collections (from 30 October; a full fortnight on about 13 November). Stations missing from that list (about 1,939) had no change in
+the fortnight. The branch stays unmerged (the check isn't needed again); the test function now runs the branch's code, and `{}`
+still runs the usual probe. Phone tips that worked: the artifact's own download link, Files unpacking the wrapper, and
+`https://console.aws.amazon.com/` (not aws.amazon.com, whose "Create profile" is an AWS Builder ID).
+
