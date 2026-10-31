@@ -119,7 +119,7 @@ function About() {
       <p>How to read the list:</p>
       <ul>
         <li>
-          <strong>Cheapest</strong> marks the lowest unleaded and the lowest diesel price among the stations shown.
+          <strong>Cheapest</strong> marks the lowest unleaded and the lowest diesel price among the stations shown. When that is at Costco, it says “Cheapest (Members only)”, and the lowest price anyone can buy is marked Cheapest too.
         </li>
         <li>
           <strong>Members only</strong> marks Costco, which sells fuel only to its members.

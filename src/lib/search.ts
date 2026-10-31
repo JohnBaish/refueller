@@ -326,12 +326,16 @@ export function nearestFrom(lat: number, lon: number, stations: Station[], price
     .slice(0, 8);
   for (const r of rows) r.open = openState(r.station, ms, bank);
   for (const fuel of ['e10', 'diesel'] as const) {
-    const usable = rows.map((r) => r.prices[fuel]).filter((p): p is Price => !!p && !p.x).map((p) => p.p);
-    if (usable.length === 0) continue;
-    const low = Math.min(...usable);
-    for (const r of rows) {
-      const p = r.prices[fuel];
-      if (p && !p.x && p.p === low) r.cheapest[fuel] = true;
+    // The lowest usual price is marked; when that is at Costco (members only), the lowest price anyone can buy is marked too, and
+    // the page labels Costco's "Cheapest (Members only)" (John, 31 October).
+    const usual = rows.filter((r) => r.prices[fuel] && !r.prices[fuel]!.x);
+    if (usual.length === 0) continue;
+    const low = Math.min(...usual.map((r) => r.prices[fuel]!.p));
+    const open = usual.filter((r) => !membersOnly(r.station)).map((r) => r.prices[fuel]!.p);
+    const lowOpen = open.length ? Math.min(...open) : null;
+    for (const r of usual) {
+      const p = r.prices[fuel]!.p;
+      if (membersOnly(r.station) ? p === low : p === lowOpen) r.cheapest[fuel] = true;
     }
   }
   return rows;

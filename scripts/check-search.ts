@@ -268,6 +268,19 @@ await check('the eight: temporarily closed left out; an unusual price never mark
   assert.deepEqual(r.rows.map((x) => x.cheapest.e10), [false, true]);
 });
 
+await check('Costco cheapest: marked "members only", and the lowest price anyone can buy marked too', () => {
+  const stations = [
+    st({ id: 'a', lat: 51.483, lon: -0.97, brand: 'COSTCO WHOLESALE', name: 'COSTCO WHOLESALE READING' }),
+    st({ id: 'c', lat: 51.485, lon: -0.97 }),
+    st({ id: 'd', lat: 51.486, lon: -0.97 }),
+  ];
+  const u = '2026-10-29T00:00:00Z';
+  const prices = { a: { e10: { p: 165.9, u }, diesel: { p: 199.9, u } }, c: { e10: { p: 168.9, u }, diesel: { p: 195.9, u } }, d: { e10: { p: 170.9, u }, diesel: { p: 196.9, u } } };
+  const r = nearestEight('RG4', stations, prices, outcodes, bank, at('2026-10-30T12:00:00Z'));
+  assert.deepEqual(r.rows.map((x) => x.cheapest.e10), [true, true, false], 'Costco lowest: it and the lowest for everyone');
+  assert.deepEqual(r.rows.map((x) => x.cheapest.diesel), [false, true, false], 'Costco not lowest: only the lowest');
+});
+
 await check('the page footer carries the credit lines from the Open Names licence file, word for word', () => {
   const credits: string[] = JSON.parse(readFileSync(new URL('../data/outcodes.json', import.meta.url), 'utf8')).credits;
   const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8').replace(/\s+/g, ' ');

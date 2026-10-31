@@ -83,14 +83,14 @@ function Rank({ me, all }: { me: number; all: number[] }) {
   );
 }
 
-function PriceCell({ p, cheapest, fuel, now, all }: { p?: Price; cheapest: boolean; fuel: 'e10' | 'diesel'; now: number; all: number[] }) {
+function PriceCell({ p, cheapest, fuel, now, all, members }: { p?: Price; cheapest: boolean; fuel: 'e10' | 'diesel'; now: number; all: number[]; members?: boolean }) {
   if (!p) return <span className="none">Doesn’t sell {fuel === 'e10' ? 'unleaded' : 'diesel'}</span>;
   return (
     <>
       <div className="price mono">{p.p.toFixed(1)}p</div>
       {cheapest && (
         <div>
-          <span className="cheap-tag">Cheapest</span>
+          {members ? <span className="cheap-tag members-tag">Cheapest (Members only)</span> : <span className="cheap-tag">Cheapest</span>}
         </div>
       )}
       <div className={`upd${isOld(p.u, now) ? ' old' : ''}`}>{updatedText(p.u, now)}</div>
@@ -191,10 +191,10 @@ function Table({ rows, now, centreId, calc }: { rows: Row[]; now: number; centre
                 </td>
                 <td className="c mono dist">{distanceText(r, centreId)}</td>
                 <td className="c">
-                  <PriceCell p={r.prices.e10} cheapest={r.cheapest.e10} fuel="e10" now={now} all={ranks.e10} />
+                  <PriceCell p={r.prices.e10} cheapest={r.cheapest.e10} fuel="e10" now={now} all={ranks.e10} members={membersOnly(r.station)} />
                 </td>
                 <td className="c">
-                  <PriceCell p={r.prices.diesel} cheapest={r.cheapest.diesel} fuel="diesel" now={now} all={ranks.diesel} />
+                  <PriceCell p={r.prices.diesel} cheapest={r.cheapest.diesel} fuel="diesel" now={now} all={ranks.diesel} members={membersOnly(r.station)} />
                 </td>
                 <td className="c">
                   <OpenCell row={r} />
@@ -230,11 +230,11 @@ function Cards({ rows, now, centreId, calc }: { rows: Row[]; now: number; centre
           <div className="grid">
             <div className="lbl">Unleaded</div>
             <div>
-              <PriceCell p={r.prices.e10} cheapest={r.cheapest.e10} fuel="e10" now={now} all={ranks.e10} />
+              <PriceCell p={r.prices.e10} cheapest={r.cheapest.e10} fuel="e10" now={now} all={ranks.e10} members={membersOnly(r.station)} />
             </div>
             <div className="lbl">Diesel</div>
             <div>
-              <PriceCell p={r.prices.diesel} cheapest={r.cheapest.diesel} fuel="diesel" now={now} all={ranks.diesel} />
+              <PriceCell p={r.prices.diesel} cheapest={r.cheapest.diesel} fuel="diesel" now={now} all={ranks.diesel} members={membersOnly(r.station)} />
             </div>
             <div className="lbl">Open</div>
             <div className="openv">

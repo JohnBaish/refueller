@@ -1267,3 +1267,15 @@ the link at the bottom `journey-3-*`; Cardiff to Bristol's Costco with its note 
 in Bristol; b, the same eight in the order you reach them (only Swindon before Bristol); c, two per quarter, which shows the gap: the second
 quarter's only cheap-ish choices are Asda Chiseldon (174.9p) and Membury services (198.9p); d, leaving out 10 miles at each end, gives
 Swindon and Chippenham at 167.9p to 177.9p. Heading now "Eight cheaper stations…" (draft).
+
+### 2026-10-31 — "Members only" and "Cheapest (Members only)" for Costco (branch `costco-members`)
+
+**John:** a "Members only" note on Costco stations (costco.co.uk's fuel Q&A, seen through a search summary: members only); and when
+Costco is the cheapest, a different badge, "Cheapest (Members only)". **What:** `membersOnly()` in `src/lib/search.ts` (Costco by brand
+or name; 22 stations on October 31st); a blue "Members only" line under the name (table and cards); in `nearestFrom()`, a Costco is
+marked cheapest only when it has the lowest price, and the lowest price among the others is then marked too (Claude's reading of "a
+different badge", for John to confirm); the Costco badge is outlined ("Cheapest (Members only)", `.members-tag`). About: the Cheapest
+bullet explains it, and a "Members only" bullet. **Checked:** `npm run check` (new: Costco by brand and name; Costco cheapest for one fuel
+and not the other), lint, type-check, build; RG2 at 1200px and 390px with touch, light and dark: both badges as above, the note, no errors,
+no sideways scroll. Pictures `design/previews/costco-badge-*.png`. Journey list: John chose **option b** (the eight cheapest, in the order
+you'd reach them). Not merged.
