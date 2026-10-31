@@ -11,7 +11,7 @@
 //
 // Also here: high prices in the Highlands and Islands and on Scilly aren't marked unusual. Left out here, once for all visitors: temporarily closed stations, and stations placed far from their own postcode
 // district (src/lib/search.ts, positionAgrees). Prices and their "last updated" times go through exactly as collected.
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { higherPricesUsual, positionAgrees, postcodeArea, type BankHolidays, type Outcodes, type Price, type Station } from '../../src/lib/search.ts';
 import type { DetailRow, PageIndex, PriceCell, RoadFile } from '../../src/lib/pageTypes.ts';
@@ -19,7 +19,7 @@ import { trim, windowFor, withPrice, type Hist } from '../../src/lib/history.ts'
 
 export type { DetailRow, PageIndex, PriceCell };
 
-export const SOURCES = ['data/stations.json', 'data/prices.json', 'data/outcodes.json', 'data/bank-holidays.json', 'data/road-miles.json', 'data/history.json'];
+export const SOURCES = ['data/postcodes/README.md', 'data/stations.json', 'data/prices.json', 'data/outcodes.json', 'data/bank-holidays.json', 'data/road-miles.json', 'data/history.json'];
 
 const round4 = (n: number) => Math.round(n * 1e4) / 1e4;
 const cell = (p: Price | undefined): PriceCell => (p ? [p.p, p.u, p.x ? 1 : 0] : 0);
@@ -82,6 +82,7 @@ export function makePageData(stations: Station[], prices: Record<string, { e10?:
     leftOut,
     roads: null,
     history: null,
+    postcodes: null,
   };
   return { index, byArea };
 }
@@ -127,6 +128,15 @@ export function writePageData(root: string) {
     index.roads = { folder: `roads-${roads.built}`, credit: roads.credit };
     mkdirSync(join(out, index.roads.folder));
     for (const [a, file] of splitRoads(roads, st.stations)) writeFileSync(join(out, index.roads.folder, `${a}.json`), JSON.stringify(file));
+  }
+  // Full postcodes (data/postcodes/, scripts/build-postcodes.ts): copied as they are, one file per area, in a folder named by the
+  // date they were made, so a rebuilt set is never mixed with an old one in a browser's cache.
+  const pc = join(root, 'data/postcodes');
+  if (existsSync(join(pc, 'README.md'))) {
+    const made = /Made (\d{4}-\d{2}-\d{2})/.exec(readFileSync(join(pc, 'README.md'), 'utf8'))?.[1] ?? 'unknown';
+    index.postcodes = { folder: `postcodes-${made}` };
+    mkdirSync(join(out, index.postcodes.folder));
+    for (const f of readdirSync(pc).filter((f) => f.endsWith('.json'))) copyFileSync(join(pc, f), join(out, index.postcodes.folder, f));
   }
   writeFileSync(join(out, 'index.json'), JSON.stringify(index));
   return index;

@@ -27,18 +27,20 @@ export type Outcodes = Record<string, [number, number, string]>; // latitude, lo
 
 // --- Postcodes ---------------------------------------------------------------------------------------------------------
 
-export type PostcodeResult = { ok: true; outcode: string } | { ok: false; problem: 'empty' | 'not-a-postcode' | 'northern-ireland' | 'not-found' };
+export type PostcodeResult = { ok: true; outcode: string; inward?: string } | { ok: false; problem: 'empty' | 'not-a-postcode' | 'northern-ireland' | 'not-found' };
 
-// The first half of a typed postcode: "rg4 7hn", "RG47HN" and "RG4" all give "RG4". Only the first half is ever used.
+// A typed postcode: "rg4 7hn" and "RG47HN" give RG4 and 7HN; "RG4" gives just the district (John, 31 October: full postcodes).
+// Only the district has to be known here; whether the full postcode exists is found from its area's file (src/lib/postcodes.ts).
 export function readPostcode(typed: string, outcodes: Outcodes): PostcodeResult {
   const s = typed.toUpperCase().replace(/[^A-Z0-9]/g, '');
   if (s === '') return { ok: false, problem: 'empty' };
   let outcode: string;
-  if (/^[A-Z]{1,2}\d[A-Z\d]?\d[A-Z]{2}$/.test(s)) outcode = s.slice(0, -3);
+  let inward: string | undefined;
+  if (/^[A-Z]{1,2}\d[A-Z\d]?\d[A-Z]{2}$/.test(s)) [outcode, inward] = [s.slice(0, -3), s.slice(-3)];
   else if (/^[A-Z]{1,2}\d[A-Z\d]?$/.test(s)) outcode = s;
   else return { ok: false, problem: 'not-a-postcode' };
   if (/^BT\d/.test(outcode)) return { ok: false, problem: 'northern-ireland' };
-  return outcode in outcodes ? { ok: true, outcode } : { ok: false, problem: 'not-found' };
+  return outcode in outcodes ? { ok: true, outcode, ...(inward ? { inward } : {}) } : { ok: false, problem: 'not-found' };
 }
 
 // --- Distances ---------------------------------------------------------------------------------------------------------

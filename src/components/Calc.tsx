@@ -4,7 +4,8 @@ import { loadRoads } from '../lib/load.ts';
 import { tidyName, type Row } from '../lib/search.ts';
 
 // Where the list is measured from, for the road miles: a postcode district ("RG4", in area RG) or a station's own code.
-export type Origin = { area: string; key: string };
+// `note` says where the road miles start from, beside the verdict (John, 31 October).
+export type Origin = { area: string; key: string; note: string };
 
 type Roads = { state: 'loading' } | { state: 'ready'; miles: (id: string) => number | undefined };
 
@@ -142,7 +143,7 @@ export function CalcPanel({ row, rows, origin, centreId, roads, onClose }: { row
               </p>
               <p className="calc-small">
                 {result.breakEven !== null && `It’s worth the trip if this station is at least ${result.breakEven.toFixed(1)}p a litre cheaper. `}
-                This doesn’t count your time or wear on the car.
+                {origin.note} This doesn’t count your time or wear on the car.
               </p>
             </>
           ) : (

@@ -3,6 +3,9 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fromBritishGrid, toBritishGrid } from './lib/grid.ts';
+import { encodeDistrict } from './build-postcodes.ts';
+import { decodeDistrict } from '../src/lib/postcodes.ts';
+import { readdirSync } from 'node:fs';
 import { makePageData } from './lib/pageData.ts';
 import {
   clockText,
@@ -63,9 +66,10 @@ await check('grid: British National Grid there and back agrees to less than a me
 });
 
 await check('postcodes: only the first half is used, Northern Ireland and unknowns explained', () => {
-  for (const t of ['rg4 7hn', 'RG47HN', ' RG4 ', 'rg4']) assert.deepEqual(readPostcode(t, outcodes), { ok: true, outcode: 'RG4' }, t);
-  assert.deepEqual(readPostcode('sw1a 1aa', outcodes), { ok: true, outcode: 'SW1A' });
-  assert.deepEqual(readPostcode('W1A1AA', outcodes), { ok: true, outcode: 'W1A' });
+  for (const t of [' RG4 ', 'rg4']) assert.deepEqual(readPostcode(t, outcodes), { ok: true, outcode: 'RG4' }, t);
+  for (const t of ['rg4 7hn', 'RG47HN', ' rg4  7HN ']) assert.deepEqual(readPostcode(t, outcodes), { ok: true, outcode: 'RG4', inward: '7HN' }, t);
+  assert.deepEqual(readPostcode('sw1a 1aa', outcodes), { ok: true, outcode: 'SW1A', inward: '1AA' });
+  assert.deepEqual(readPostcode('W1A1AA', outcodes), { ok: true, outcode: 'W1A', inward: '1AA' });
   assert.deepEqual(readPostcode('BT1 1AA', outcodes), { ok: false, problem: 'northern-ireland' });
   assert.deepEqual(readPostcode('QQ1', outcodes), { ok: false, problem: 'not-found' });
   assert.deepEqual(readPostcode('hello', outcodes), { ok: false, problem: 'not-a-postcode' });
@@ -279,6 +283,24 @@ await check('centre on a station: the eight from its own position, itself first;
   assert.equal(rows[0].miles, 0);
   assert.equal(rows[0].cheapest.e10, true, 'and marked cheapest when it is');
   assert.equal(rows[7].station.id, 'b70000000000', 'the ninth left out');
+});
+
+await check('full postcodes: positions packed and unpacked exactly; the real file has every district, and RG4 7HN where OS puts it', () => {
+  const list: [string, number, number][] = [['7HN', 51.48289, -0.9697], ['5AA', 51.4668, -0.9654], ['9ZZ', 51.5, -1]];
+  const back = decodeDistrict(encodeDistrict(list));
+  for (const [i, la, lo] of list) {
+    const [a, b] = back.get(i)!;
+    assert.ok(Math.abs(a - la) < 6e-5 && Math.abs(b - lo) < 6e-5, i);
+  }
+  const files = readdirSync(new URL('../data/postcodes/', import.meta.url)).filter((f) => f.endsWith('.json'));
+  const all: Record<string, string> = Object.assign({}, ...files.map((f) => JSON.parse(readFileSync(new URL(`../data/postcodes/${f}`, import.meta.url), 'utf8'))));
+  const missing = Object.keys(outcodes).filter((o) => !(o in all));
+  assert.deepEqual(missing, [], 'districts with no postcode file entry');
+  // RG4 7HN in OS Open Names: easting 470234, northing 175930.
+  const want = fromBritishGrid(470234, 175930);
+  const [lat, lon] = decodeDistrict(all.RG4).get('7HN')!;
+  assert.ok(Math.abs(lat - want.latitude) < 1e-4 && Math.abs(lon - want.longitude) < 1e-4, `${lat},${lon}`);
+  assert.equal(decodeDistrict(all.RG4).get('7ZZ'), undefined);
 });
 
 console.log(failures === 0 ? '\nAll search checks passed.' : `\n${failures} search check(s) FAILED.`);

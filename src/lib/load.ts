@@ -5,6 +5,7 @@ import type { DetailRow, PageIndex, RoadFile } from './pageTypes.ts';
 let index: Promise<PageIndex> | null = null;
 const areas = new Map<string, Promise<DetailRow[]>>();
 const roadFiles = new Map<string, Promise<RoadFile>>();
+const postcodeFiles = new Map<string, Promise<Record<string, string>>>();
 
 async function json<T>(url: string): Promise<T> {
   const res = await fetch(url);
@@ -51,4 +52,19 @@ export function loadRoads(folder: string, area: string): Promise<RoadFile> {
     );
   }
   return roadFiles.get(key)!;
+}
+
+// Every postcode's position in one postcode area (only when a full postcode is typed; src/lib/postcodes.ts).
+export function loadPostcodes(folder: string, area: string): Promise<Record<string, string>> {
+  const key = `${folder}/${area}`;
+  if (!postcodeFiles.has(key)) {
+    postcodeFiles.set(
+      key,
+      json<Record<string, string>>(`/data/${folder}/${encodeURIComponent(area)}.json`).catch((e) => {
+        postcodeFiles.delete(key);
+        throw e;
+      }),
+    );
+  }
+  return postcodeFiles.get(key)!;
 }

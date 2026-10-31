@@ -3,10 +3,11 @@ import { REPORT_URL, Results, type Target } from './components/Results.tsx';
 import { ThemeSwitch } from './components/ThemeSwitch.tsx';
 import { loadIndex } from './lib/load.ts';
 import { ROAD_CREDIT } from './lib/calc.ts';
+import { fullHash } from './lib/postcodes.ts';
 import { readPostcode, type PostcodeResult } from './lib/search.ts';
 
-// The page has two states: the postcode screen, and a postcode district's results. The district is kept in the address
-// after "#" (#RG4: browsers never send that part, and the visit statistics drop it) and on this device as the last choice.
+// The page has two states: the postcode screen, and the results for a postcode or district. It is kept in the address after "#"
+// (#RG4 or #RG4-7HN: browsers never send that part, and the visit statistics drop it) and on this device as the last choice.
 const CHOICE = 'refueller.choice';
 
 // The address after "#": a postcode district (#RG4) or a station (#station/RG/d20f21e97871, "Find stations near this one").
@@ -14,8 +15,12 @@ function fromHash(): Target | null {
   const h = decodeURIComponent(location.hash.slice(1));
   const st = /^station\/([A-Za-z]{1,2})\/([0-9a-f]{12})$/.exec(h);
   if (st) return { kind: 'station', area: st[1].toUpperCase(), id: st[2] };
-  const o = h.toUpperCase();
-  return /^[A-Z]{1,2}\d[A-Z\d]?$/.test(o) ? { kind: 'postcode', outcode: o } : null;
+  return postcodeTarget(h);
+}
+// "RG4" or "RG4-7HN" (also as kept on the device) into a target.
+function postcodeTarget(h: string): Target | null {
+  const m = /^([A-Z]{1,2}\d[A-Z\d]?)(?:-(\d[A-Z]{2}))?$/.exec(h.toUpperCase());
+  return m ? { kind: 'postcode', outcode: m[1], ...(m[2] ? { inward: m[2] } : {}) } : null;
 }
 function remembered(): string | null {
   try {
@@ -24,9 +29,10 @@ function remembered(): string | null {
     return null;
   }
 }
-function remember(outcode: string) {
+// The full postcode when one was typed (John, 31 October), otherwise the district; on this device only.
+function remember(choice: string) {
   try {
-    localStorage.setItem(CHOICE, outcode);
+    localStorage.setItem(CHOICE, choice);
   } catch {
     // Not kept; the page still works.
   }
@@ -59,8 +65,9 @@ function SearchBox({ start, initial }: { start: boolean; initial: string }) {
       setProblem(PROBLEMS[r.problem](typed));
       return;
     }
-    remember(r.outcode);
-    location.hash = r.outcode;
+    const choice = r.inward ? fullHash(r.outcode, r.inward) : r.outcode;
+    remember(choice);
+    location.hash = choice;
   }
 
   return (
@@ -88,7 +95,9 @@ function SearchBox({ start, initial }: { start: boolean; initial: string }) {
           {problem}
         </p>
       )}
-      {start && !problem && <p className="hint">Only the first half (RG1) is used. Nothing you type leaves this page.</p>}
+      {start && !problem && (
+        <p className="hint">Type your full postcode for the most accurate list, or just the first half (RG1). Nothing you type leaves this page.</p>
+      )}
     </form>
   );
 }
@@ -126,7 +135,8 @@ function About() {
         </li>
       </ul>
       <p>
-        Distances are in a straight line from the middle of the postcode district, so they’re approximate. Stations that Fuel
+        Distances are in a straight line from your postcode, or from the middle of its district if you type only the first half,
+        so they’re approximate. Stations that Fuel
         Finder lists as temporarily closed are left out, and so are a few whose position on the map is far from their own
         postcode. Opening times are each station’s usual hours, including bank holidays, and may differ on the day.
       </p>
@@ -134,8 +144,8 @@ function About() {
         <strong>Worth driving here?</strong> compares a station with the nearest open station in the list selling the same
         fuel. It works out how much fuel your money buys at the nearer station, how much less it would cost at this one, and
         how much fuel the extra miles there and back would use, from your car’s miles per gallon (36 for petrol and 43 for
-        diesel to start with, typical figures; change them to your car’s). The extra miles are by road, from the same starting
-        point as the list, using Ordnance Survey’s map of every road; they don’t allow for one-way streets or turns, so a sat
+        diesel to start with, typical figures; change them to your car’s). The extra miles are by road from the middle of the
+        postcode district, even when you type a full postcode, using Ordnance Survey’s map of every road; they don’t allow for one-way streets or turns, so a sat
         nav may give a little more. Where there’s no road figure, type your own. It doesn’t count your time or wear on the car.
       </p>
       <p>
@@ -167,9 +177,9 @@ class SafetyNet extends Component<{ children: ReactNode }, { failed: boolean }> 
 
 const fromRemembered = (): Target | null => {
   const o = remembered();
-  return o ? { kind: 'postcode', outcode: o } : null;
+  return o ? postcodeTarget(o) : null;
 };
-const hashOf = (t: Target) => (t.kind === 'postcode' ? t.outcode : `station/${t.area}/${t.id}`);
+const hashOf = (t: Target) => (t.kind === 'postcode' ? (t.inward ? fullHash(t.outcode, t.inward) : t.outcode) : `station/${t.area}/${t.id}`);
 
 export default function App() {
   const [target, setTarget] = useState<Target | null>(() => fromHash() ?? fromRemembered());
@@ -202,7 +212,7 @@ export default function App() {
           <div className="card-kicker">Fuel prices</div>
           <h2>{start ? 'Check fuel prices near you' : 'Refueller'}</h2>
           {start && <p className="lead">Enter a postcode to see the eight nearest petrol stations, with their unleaded and diesel prices and opening times.</p>}
-          <SearchBox start={start} initial={target?.kind === 'postcode' ? target.outcode : ''} />
+          <SearchBox start={start} initial={target?.kind === 'postcode' ? `${target.outcode}${target.inward ? ` ${target.inward}` : ''}` : ''} />
         </div>
         <SafetyNet key={target ? hashOf(target) : ''}>{target && <Results target={target} />}</SafetyNet>
         {!start && <About />}
@@ -229,7 +239,7 @@ export default function App() {
           <p>
             Refueller is a free-to-use personal project by John Baish, not connected with the Fuel Finder service. We don’t
             record anything you do here, apart from anonymous visit statistics (no cookies, no personal data), showing us how
-            the site is used. Your device, rather than the website, stores your last choices (postcode district, light or
+            the site is used. Your device, rather than the website, stores your last choices (postcode, light or
             dark mode, and the calculator’s fuel, amount and miles per gallon), so the page opens the same way next time.
           </p>
           <p>

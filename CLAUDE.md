@@ -108,6 +108,11 @@ folder>`, about 90 s, needs `NODE_OPTIONS=--max-old-space-size=8192`) makes `dat
 tenths of a mile from each postcode district middle and each station to its 12 nearest stations. `scripts/lib/pageData.ts` splits it
 into `public/data/roads-<built>/<area>.json`. `src/lib/calc.ts` (the sums, wording, remembered choices as `refueller.calc`),
 `src/components/Calc.tsx` (the panel), `scripts/check-calc.ts`.
+Price history (on `main` since 31 October): `scripts/build-history.ts` and `.github/workflows/history.yml` keep `data/history.json`;
+`src/lib/history.ts`, `src/components/History.tsx`, `scripts/check-history.ts`.
+Full postcodes (branch `feature-full-postcodes`): `scripts/build-postcodes.ts` (`npm run postcodes <Open Names folder>`) makes
+`data/postcodes/<area>.json` (every postcode's position, 16 MB); `scripts/lib/pageData.ts` copies them to
+`public/data/postcodes-<made>/`; `src/lib/postcodes.ts` decodes a district; the address after "#" is `RG4` or `RG4-7HN`.
 
 ## Log
 
@@ -1183,4 +1188,26 @@ After the 10.15am collection (`919224b`, "Data: 2026-10-31 10:15 UTC", 10:17:12 
 success) and committed `9be7484` "History: 2026-10-31 10:17 UTC" eleven seconds later: `recordedFrom` 30 October 09:08, `collected`
 31 October 10:15, 1,723 stations with earlier prices (was 1,076 with three collections). Vercel built it (success); the page builds
 from it here too.
+
+### 2026-10-31 — full postcodes built (branch `feature-full-postcodes`)
+
+**John:** the wording as mocked up; A1 (one file per postcode area, so the website sees no more than the area, as today); remember
+the full postcode when one is typed; and say beside the calculator's verdict that its road miles start from the middle of the
+district, worded for a full postcode and for a district.
+
+**What:** `scripts/build-postcodes.ts` reads OS Open Names (downloaded again from `api.os.uk`, 31 October) and writes
+`data/postcodes/<area>.json`: all 1,743,934 GB postcodes in 120 area files, each district one string of positions stepped in 0.0001°
+(16 MB in the repo; RG 225 KB, 110 KB compressed). The page loads an area's file only when a full postcode is typed; a postcode not
+in it (new or mistyped) falls back to the district with "We couldn't find RG4 7ZZ (it may be new, or mistyped), so distances are in a
+straight line from the middle of RG4." Heading "Eight nearest stations to RG4 7HN (Caversham)", notes "Straight-line distances from
+RG4 7HN." The address is `#RG4-7HN`, remembered on the device the same way. Hint, About (distances; the calculator's road miles) and
+the footer's "(postcode, …)" updated. **Calculator note (drafts):** "The extra miles are by road from the middle of RG4, not from
+RG4 7HN itself, so they're a guide." / "The extra miles are by road from the middle of RG4, so they're a guide." / for a station
+view, "The extra miles are by road from Caversham Esso Express.", each before "This doesn't count your time or wear on the car."
+
+**Checked:** `npm run check` (new: postcodes read with and without a space, packing and unpacking positions, every district present,
+RG4 7HN where OS puts it), lint, both type-checks, build (the site's data is now 21 MB). In Chromium at 390px with touch and 1200px:
+RG4 7HN (nearest 0.9 miles, not 0.4 from the middle of RG4), RG4, RG4 7ZZ (fallback), ZE1 0AA (Lerwick), the full postcode kept and
+reopened after a reload, both calculator notes, only area files requested (`postcodes-…/RG.json`), no errors, no sideways scroll.
+Not merged.
 

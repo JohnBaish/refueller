@@ -3,7 +3,8 @@ import { CalcPanel, type Origin } from './Calc.tsx';
 import { HistoryPanel, type Histories } from './History.tsx';
 import { cheaperFuels } from '../lib/calc.ts';
 import { fromDetail, type PageIndex } from '../lib/pageTypes.ts';
-import { loadArea, loadIndex } from '../lib/load.ts';
+import { loadArea, loadIndex, loadPostcodes } from '../lib/load.ts';
+import { decodeDistrict } from '../lib/postcodes.ts';
 import { useIsNarrow } from '../lib/responsive.ts';
 import {
   clockText,
@@ -24,7 +25,7 @@ import {
 } from '../lib/search.ts';
 
 // What the eight are centred on: the middle of a postcode district, or one station (#station/RG/d20f21e97871).
-export type Target = { kind: 'postcode'; outcode: string } | { kind: 'station'; area: string; id: string };
+export type Target = { kind: 'postcode'; outcode: string; inward?: string } | { kind: 'station'; area: string; id: string };
 
 export const stationHash = (s: Station) => `#station/${postcodeArea(s.postcode)}/${s.id}`;
 
@@ -221,7 +222,7 @@ function Cards({ rows, now, centreId, calc }: { rows: Row[]; now: number; centre
   );
 }
 
-type Found = { index: PageIndex; lat: number; lon: number; rows: Row[]; histories: Histories; heading: string; from: string; centreId?: string };
+type Found = { index: PageIndex; lat: number; lon: number; rows: Row[]; histories: Histories; heading: string; from: string; notFound?: string; centreId?: string };
 
 // Asked for a station that isn't in this collection (closed since the link was made, say).
 class NotListed extends Error {}
@@ -230,10 +231,18 @@ class NotListed extends Error {}
 // are in.
 async function find(target: Target, now: number): Promise<Found> {
   const index = await loadIndex();
-  let lat: number, lon: number, heading: string, from: string, centreId: string | undefined;
+  let lat: number, lon: number, heading: string, from: string, centreId: string | undefined, notFound: string | undefined;
   if (target.kind === 'postcode') {
     const [la, lo, place] = index.outcodes[target.outcode];
     [lat, lon, heading, from] = [la, lo, `${target.outcode} (${place})`, `the middle of ${target.outcode}`];
+    // A full postcode: its own position, from its area's file. One not in the file (new, or mistyped) falls back to the district.
+    if (target.inward) {
+      const full = `${target.outcode}\u00a0${target.inward}`; // kept on one line
+      const file = index.postcodes ? await loadPostcodes(index.postcodes.folder, postcodeArea(target.outcode)) : {};
+      const at = file[target.outcode] ? decodeDistrict(file[target.outcode]).get(target.inward) : undefined;
+      if (at) [lat, lon, heading, from] = [at[0], at[1], `${full} (${place})`, full];
+      else notFound = full;
+    }
   } else {
     const a = index.areas.indexOf(target.area);
     if (a < 0) throw new NotListed();
@@ -260,7 +269,7 @@ async function find(target: Target, now: number): Promise<Found> {
     histories[d.station.id] = d.history;
   }
   const rows = nearestFrom(lat, lon, stations, prices, index.outcodes, index.bank, now);
-  return { index, lat, lon, rows, histories, heading, from, centreId };
+  return { index, lat, lon, rows, histories, heading, from, notFound, centreId };
 }
 
 export function Results({ target }: { target: Target }) {
@@ -284,7 +293,7 @@ export function Results({ target }: { target: Target }) {
     });
     return () => cancelAnimationFrame(frame);
   }, [panel?.id, panel?.kind]);
-  const key = target.kind === 'postcode' ? target.outcode : `${target.area}/${target.id}`;
+  const key = target.kind === 'postcode' ? `${target.outcode} ${target.inward ?? ''}` : `${target.area}/${target.id}`;
 
   useEffect(() => {
     let live = true;
@@ -331,7 +340,19 @@ export function Results({ target }: { target: Target }) {
   const nowUk = ukNow(now);
   const nowText = `${['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][nowUk.day]} ${clockText(`${String(Math.floor(nowUk.mins / 60)).padStart(2, '0')}:${String(nowUk.mins % 60).padStart(2, '0')}`)}`;
   const stale = now - Date.parse(found.index.collected) > 24 * 3_600_000;
-  const origin: Origin = target.kind === 'postcode' ? { area: /^[A-Z]+/.exec(target.outcode)?.[0] ?? '', key: target.outcode } : { area: target.area, key: target.id };
+  // The road miles start from the middle of the district even for a full postcode (road figures for every postcode would be far too
+  // big); the calculator says so beside its verdict, worded for each case (John, 31 October).
+  const origin: Origin =
+    target.kind === 'postcode'
+      ? {
+          area: postcodeArea(target.outcode),
+          key: target.outcode,
+          note:
+            target.inward && !found.notFound
+              ? `The extra miles are by road from the middle of ${target.outcode}, not from ${target.outcode} ${target.inward} itself, so they’re a guide.`
+              : `The extra miles are by road from the middle of ${target.outcode}, so they’re a guide.`,
+        }
+      : { area: target.area, key: target.id, note: `The extra miles are by road from ${found.from}.` };
   // One panel open at a time.
   const calc: Calc = {
     open: panel,
@@ -360,7 +381,9 @@ export function Results({ target }: { target: Target }) {
         </h3>
       </div>
       <p className="notes">
-        Straight-line distances from {found.from}.
+        {found.notFound
+          ? `We couldn’t find ${found.notFound} (it may be new, or mistyped), so distances are in a straight line from ${found.from}.`
+          : `Straight-line distances from ${found.from}.`}
         {closed > 0 && ` ${WORDS[closed]} of them ${closed === 1 ? 'is' : 'are'} closed now (${nowText}).`} Prices collected at{' '}
         {collectedText(found.index.collected, now)}, as reported by each station; they may have changed since.
         {stale && ' The latest collection is older than usual, so some prices may be out of date.'}{' '}
