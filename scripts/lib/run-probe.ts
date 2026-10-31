@@ -16,6 +16,7 @@ import {
   redact,
   safeHeaders,
   USER_AGENT,
+  summariseHistory,
   summarisePrices,
   summariseStations,
   trimmedSizeEstimate,
@@ -35,6 +36,9 @@ export type ProbeOptions = {
   stepSummaryPath?: string;
   controlUrl?: string; // a harmless public page, to see whether this machine can reach the internet at all
   diagnose?: boolean;
+  // History check (John, 31 October): skip the station list and the usual extras; fetch the current prices and every batch of
+  // prices changed since this many days ago, and compare them (summariseHistory).
+  historyDays?: number;
   log: (line: string) => void;
 };
 
@@ -239,7 +243,7 @@ export async function runProbe(opts: ProbeOptions) {
     return reply;
   }
 
-  async function fetchAll(path: string, label: string) {
+  async function fetchAll(path: string, label: string, query = '') {
     const records: Obj[] = [];
     const sizes: number[] = [];
     let bytes = 0;
@@ -247,7 +251,7 @@ export async function runProbe(opts: ProbeOptions) {
     let failure: Record<string, unknown> | null = null;
     let envelope = '';
     for (let n = 1; n <= maxBatches; n++) {
-      const reply = await get(`${path}?batch-number=${n}`);
+      const reply = await get(`${path}?batch-number=${n}${query}`);
       // The API marks the end of the list with a 404 on the batch after the last (seen from AWS London, 27 October).
       if (reply.status === 404 && n > 1) break;
       if (reply.status !== 200) {
@@ -269,6 +273,18 @@ export async function runProbe(opts: ProbeOptions) {
       if (arr.length === 0) break;
     }
     return { records, info: { envelope, batches: sizes.length, batchSizes: sizes, totalRecords: records.length, bytes, seconds: Math.round(ms / 100) / 10, failure } };
+  }
+
+  if (opts.historyDays !== undefined) {
+    const sinceMs = now - opts.historyDays * 86_400_000;
+    const currentRun = await fetchAll('/api/v1/pfs/fuel-prices', 'current prices');
+    const sinceRun = await fetchAll('/api/v1/pfs/fuel-prices', `prices changed since ${utcDate(sinceMs)}`, `&effective-start-timestamp=${utcDate(sinceMs)}`);
+    summary.history = {
+      currentCall: currentRun.info,
+      changedSinceCall: sinceRun.info,
+      ...(sinceRun.records.length > 0 ? summariseHistory(sinceRun.records, currentRun.records, Date.parse(utcDate(sinceMs))) : {}),
+    };
+    return finish(!(currentRun.info.failure || sinceRun.info.failure) && currentRun.records.length > 0);
   }
 
   const stationsRun = await fetchAll('/api/v1/pfs', 'stations');

@@ -406,6 +406,71 @@ export function summarisePrices(prices: Obj[], stations: Obj[], nowMs: number) {
   };
 }
 
+// --- Does the "changed since a date" call hold earlier prices? (31 October) ------------------
+// John asked whether 14 days of price history can be had from Fuel Finder rather than built up from our own collections.
+// The full price call gives one price per station and fuel. This compares it with the incremental call since a date, and
+// counts (never lists) what would show a history: a station appearing more than once, the same fuel more than once, or a
+// price different from the current one. Counts and dates only; no station codes or prices are printed.
+export function summariseHistory(incremental: Obj[], current: Obj[], sinceMs: number) {
+  const currentPrice = new Map<string, { p: unknown; u: string }>();
+  for (const r of current)
+    for (const e of Array.isArray(r.fuel_prices) ? r.fuel_prices : [])
+      if (isObj(e)) currentPrice.set(`${String(r.node_id ?? '')}|${fuelCode(e.fuel_type)}`, { p: e.price, u: String(e.price_last_updated ?? '') });
+
+  const recordsPerStation: Record<string, number> = {};
+  const entries = new Map<string, { p: unknown; u: string }[]>();
+  let entryCount = 0;
+  let updatedBeforeSince = 0;
+  let earliest = '';
+  let latest = '';
+  for (const r of incremental) {
+    const id = String(r.node_id ?? '');
+    bump(recordsPerStation, id);
+    for (const e of Array.isArray(r.fuel_prices) ? r.fuel_prices : []) {
+      if (!isObj(e)) continue;
+      entryCount++;
+      const u = String(e.price_last_updated ?? '');
+      const key = `${id}|${fuelCode(e.fuel_type)}`;
+      if (!entries.has(key)) entries.set(key, []);
+      entries.get(key)!.push({ p: e.price, u });
+      const t = Date.parse(u);
+      if (Number.isFinite(t)) {
+        if (t < sinceMs) updatedBeforeSince++;
+        if (earliest === '' || u < earliest) earliest = u;
+        if (latest === '' || u > latest) latest = u;
+      }
+    }
+  }
+  const timesSeen = Object.values(recordsPerStation);
+  const perFuel: Record<string, number> = {};
+  let fuelsWithDifferentPrices = 0;
+  let differFromCurrent = 0;
+  let sameAsCurrent = 0;
+  let notInCurrent = 0;
+  for (const [key, list] of entries) {
+    bump(perFuel, list.length >= 3 ? '3 or more' : String(list.length));
+    if (new Set(list.map((x) => String(x.p))).size > 1) fuelsWithDifferentPrices++;
+    const now = currentPrice.get(key);
+    if (!now) notInCurrent++;
+    else if (list.some((x) => String(x.p) !== String(now.p) || x.u !== now.u)) differFromCurrent++;
+    else sameAsCurrent++;
+  }
+  return {
+    since: new Date(sinceMs).toISOString().slice(0, 10),
+    records: incremental.length,
+    stations: timesSeen.length,
+    stationsSeenMoreThanOnce: timesSeen.filter((n) => n > 1).length,
+    mostTimesOneStationSeen: timesSeen.length ? Math.max(...timesSeen) : 0,
+    priceEntries: entryCount,
+    stationFuels: entries.size,
+    entriesPerStationFuel: perFuel,
+    stationFuelsWithMoreThanOnePrice: fuelsWithDifferentPrices,
+    comparedWithCurrentCall: { same: sameAsCurrent, different: differFromCurrent, notInCurrentCall: notInCurrent },
+    entriesSetBeforeTheDate: updatedBeforeSince,
+    priceSetTimes: { earliest: earliest.slice(0, 10), latest: latest.slice(0, 10) },
+  };
+}
+
 // --- How big would the page's data file be? ----------------------------------------------
 
 function compactHours(s: Obj): string {

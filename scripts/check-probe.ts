@@ -6,6 +6,7 @@ import { readFileSync } from 'node:fs';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { runProbe } from './lib/run-probe.ts';
+import { summariseHistory } from './lib/probe.ts';
 import {
   CANDIDATE_HOSTS,
   classifyDay,
@@ -225,7 +226,7 @@ async function fakeApi(b: Behaviour = {}) {
       return json(res, 200, n === 1 ? [stations[0], stations[1]] : n === 2 ? [stations[2]] : []);
     }
     if (url.pathname === '/api/v1/pfs/fuel-prices') {
-      const page = incremental ? [prices[0]] : n === 1 ? [prices[0], prices[1]] : n === 2 ? [prices[2], prices[3]] : [];
+      const page = incremental ? (n === 1 ? [prices[0], { ...prices[0], fuel_prices: [{ fuel_type: 'E10', price: 99.9, price_last_updated: '2026-02-10T08:00:00.000Z' }] }] : []) : n === 1 ? [prices[0], prices[1]] : n === 2 ? [prices[2], prices[3]] : [];
       return json(res, 200, b.wrapPrices ? { success: true, data: page } : page);
     }
     json(res, 404, { message: 'not found' });
@@ -252,7 +253,7 @@ await check('probe: a full run against the fake server', async () => {
     assert.equal(s.token.expiresIn, 3600);
     assert.equal(s.token.hasRefreshToken, true);
     assert.equal(s.incremental.pricesSinceYesterday.date, '2026-02-17');
-    assert.equal(s.incremental.pricesSinceYesterday.firstBatchRecords, 1);
+    assert.equal(s.incremental.pricesSinceYesterday.firstBatchRecords, 2);
     assert.equal(s.regenerate.ok, true);
     assert.equal(s.estimatedPageFile.stationsInFile, 3);
     assert.ok(s.requestsMade > 8);
@@ -375,6 +376,44 @@ await check('probe: nothing answering ends cleanly, with no token', async () => 
   const r = await probe([url]);
   assert.equal(r.ok, false);
   assert.ok(r.text.includes('no access token obtained'));
+});
+
+await check('history check: counts what would show earlier prices, and nothing that identifies a station', () => {
+  const since = Date.parse('2026-02-04T00:00:00Z');
+  const cur = [{ node_id: 'a', fuel_prices: [{ fuel_type: 'E10', price: 170, price_last_updated: '2026-02-17T09:00:00.000Z' }] }, { node_id: 'b', fuel_prices: [{ fuel_type: 'B7_STANDARD', price: 190, price_last_updated: '2026-01-01T09:00:00.000Z' }] }];
+  const inc = [
+    { node_id: 'a', fuel_prices: [{ fuel_type: 'E10', price: 170, price_last_updated: '2026-02-17T09:00:00.000Z' }] },
+    { node_id: 'a', fuel_prices: [{ fuel_type: 'e10', price: 172, price_last_updated: '2026-02-10T09:00:00.000Z' }] },
+    { node_id: 'b', fuel_prices: [{ fuel_type: 'B7_STANDARD', price: 190, price_last_updated: '2026-01-01T09:00:00.000Z' }] },
+  ];
+  const h = summariseHistory(inc, cur, since);
+  assert.equal(h.stations, 2);
+  assert.equal(h.stationsSeenMoreThanOnce, 1);
+  assert.deepEqual(h.entriesPerStationFuel, { '1': 1, '2': 1 });
+  assert.equal(h.stationFuelsWithMoreThanOnePrice, 1);
+  assert.deepEqual(h.comparedWithCurrentCall, { same: 1, different: 1, notInCurrentCall: 0 });
+  assert.equal(h.entriesSetBeforeTheDate, 1);
+  assert.deepEqual(h.priceSetTimes, { earliest: '2026-01-01', latest: '2026-02-17' });
+  assert.ok(!JSON.stringify(h).includes('"a"') && !JSON.stringify(h).includes('172'), 'no station code or price in the summary');
+});
+
+await check('history check: a run pages through the changed-since call and skips the station list', async () => {
+  const api = await fakeApi({ wrapPrices: true });
+  try {
+    const r = await probe([api.url], { historyDays: 14 });
+    assert.equal(r.ok, true);
+    const s = r.summary as Record<string, any>;
+    assert.equal(s.stations, undefined);
+    assert.equal(s.history.since, '2026-02-04');
+    assert.equal(s.history.currentCall.totalRecords, 4);
+    assert.equal(s.history.changedSinceCall.totalRecords, 2);
+    assert.equal(s.history.stationsSeenMoreThanOnce, 1);
+    assert.equal(s.history.comparedWithCurrentCall.different, 1);
+    assert.ok(api.seen.some((x) => x.url.includes('effective-start-timestamp=2026-02-04')), 'asked since 14 days before');
+    assert.ok(!r.text.includes(SECRET) && !r.text.includes(String(prices[0].node_id)), 'no secret or station code printed');
+  } finally {
+    await api.close();
+  }
 });
 
 console.log(failures === 0 ? '\nAll checks passed.' : `\n${failures} check(s) FAILED.`);

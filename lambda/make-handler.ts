@@ -9,7 +9,9 @@ import { runProbe, type ProbeOptions } from '../scripts/lib/run-probe.ts';
 type Overrides = Partial<Pick<ProbeOptions, 'hosts' | 'allowLocal' | 'paceMs' | 'backoffMs' | 'controlUrl'>>;
 
 export function makeHandler(overrides: Overrides = {}) {
-  return async function handler() {
+  // The console's Test event: `{}` runs the usual probe; `{"history": true}` runs the price-history check (31 October).
+  return async function handler(event?: unknown) {
+    const history = typeof event === 'object' && event !== null && (event as { history?: unknown }).history === true;
     const clientId = process.env.FUEL_FINDER_CLIENT_ID ?? '';
     const clientSecret = process.env.FUEL_FINDER_CLIENT_SECRET ?? '';
     // Where it ran, so a London run can be told from any other (harmless: a region name and a version).
@@ -23,6 +25,7 @@ export function makeHandler(overrides: Overrides = {}) {
       clientId,
       clientSecret,
       log: (line) => console.log(line),
+      ...(history ? { historyDays: 14 } : {}),
       ...overrides,
     });
     // summaryText has already been through redact(); do it once more before returning, as a last line of defence.

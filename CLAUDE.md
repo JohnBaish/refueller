@@ -1099,3 +1099,14 @@ later in the mock-up round of 30 October; they aren't yet in the agreed feature 
 postcodes added to PLAN "Ideas logged for later" (item 4), next after the 14-day graph, with the wording with and without the
 second half still to work out.
 
+### 2026-10-31 — can Fuel Finder give 14 days of price history? A check built (branch `probe-price-history`)
+
+**John:** can't the 14 days come from the system, as it knows when prices changed? Each price comes only with when it was set, not
+what it replaced; and the portal keeps no list of past CSV files (John checked). Untested: whether the "changed since a date" call
+returns a station more than once, or older prices. **Built:** `summariseHistory()` in `scripts/lib/probe.ts` and a `historyDays`
+option in `scripts/lib/run-probe.ts`: current prices, every batch changed since 14 days ago, and counts only (stations seen more than
+once, entries per station and fuel, prices different from the current call, the date range). The Lambda probe runs it when the Test
+event is `{"history": true}`; `{}` still runs the usual probe. John's steps: `design/aws-history-check-steps-2026-10-31.md` (build from
+this branch, upload to `refueller-probe`, Test). **Checked:** `npm run check` (two new checks; making "seen more than once" mean three
+times made both fail, then restored), lint, type-check, both Lambda bundles build. Not checked against the real API. Not merged.
+
