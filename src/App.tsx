@@ -168,7 +168,8 @@ function About() {
         device, from Ordnance Survey’s map of motorways, A roads and B roads, using rough speeds for each kind of road. It lists
         the eight cheapest stations that add no more than three miles and about six minutes to the journey, there and back (a short
         detour through a busy town can take much longer than its miles suggest), in the order you’d reach
-        them. One-way streets and turns aren’t known and minor roads are left out, so the distances are a guide. Opening hours
+        them. For comparison it also shows the cheapest of the eight stations nearest the start and the end, as the main list
+        would find them (a members-only Costco aside). One-way streets and turns aren’t known and minor roads are left out, so the distances are a guide. Opening hours
         are today’s, as Refueller can’t know when you’ll get there.
       </p>
     </section>
