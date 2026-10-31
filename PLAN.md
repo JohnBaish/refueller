@@ -392,7 +392,7 @@ within a chosen distance; county or region pages for search.
 
 **Asked for by John (30 October 2026), to come after launch:**
 
-1. **A 14-day price graph for a station:** how its unleaded and diesel prices have changed over the last 14 days,
+1. **A 14-day price graph for a station (built and merged 31 October 2026 as "Price history"):** how its unleaded and diesel prices have changed over the last 14 days,
    beside the average of the eight stations shown. Notes from checking:
    - *Fair Use policy:* nothing in it forbids history or comparisons. What applies: comparisons must be "based on
      objective criteria" and not "misleading", prices shown "in an unbiased manner", timestamps not altered. An

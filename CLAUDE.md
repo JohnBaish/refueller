@@ -1159,3 +1159,9 @@ device asks for reduced motion (`Results.tsx`; `.calc { scroll-margin-top: 12px 
 panels open with their top 12px from the top of the screen (54px for the last station, where the page can't scroll further); a
 panel that already fits doesn't move; no errors. Build and lint clean.
 
+### 2026-10-31 — the price graph merged to `main`
+
+John said merge. `feature-price-history` fast-forwarded into `main` (no data commits had arrived since); checks, lint and build clean
+first. On `main` now: the graph, its record and the "Price history" workflow, "Find stations near this one" hidden, and panels scrolling
+into view. The workflow first runs after the 10.15am collection; to check then.
+
