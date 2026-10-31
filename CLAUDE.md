@@ -1109,3 +1109,15 @@ the fortnight. The branch stays unmerged (the check isn't needed again); the tes
 still runs the usual probe. Phone tips that worked: the artifact's own download link, Files unpacking the wrapper, and
 `https://console.aws.amazon.com/` (not aws.amazon.com, whose "Create profile" is an AWS Builder ID).
 
+### 2026-10-31 — 14-day graph, option A: mock-ups (notes only)
+
+John asked to see option A (build the graph now and let it fill in). Mock-ups from the real RG4 prices in the three collections of
+30 October, drawn into the built page in the browser only (`design/mock/graph-mock.cjs`; no app code): a "Price history" link and a
+panel under the station, like the calculator, with Unleaded/Diesel buttons, this station's price as a step line from each price's
+own "set" time, a dashed line for the average of the eight shown (only once all eight prices are known: from 3pm on October 29th),
+"Not recorded" shading before the first known price, a sentence saying the same in words, and a note on when recording began.
+Already real: Caversham Esso Express shows the full fortnight (177.9p since October 14th, then 175.9p), because its earlier price was
+set before the window. Colours checked with the dataviz validator (light #c05a14 and #5f5a52, dark #cf7a3f and #7a7266): all checks
+pass except the grey's "chroma floor", which is deliberate (a grey reference line), with dashes as the second cue. Pictures
+`design/previews/graph-*.png`. All wording is draft.
+
