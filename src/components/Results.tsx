@@ -270,6 +270,20 @@ export function Results({ target }: { target: Target }) {
   const [failed, setFailed] = useState<'' | 'load' | 'not-listed'>('');
   const [attempt, setAttempt] = useState(0);
   const [panel, setPanel] = useState<{ id: string; kind: PanelKind } | null>(null);
+  // When a panel opens and doesn't fit on the screen below where it starts (usual on a phone), bring its top into view, so the
+  // visitor sees what they asked for without scrolling (John, 31 October).
+  useEffect(() => {
+    if (!panel) return;
+    const frame = requestAnimationFrame(() => {
+      const el = document.querySelector<HTMLElement>('.calc');
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      if (r.top >= 0 && r.bottom <= window.innerHeight) return;
+      const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      el.scrollIntoView({ block: 'start', behavior: still ? 'auto' : 'smooth' });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [panel?.id, panel?.kind]);
   const key = target.kind === 'postcode' ? target.outcode : `${target.area}/${target.id}`;
 
   useEffect(() => {

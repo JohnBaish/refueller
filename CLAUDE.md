@@ -1151,3 +1151,11 @@ about it much later. `SHOW_FIND_NEAR = false` in `src/components/Results.tsx` hi
 and 390px with touch: no "Find stations" links, eight "Price history", three "Worth driving here?"; a station address still works; on
 a phone the two remaining links now share one line (`design/previews/links-without-find-phone.png`); no errors, no sideways scroll.
 
+### 2026-10-31 — panels scroll into view on a phone (branch `feature-price-history`)
+
+**John** (on his phone): after tapping "Price history" he had to scroll to see it. Now, when a panel ("Price history" or "Worth
+driving here?") opens and doesn't fit on the screen below where it starts, the page scrolls its top into view, smoothly unless the
+device asks for reduced motion (`Results.tsx`; `.calc { scroll-margin-top: 12px }`). **Checked:** at 390px with touch and 1200px:
+panels open with their top 12px from the top of the screen (54px for the last station, where the page can't scroll further); a
+panel that already fits doesn't move; no errors. Build and lint clean.
+
