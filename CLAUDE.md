@@ -1256,3 +1256,14 @@ type (motorway 62 mph … B road 30, roundabouts 15; `design/mock/journey-build-
 with miles reported along it (`design/mock/journey-compute.ts`): Reading to Bristol 77.6 miles, Cardiff to Bristol 43.1. **Found:**
 the cheapest stations cluster in the cities at either end (six of the eight for Reading to Bristol are in Bristol); Costco (members
 only) comes top from Cardiff. Both put to John. Wording all draft.
+
+### 2026-10-31 — the journey list: four ways to choose the eight (notes only)
+
+**John:** the journey planner is secondary, so its link goes at the bottom (above the footer on the postcode screen; below the list,
+before "About these figures", on the results); "Members only" on Costco stations (built separately, branch `costco-members`); and
+asked to see options a to d one after the other (leaning to b). Mock-ups, Reading to Bristol, unleaded, from the 4.15pm collection
+(`design/mock/journey-options.cjs`, built page in the browser only): `design/previews/journey-4-option-{a,b,c,d}-{computer,phone}.png`;
+the link at the bottom `journey-3-*`; Cardiff to Bristol's Costco with its note `journey-5-costco-*`. **What each gives:** a, six of eight
+in Bristol; b, the same eight in the order you reach them (only Swindon before Bristol); c, two per quarter, which shows the gap: the second
+quarter's only cheap-ish choices are Asda Chiseldon (174.9p) and Membury services (198.9p); d, leaving out 10 miles at each end, gives
+Swindon and Chippenham at 167.9p to 177.9p. Heading now "Eight cheaper stations…" (draft).
