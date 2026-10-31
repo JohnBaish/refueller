@@ -1279,3 +1279,9 @@ bullet explains it, and a "Members only" bullet. **Checked:** `npm run check` (n
 and not the other), lint, type-check, build; RG2 at 1200px and 390px with touch, light and dark: both badges as above, the note, no errors,
 no sideways scroll. Pictures `design/previews/costco-badge-*.png`. Journey list: John chose **option b** (the eight cheapest, in the order
 you'd reach them). Not merged.
+
+### 2026-10-31 — Costco badges merged to `main`
+
+John said merge (and confirmed the sitemap was already there: `public/sitemap.xml` and `robots.txt` since 30 October; he is adding
+the sitemap in Search Console). `costco-members` merged into `main` after bringing in its data commits; checks, lint, type-check and
+build clean first. The lowest price anyone can buy being marked too stands, as John said merge after reading it.
