@@ -110,7 +110,7 @@ into `public/data/roads-<built>/<area>.json`. `src/lib/calc.ts` (the sums, wordi
 `src/components/Calc.tsx` (the panel), `scripts/check-calc.ts`.
 Price history (on `main` since 31 October): `scripts/build-history.ts` and `.github/workflows/history.yml` keep `data/history.json`;
 `src/lib/history.ts`, `src/components/History.tsx`, `scripts/check-history.ts`.
-Full postcodes (branch `feature-full-postcodes`): `scripts/build-postcodes.ts` (`npm run postcodes <Open Names folder>`) makes
+Full postcodes (on `main` since 31 October): `scripts/build-postcodes.ts` (`npm run postcodes <Open Names folder>`) makes
 `data/postcodes/<area>.json` (every postcode's position, 16 MB); `scripts/lib/pageData.ts` copies them to
 `public/data/postcodes-<made>/`; `src/lib/postcodes.ts` decodes a district; the address after "#" is `RG4` or `RG4-7HN`.
 
@@ -1210,4 +1210,9 @@ RG4 7HN where OS puts it), lint, both type-checks, build (the site's data is now
 RG4 7HN (nearest 0.9 miles, not 0.4 from the middle of RG4), RG4, RG4 7ZZ (fallback), ZE1 0AA (Lerwick), the full postcode kept and
 reopened after a reload, both calculator notes, only area files requested (`postcodes-…/RG.json`), no errors, no sideways scroll.
 Not merged.
+
+### 2026-10-31 — full postcodes merged to `main`
+
+John said merge. `feature-full-postcodes` fast-forwarded into `main` (no new data commits since); checks, lint and build clean first.
+All the drafted wording stands, including the calculator's notes.
 
