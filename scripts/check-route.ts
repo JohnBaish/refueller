@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { joinChains, speedMph } from './build-route-roads.ts';
-import { journey, makeNetwork, readRouteHash, routeCheapest, routeEight, routeHash, routeMiles, todayText, toPlace, type RouteFile, type RouteRow } from '../src/lib/route.ts';
+import { endChoice, journey, makeNetwork, readRouteHash, routeCheapest, routeEight, routeHash, routeMiles, todayText, toPlace, type RouteFile, type RouteRow } from '../src/lib/route.ts';
 import type { Station } from '../src/lib/search.ts';
 
 let failures = 0;
@@ -106,6 +106,15 @@ await check('the eight: the cheapest within three extra miles, at a usual price,
   assert.equal(r.within, 10);
   assert.equal(r.rows.length, 8);
   assert.deepEqual(r.rows.map((x) => x.station.id), ['a', 'z0', 'z1', 'z2', 'z3', 'z4', 'z5', 'd']);
+});
+
+await check('each end: the cheapest of the eight nearest anyone can buy, nearest first on a tie; left out of the eight on the way', () => {
+  const near = (id: string, p: number | null, fromEnd: number, over: Partial<Station> = {}) => ({ ...row(id, p, 0, 0, over), fromEnd });
+  const eight = [near('a', 171, 0.4), near('costco', 160, 1, { brand: 'COSTCO WHOLESALE' }), near('b', 168, 2), near('c', 168, 1.5), near('d', null, 0.2)];
+  assert.equal(endChoice(eight, 'e10')!.station.id, 'c');
+  assert.equal(endChoice([near('costco', 160, 1, { brand: 'COSTCO WHOLESALE' }), near('d', null, 0.2)], 'e10'), null);
+  const r = routeEight([row('c', 168, 1, 0.5), row('e', 170, 5, 0.5)], 'e10', new Set(['c']));
+  assert.deepEqual(r.rows.map((x) => x.station.id), ['e']);
 });
 
 await check('badges: as the main list, Costco "members only" and the lowest anyone can buy', () => {

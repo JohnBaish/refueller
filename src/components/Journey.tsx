@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { Fragment, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { collectedText, PriceCell, REPORT_URL, useNow } from './Results.tsx';
 import { loadChoices, saveChoices, type Fuel } from '../lib/calc.ts';
 import { loadArea, loadIndex, loadPostcodes, loadRouteRoads } from '../lib/load.ts';
@@ -17,12 +17,13 @@ import {
   toPlace,
   ROUTE_EXTRA_MILES,
   ROUTE_EXTRA_MINUTES,
+  endChoice,
   type Network,
   type Pc,
   type RouteRow,
   type RouteTarget,
 } from '../lib/route.ts';
-import { membersOnly, postcodeArea, readPostcode, tidyAddress, tidyName } from '../lib/search.ts';
+import { membersOnly, milesBetween, milesText, postcodeArea, readPostcode, tidyAddress, tidyName } from '../lib/search.ts';
 
 // "Find cheaper fuel near the route" (John, 31 October 2026; option b): the form, then the eight cheapest within three extra
 // miles in the order you'd reach them. Everything is worked out on this device (src/lib/route.ts).
@@ -136,7 +137,7 @@ async function whereIs(index: PageIndex, p: Pc): Promise<Where> {
   return at ? { lat: at[0], lon: at[1], label: `${full} (${place.split(' / ')[0]})` } : { ...district, notFound: full };
 }
 
-type Found = { ok: true; index: PageIndex; miles: number; candidates: RouteRow[]; from: Where; to: Where; via?: Where } | { ok: false; message: string };
+type Found = { ok: true; index: PageIndex; miles: number; candidates: RouteRow[]; startEight: RouteRow[]; endEight: RouteRow[]; from: Where; to: Where; via?: Where } | { ok: false; message: string };
 
 async function find(t: Required<Pick<RouteTarget, 'from' | 'to'>> & RouteTarget): Promise<Found> {
   const index = await loadIndex();
@@ -154,13 +155,21 @@ async function find(t: Required<Pick<RouteTarget, 'from' | 'to'>> & RouteTarget)
           : 'One of those places is too far from a main road for Refueller to work out a journey.',
     };
   const near = index.points.map((p, i) => ({ p, i })).filter(({ i }) => j.extra[i] <= ROUTE_EXTRA_MILES && j.minutes[i] <= ROUTE_EXTRA_MINUTES);
-  const areas = [...new Set(near.map(({ p }) => p[2]))];
+  // The eight stations nearest each end, as the main list finds them (in a straight line), for the comparison at either end.
+  const nearestTo = (w: Where) =>
+    index.points
+      .map((p, i) => ({ p, i, d: milesBetween(w.lat, w.lon, p[0], p[1]) }))
+      .sort((a, b) => a.d - b.d || a.i - b.i)
+      .slice(0, 8);
+  const [atStart, atEnd] = [nearestTo(from), nearestTo(to)];
+  const areas = [...new Set([...near, ...atStart, ...atEnd].map(({ p }) => p[2]))];
   const files = new Map(await Promise.all(areas.map(async (a) => [a, await loadArea(index.version, index.areas[a])] as const)));
-  const candidates = near.map(({ p, i }) => {
+  const rowOf = ({ p, i, d }: { p: PageIndex['points'][number]; i: number; d?: number }): RouteRow => {
     const { station, prices } = fromDetail(files.get(p[2])![p[3]], p[0], p[1]);
-    return { station, prices, along: j.along[i], extra: j.extra[i], minutes: j.minutes[i] };
-  });
-  return { ok: true, index, miles: j.miles, candidates, from, to, via };
+    return { station, prices, along: j.along[i], extra: j.extra[i], minutes: j.minutes[i], ...(d === undefined ? {} : { fromEnd: d }) };
+  };
+  const candidates = near.map(rowOf);
+  return { ok: true, index, miles: j.miles, candidates, startEight: atStart.map(rowOf), endEight: atEnd.map(rowOf), from, to, via };
 }
 
 function Notes({ found, shown, within, now }: { found: Extract<Found, { ok: true }>; shown: number; within: number; now: number }) {
@@ -174,7 +183,8 @@ function Notes({ found, shown, within, now }: { found: Extract<Found, { ok: true
         : shown === within
           ? `${cap(WORDS[within] ?? String(within))} station${within === 1 ? ' adds' : 's add'} no more than ${ROUTE_EXTRA_MILES} miles and about ${ROUTE_EXTRA_MINUTES} minutes to it, there and back; here ${within === 1 ? 'it is' : 'they are'}, in the order you’d reach them.`
           : `Of the ${within} stations that add no more than ${ROUTE_EXTRA_MILES} miles and about ${ROUTE_EXTRA_MINUTES} minutes to it, there and back, these are the cheapest, in the order you’d reach them.`}{' '}
-      Distances are by main roads, so they’re a guide. Opening hours are today’s. Prices collected at {collectedText(found.index.collected, now)}, as
+      For comparison, the cheapest of the eight stations nearest each end is shown first and last. Distances are by main roads, so
+      they’re a guide. Opening hours are today’s. Prices collected at {collectedText(found.index.collected, now)}, as
       reported by each station; they may have changed since.{' '}
       <a href={REPORT_URL} target="_blank" rel="noopener noreferrer">
         Report a wrong price
@@ -206,7 +216,13 @@ export function JourneyResults({ target }: { target: RouteTarget }) {
     };
   }, [target.from?.outcode, target.from?.inward, target.to?.outcode, target.to?.inward, target.via?.outcode, target.via?.inward, attempt]);
 
-  const chosen = useMemo(() => (found?.ok ? routeEight(found.candidates, fuel) : null), [found, fuel]);
+  const chosen = useMemo(() => {
+    if (!found?.ok) return null;
+    const start = endChoice(found.startEight, fuel);
+    const end = endChoice(found.endEight, fuel);
+    const leaveOut = new Set([start, end].filter((r): r is RouteRow => !!r).map((r) => r.station.id));
+    return { start, end: end && end.station.id !== start?.station.id ? end : null, ...routeEight(found.candidates, fuel, leaveOut) };
+  }, [found, fuel]);
   if (!target.from || !target.to) return null;
   if (failed)
     return (
@@ -226,8 +242,19 @@ export function JourneyResults({ target }: { target: RouteTarget }) {
     );
 
   const rows = chosen!.rows;
-  const cheapest = routeCheapest(rows, fuel);
-  const all = rows.map((r) => r.prices[fuel]!.p).sort((a, b) => a - b);
+  // Shown together, in this order: the cheapest near the start, the stations on the way, the cheapest near the end. "Cheapest" and the
+  // small chart compare all of them.
+  type Shown = { r: RouteRow; group: 'start' | 'way' | 'end' };
+  const shown: Shown[] = [
+    ...(chosen!.start ? [{ r: chosen!.start, group: 'start' as const }] : []),
+    ...rows.map((r) => ({ r, group: 'way' as const })),
+    ...(chosen!.end ? [{ r: chosen!.end, group: 'end' as const }] : []),
+  ];
+  const cheapest = routeCheapest(
+    shown.map((x) => x.r),
+    fuel,
+  );
+  const all = shown.map((x) => x.r.prices[fuel]!.p).sort((a, b) => a - b);
   const fuelName = fuel === 'e10' ? 'Unleaded' : 'Diesel';
   const choose = (f: Fuel) => {
     setFuel(f);
@@ -241,6 +268,11 @@ export function JourneyResults({ target }: { target: RouteTarget }) {
     </>
   );
   const price = (r: RouteRow, i: number) => <PriceCell p={r.prices[fuel]} cheapest={cheapest[i]} fuel={fuel} now={now} all={all} members={membersOnly(r.station)} />;
+  const endName = (g: Shown['group']) => (g === 'start' ? found.from : found.to).label.split(' (')[0];
+  const where = (x: Shown) => (x.group === 'way' ? `${routeMiles(x.r.along)} from the start` : `${milesText(x.r.fromEnd!)} from ${endName(x.group)}`);
+  const extraText = (r: RouteRow) => (Number.isFinite(r.extra) ? routeMiles(r.extra) : '–');
+  const GROUP: Record<Shown['group'], string> = { start: 'Cheapest near the start', way: 'On the way', end: 'Cheapest near the end' };
+  const firstOf = (i: number) => i === 0 || shown[i - 1].group !== shown[i].group;
   const today = (r: RouteRow) => todayText(r.station, now, found.index.bank);
 
   return (
@@ -258,26 +290,29 @@ export function JourneyResults({ target }: { target: RouteTarget }) {
         ))}
       </div>
       <Notes found={found} shown={rows.length} within={chosen!.within} now={now} />
-      {rows.length === 0 ? null : narrow ? (
+      {shown.length === 0 ? null : narrow ? (
         <div className="cards">
-          {rows.map((r, i) => (
-            <div key={r.station.id} className="pcard">
-              <div className="pcard-top">
-                <div>{name(r)}</div>
-                <div className="dist mono route-extra">
-                  {routeMiles(r.extra)}
-                  <div className="route-extra-lbl">extra</div>
+          {shown.map((x, i) => (
+            <div key={x.r.station.id}>
+              {firstOf(i) && <div className="grp">{GROUP[x.group]}</div>}
+              <div className="pcard">
+                <div className="pcard-top">
+                  <div>{name(x.r)}</div>
+                  <div className="dist mono route-extra">
+                    {extraText(x.r)}
+                    <div className="route-extra-lbl">extra</div>
+                  </div>
                 </div>
-              </div>
-              <div className="grid">
-                <div className="lbl">{fuelName}</div>
-                <div>{price(r, i)}</div>
-                <div className="lbl">On the way</div>
-                <div>{routeMiles(r.along)} from the start</div>
-                <div className="lbl">Today</div>
-                <div className="openv">{today(r)}</div>
-                <div className="lbl">Address</div>
-                <div className="addr">{tidyAddress(r.station)}</div>
+                <div className="grid">
+                  <div className="lbl">{fuelName}</div>
+                  <div>{price(x.r, i)}</div>
+                  <div className="lbl">{x.group === 'way' ? 'On the way' : 'Where'}</div>
+                  <div>{where(x)}</div>
+                  <div className="lbl">Today</div>
+                  <div className="openv">{today(x.r)}</div>
+                  <div className="lbl">Address</div>
+                  <div className="addr">{tidyAddress(x.r.station)}</div>
+                </div>
               </div>
             </div>
           ))}
@@ -295,24 +330,33 @@ export function JourneyResults({ target }: { target: RouteTarget }) {
             <thead>
               <tr>
                 <th>Station</th>
-                <th className="c">On the way</th>
+                <th className="c">Where</th>
                 <th className="c">Extra miles</th>
                 <th className="c">{fuel === 'e10' ? 'Unleaded (E10)' : 'Diesel'}</th>
                 <th className="c">Today</th>
               </tr>
             </thead>
             <tbody>
-              {rows.map((r, i) => (
-                <tr key={r.station.id}>
-                  <td>
-                    {name(r)}
-                    <div className="addr">{tidyAddress(r.station)}</div>
-                  </td>
-                  <td className="c">{routeMiles(r.along)} from the start</td>
-                  <td className="c mono dist">{routeMiles(r.extra)}</td>
-                  <td className="c">{price(r, i)}</td>
-                  <td className="c">{today(r)}</td>
-                </tr>
+              {shown.map((x, i) => (
+                <Fragment key={x.r.station.id}>
+                  {firstOf(i) && (
+                    <tr className="grp-row">
+                      <td colSpan={5}>
+                        <div className="grp">{GROUP[x.group]}</div>
+                      </td>
+                    </tr>
+                  )}
+                  <tr>
+                    <td>
+                      {name(x.r)}
+                      <div className="addr">{tidyAddress(x.r.station)}</div>
+                    </td>
+                    <td className="c">{where(x)}</td>
+                    <td className="c mono dist">{extraText(x.r)}</td>
+                    <td className="c">{price(x.r, i)}</td>
+                    <td className="c">{today(x.r)}</td>
+                  </tr>
+                </Fragment>
               ))}
             </tbody>
           </table>

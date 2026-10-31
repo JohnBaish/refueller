@@ -176,12 +176,20 @@ export function journey(net: Network, places: Place[], stations: Place[]): Journ
 
 export const toPlace = (lat: number, lon: number): Place => toBritishGrid(lat, lon);
 
-export type RouteRow = { station: Station; prices: { e10?: Price; diesel?: Price }; along: number; extra: number; minutes: number };
+export type RouteRow = { station: Station; prices: { e10?: Price; diesel?: Price }; along: number; extra: number; minutes: number; fromEnd?: number };
+
+// For comparison (John, 31 October): the cheapest of the eight stations nearest each end, as the main list would show them, at a usual
+// price; the cheapest anyone can buy, so not a members-only Costco. Null when none of the eight sells the fuel.
+export function endChoice(eight: RouteRow[], fuel: 'e10' | 'diesel'): RouteRow | null {
+  const usual = eight.filter((r) => r.prices[fuel] && !r.prices[fuel]!.x && !membersOnly(r.station));
+  if (!usual.length) return null;
+  return usual.reduce((a, b) => (b.prices[fuel]!.p < a.prices[fuel]!.p || (b.prices[fuel]!.p === a.prices[fuel]!.p && b.fromEnd! < a.fromEnd!) ? b : a));
+}
 
 // The eight cheapest within three extra miles at a usual price, then in the order you'd reach them; and how many were within the
 // three miles. Ties in price go to the smaller detour.
-export function routeEight(candidates: RouteRow[], fuel: 'e10' | 'diesel') {
-  const within = candidates.filter((c) => c.extra <= ROUTE_EXTRA_MILES && c.minutes <= ROUTE_EXTRA_MINUTES && c.prices[fuel] && !c.prices[fuel]!.x);
+export function routeEight(candidates: RouteRow[], fuel: 'e10' | 'diesel', leaveOut: Set<string> = new Set()) {
+  const within = candidates.filter((c) => !leaveOut.has(c.station.id) && c.extra <= ROUTE_EXTRA_MILES && c.minutes <= ROUTE_EXTRA_MINUTES && c.prices[fuel] && !c.prices[fuel]!.x);
   const eight = within
     .slice()
     .sort((a, b) => a.prices[fuel]!.p - b.prices[fuel]!.p || a.extra - b.extra)

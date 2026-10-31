@@ -1326,3 +1326,15 @@ updated to say "3 miles and about 6 minutes" (lead, notes, About). Results now: 
 (new town check; setting the junction delay to 0, or dropping the minutes limit, each made checks fail, then restored), lint, both
 type-checks, build; RG1 to PE38 in Chromium at 1200px and 390px with touch: no errors, no sideways scroll. Picture
 `design/previews/journey-built-RG1-PE38-computer.png`. Not merged.
+
+### 2026-10-31 — journey planner: the cheapest near each end, for comparison (branch `feature-journey`)
+
+**John:** to be truly useful, compare with the stations at either end: include the cheapest of the eight closest to the start and to the
+end. **What:** `endChoice()` in `src/lib/route.ts`: of the eight nearest each end (straight line, as the main list finds them), the
+cheapest at a usual price that anyone can buy (not a members-only Costco; nearest first on a tie). The list now has three groups,
+"Cheapest near the start", "On the way" (the eight, leaving out the two end stations so nothing appears twice), "Cheapest near the end";
+"Cheapest" and the small chart compare all of them ("Lowest of ten"; the number words now go to ten). The "Where" column (was "On the
+way") says "0.4 miles from RG1" for the ends; "Extra miles" is still the detour from the route. Notes and About each gain a sentence
+(drafts). **Checked:** `npm run check` (new: the end choice, Costco left out, a tie, no duplicate), type-check, lint, build; RG1 to PE38,
+RG1 to BS1 and CF10 to BS1 at 1200px and 390px with touch, light and dark: the three groups, no errors, no sideways scroll. Picture
+`design/previews/journey-ends-RG1-PE38-*.png`. Not merged.

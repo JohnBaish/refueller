@@ -214,3 +214,7 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
   .journey-link a { display: inline-block; min-height: 44px; line-height: 44px; }
 }
 @media print { .journey-link { display: none; } }
+/* The journey list's three groups: the cheapest near the start, on the way, the cheapest near the end. */
+.grp { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-neutral-700); margin: 14px 0 6px; }
+.table .grp-row td { padding-bottom: 0; border-bottom: 0; }
+.cards > div > .grp { margin-top: 18px; }
