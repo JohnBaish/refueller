@@ -1121,3 +1121,25 @@ set before the window. Colours checked with the dataviz validator (light #c05a14
 pass except the grey's "chroma floor", which is deliberate (a grey reference line), with dashes as the second cue. Pictures
 `design/previews/graph-*.png`. All wording is draft.
 
+### 2026-10-31 — the 14-day price graph built (branch `feature-price-history`)
+
+**John:** build option A now; wording as in the mock-ups; show the average; the phone layout is fine. **The record:**
+`scripts/build-history.ts` rebuilds `data/history.json` from the versions of `data/prices.json` in git over the last 17 days (every
+collection is a commit), keeping each station's earlier prices in the window (and the last before it), with their set times; a fuel
+whose only price is the current one is left out (128 KB, 27 KB compressed today). Run after each collection by the new workflow
+`.github/workflows/history.yml` ("Price history": on a push to `main` that changes `data/prices.json`, or by hand; fetches 17 days of
+git, commits the file if it changed; no secrets; a GITHUB_TOKEN commit starts no workflow, so no loop; Vercel rebuilds on it). The
+build adds the current price and puts each station's history in its area file (an eleventh field of `DetailRow`), so nothing extra
+is downloaded. **The page:** `src/lib/history.ts` (window, trimming, the average once every station's price is known, the sentence,
+dates) and `src/components/History.tsx` (the panel and graph, as in the mock-ups): a "Price history" link on every station; one panel
+at a time with "Worth driving here?"; a mouse shows a dot's label, a tap shows it on a phone. **Wording that changes by itself:** the
+"Refueller began recording…" note shows only while the record is shorter than the window, and "starts once all their prices are
+known" only while it is; both drop away about 13 November. Also: legend and note say "the seven shown that sell diesel" when not all
+eight sell it; "It changed three times in the last 14 days, between …" for three or more changes; a draft About paragraph.
+
+**Checked:** `npm run check` (new `scripts/check-history.ts`: dates in BST and GMT, history order and trimming, the history file, the
+mock-ups' sentences, the average's start and values, the page-data column), lint, both type-checks, build. In Chromium at 1200px and
+390px with touch, light and dark: RG4's Caversham Esso Express (full fortnight) and Reading Extra ("Not recorded"), both fuels, the
+label by pointing (computer) and by tapping (phone; first try failed, as phones send "mouse leave" after a tap; fixed), one panel at a
+time, print hides it, no sideways scroll, no errors. **Not checked:** the workflow on GitHub (needs `main`). Not merged.
+

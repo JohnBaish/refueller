@@ -138,6 +138,11 @@ function About() {
         point as the list, using Ordnance Survey’s map of every road; they don’t allow for one-way streets or turns, so a sat
         nav may give a little more. Where there’s no road figure, type your own. It doesn’t count your time or wear on the car.
       </p>
+      <p>
+        <strong>Price history</strong> shows a station’s price over the last 14 days, against the average of the stations
+        shown. Fuel Finder gives only each station’s current price and when it was set, so the history is Refueller’s own
+        record, taken at each collection. A price that changed twice between collections shows only its latest change.
+      </p>
     </section>
   );
 }

@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useState, type ReactNode } from 'react';
 import { CalcPanel, type Origin } from './Calc.tsx';
+import { HistoryPanel, type Histories } from './History.tsx';
 import { cheaperFuels } from '../lib/calc.ts';
 import { fromDetail, type PageIndex } from '../lib/pageTypes.ts';
 import { loadArea, loadIndex } from '../lib/load.ts';
@@ -99,12 +100,14 @@ function OpenCell({ row }: { row: Row }) {
 
 // "Find stations near this one" (John, 30 October; first called "Centre on this station"): searches again from that
 // station's own position.
-// and "Worth driving here?" (PLAN Stage 7), which opens the calculator under the station: only on a station cheaper than the
-// nearest open one for at least one fuel (John, 30 October), as elsewhere it could only say there's nothing to work out.
-type Calc = { openId: string | null; toggle: (id: string) => void; offered: (r: Row) => boolean; panel: (r: Row) => ReactNode };
+// "Worth driving here?" (PLAN Stage 7), which opens the calculator under the station: only on a station cheaper than the
+// nearest open one for at least one fuel (John, 30 October), as elsewhere it could only say there's nothing to work out;
+// and "Price history" (31 October), on every station. One panel open at a time.
+type PanelKind = 'calc' | 'history';
+type Calc = { open: { id: string; kind: PanelKind } | null; toggle: (id: string, kind: PanelKind) => void; offered: (r: Row) => boolean; panel: (r: Row) => ReactNode };
 
 function RowLinks({ row, centreId, calc }: { row: Row; centreId?: string; calc: Calc }) {
-  const open = calc.openId === row.station.id;
+  const isOpen = (kind: PanelKind) => calc.open?.id === row.station.id && calc.open.kind === kind;
   return (
     <div className="row-links">
       {row.station.id !== centreId && (
@@ -113,10 +116,13 @@ function RowLinks({ row, centreId, calc }: { row: Row; centreId?: string; calc: 
         </a>
       )}
       {calc.offered(row) && (
-        <button type="button" className="centre-link link-btn" aria-expanded={open} onClick={() => calc.toggle(row.station.id)}>
+        <button type="button" className="centre-link link-btn" aria-expanded={isOpen('calc')} onClick={() => calc.toggle(row.station.id, 'calc')}>
           Worth driving here?
         </button>
       )}
+      <button type="button" className="centre-link link-btn" aria-expanded={isOpen('history')} onClick={() => calc.toggle(row.station.id, 'history')}>
+        Price history
+      </button>
     </div>
   );
 }
@@ -164,7 +170,7 @@ function Table({ rows, now, centreId, calc }: { rows: Row[]; now: number; centre
                   <OpenCell row={r} />
                 </td>
               </tr>
-              {calc.openId === r.station.id && (
+              {calc.open?.id === r.station.id && (
                 <tr className="calc-row">
                   <td colSpan={5}>{calc.panel(r)}</td>
                 </tr>
@@ -206,14 +212,14 @@ function Cards({ rows, now, centreId, calc }: { rows: Row[]; now: number; centre
             <div className="addr">{tidyAddress(r.station)}</div>
           </div>
           <RowLinks row={r} centreId={centreId} calc={calc} />
-          {calc.openId === r.station.id && calc.panel(r)}
+          {calc.open?.id === r.station.id && calc.panel(r)}
         </div>
       ))}
     </div>
   );
 }
 
-type Found = { index: PageIndex; lat: number; lon: number; rows: Row[]; heading: string; from: string; centreId?: string };
+type Found = { index: PageIndex; lat: number; lon: number; rows: Row[]; histories: Histories; heading: string; from: string; centreId?: string };
 
 // Asked for a station that isn't in this collection (closed since the link was made, say).
 class NotListed extends Error {}
@@ -244,13 +250,15 @@ async function find(target: Target, now: number): Promise<Found> {
   await Promise.all([...new Set(nearest.map((n) => n.p[2]))].map(async (a) => files.set(a, await loadArea(index.version, index.areas[a]))));
   const stations = [];
   const prices: Record<string, { e10?: Price; diesel?: Price }> = {};
+  const histories: Histories = {};
   for (const n of nearest) {
     const d = fromDetail(files.get(n.p[2])![n.p[3]], n.p[0], n.p[1]);
     stations.push(d.station);
     prices[d.station.id] = d.prices;
+    histories[d.station.id] = d.history;
   }
   const rows = nearestFrom(lat, lon, stations, prices, index.outcodes, index.bank, now);
-  return { index, lat, lon, rows, heading, from, centreId };
+  return { index, lat, lon, rows, histories, heading, from, centreId };
 }
 
 export function Results({ target }: { target: Target }) {
@@ -259,14 +267,14 @@ export function Results({ target }: { target: Target }) {
   const [found, setFound] = useState<Found | null>(null);
   const [failed, setFailed] = useState<'' | 'load' | 'not-listed'>('');
   const [attempt, setAttempt] = useState(0);
-  const [calcId, setCalcId] = useState<string | null>(null);
+  const [panel, setPanel] = useState<{ id: string; kind: PanelKind } | null>(null);
   const key = target.kind === 'postcode' ? target.outcode : `${target.area}/${target.id}`;
 
   useEffect(() => {
     let live = true;
     setFailed('');
     setFound(null);
-    setCalcId(null);
+    setPanel(null);
     find(target, Date.now())
       .then((f) => live && setFound(f))
       .catch((e) => live && setFailed(e instanceof NotListed ? 'not-listed' : 'load'));
@@ -310,10 +318,22 @@ export function Results({ target }: { target: Target }) {
   const origin: Origin = target.kind === 'postcode' ? { area: /^[A-Z]+/.exec(target.outcode)?.[0] ?? '', key: target.outcode } : { area: target.area, key: target.id };
   // One panel open at a time.
   const calc: Calc = {
-    openId: calcId,
-    toggle: (id) => setCalcId((c) => (c === id ? null : id)),
+    open: panel,
+    toggle: (id, kind) => setPanel((c) => (c?.id === id && c.kind === kind ? null : { id, kind })),
     offered: (r) => cheaperFuels(r, rows).length > 0,
-    panel: (r) => <CalcPanel row={r} rows={rows} origin={origin} centreId={found.centreId} roads={found.index.roads} onClose={() => setCalcId(null)} />,
+    panel: (r) =>
+      panel?.kind === 'history' ? (
+        <HistoryPanel
+          row={r}
+          rows={rows}
+          histories={found.histories}
+          collected={found.index.collected}
+          recordedFrom={found.index.history?.recordedFrom ?? found.index.collected}
+          onClose={() => setPanel(null)}
+        />
+      ) : (
+        <CalcPanel row={r} rows={rows} origin={origin} centreId={found.centreId} roads={found.index.roads} onClose={() => setPanel(null)} />
+      ),
   };
 
   return (

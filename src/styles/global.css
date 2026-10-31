@@ -55,6 +55,31 @@ a { color: var(--color-accent-700); }
 .calc-hint { font-size: 11.5px; color: var(--color-neutral-700); max-width: 220px; }
 .calc-verdict { margin: var(--space-3) 0 4px; font-size: 15px; }
 .calc-small { font-size: 12.5px; color: var(--color-neutral-700); margin: 4px 0 0; }
+
+/* "Price history" (31 October): the 14-day graph, in the calculator's panel. Line colours checked with the dataviz validator
+   (light and dark); the average is grey on purpose, and dashed so it isn't told apart by colour alone. */
+:root { --g-me: #c05a14; --g-avg: #5f5a52; }
+.hist-svg { display: block; overflow: visible; }
+.hist .g-grid { stroke: var(--color-divider); stroke-width: 1; }
+.hist .g-axl { stroke: var(--color-neutral-500); stroke-width: 1; }
+.hist .g-ax { font: 11px Figtree, sans-serif; fill: var(--color-neutral-700); }
+.hist .g-me { fill: none; stroke: var(--g-me); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.hist .g-avg { fill: none; stroke: var(--g-avg); stroke-width: 2; stroke-dasharray: 5 4; stroke-linejoin: round; }
+.hist .g-dot { fill: var(--g-me); stroke: var(--color-bg); stroke-width: 2; }
+.hist .g-hit { fill: transparent; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.hist-svg { -webkit-tap-highlight-color: transparent; }
+.hist .g-hatch { stroke: var(--color-neutral-400); stroke-width: 1.2; opacity: 0.6; }
+.hist .g-unk-t, .hist .g-lab { font: 600 12px Figtree, sans-serif; fill: var(--color-neutral-700); }
+.hist .g-lab-me { fill: var(--color-text); }
+.hist .g-cross { stroke: var(--color-neutral-500); stroke-width: 1; }
+.hist .g-tip rect { fill: var(--color-surface); stroke: var(--color-divider); }
+.hist .g-tip text { font: 12px Figtree, sans-serif; fill: var(--color-neutral-700); }
+.hist .g-tip .g-tip-b { font-weight: 600; fill: var(--color-text); }
+.hist-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: var(--color-neutral-700); margin: 2px 0 6px; }
+.hist-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.hist-legend i { display: inline-block; width: 22px; height: 0; border-top: 2.5px solid var(--g-me); }
+.hist-legend i.avg { border-top: 2px dashed var(--g-avg); }
+.hist-say { font-size: 14px; margin: 8px 0 4px; }
 .dist { font-weight: 600; white-space: nowrap; }
 .price { font-size: 17px; font-weight: 600; white-space: nowrap; }
 .upd { font-size: 11.5px; color: var(--color-neutral-700); }
@@ -133,6 +158,8 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
   :root[data-theme="dark"] {
     color-scheme: dark;
     --color-note: #9fb8dc;
+    --g-me: #cf7a3f;
+    --g-avg: #7a7266;
     --color-bg: #2a2723;
     --color-surface: #37332e;
     --color-text: #e8dfcf;
@@ -154,4 +181,5 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
   }
   /* Finer text smoothing in dark mode (HOUSE-STYLE §2): Macs draw light text on a dark page heavier; others ignore it. */
   :root[data-theme="dark"] body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  :root[data-theme="dark"] .hist .g-hatch { opacity: 0.35; }
 }

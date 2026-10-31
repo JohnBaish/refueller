@@ -15,10 +15,11 @@ import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node
 import { join } from 'node:path';
 import { higherPricesUsual, positionAgrees, postcodeArea, type BankHolidays, type Outcodes, type Price, type Station } from '../../src/lib/search.ts';
 import type { DetailRow, PageIndex, PriceCell, RoadFile } from '../../src/lib/pageTypes.ts';
+import { trim, windowFor, withPrice, type Hist } from '../../src/lib/history.ts';
 
 export type { DetailRow, PageIndex, PriceCell };
 
-export const SOURCES = ['data/stations.json', 'data/prices.json', 'data/outcodes.json', 'data/bank-holidays.json', 'data/road-miles.json'];
+export const SOURCES = ['data/stations.json', 'data/prices.json', 'data/outcodes.json', 'data/bank-holidays.json', 'data/road-miles.json', 'data/history.json'];
 
 const round4 = (n: number) => Math.round(n * 1e4) / 1e4;
 const cell = (p: Price | undefined): PriceCell => (p ? [p.p, p.u, p.x ? 1 : 0] : 0);
@@ -27,7 +28,14 @@ const cell = (p: Price | undefined): PriceCell => (p ? [p.p, p.u, p.x ? 1 : 0] :
 const unmark = (p: Price | undefined, middle: number | null): Price | undefined =>
   p && p.x && typeof middle === 'number' && p.p > middle ? { p: p.p, u: p.u } : p;
 
-export function makePageData(stations: Station[], prices: Record<string, { e10?: Price; diesel?: Price }>, outcodes: Outcodes, bank: BankHolidays, meta: { collected: string; middle: PageIndex['middle']; unusualPence: number }) {
+export function makePageData(stations: Station[], prices: Record<string, { e10?: Price; diesel?: Price }>, outcodes: Outcodes, bank: BankHolidays, meta: { collected: string; middle: PageIndex['middle']; unusualPence: number }, history: Record<string, { e10?: Hist; diesel?: Hist }> = {}) {
+  const windowStart = windowFor(Date.parse(meta.collected)).start;
+  // The 14 days' prices with the current one added (as shown, unusual marks aside); 0 when the current price is all there is.
+  const hist = (h: Hist | undefined, p: Price | undefined): Hist | 0 => {
+    if (!h || !p) return 0;
+    const all = trim(withPrice(h, p), windowStart);
+    return all.length > 1 ? all : 0;
+  };
   const leftOut = { temporarilyClosed: 0, farFromPostcode: 0 };
   const byArea = new Map<string, DetailRow[]>();
   const points: PageIndex['points'] = [];
@@ -54,7 +62,13 @@ export function makePageData(stations: Station[], prices: Record<string, { e10?:
     const p = higherPricesUsual(s.postcode) ? { e10: unmark(given.e10, meta.middle.e10), diesel: unmark(given.diesel, meta.middle.diesel) } : given;
     // Four decimal places (about 10 metres) is plenty for distances shown to a tenth of a mile, and keeps the index small.
     points.push([round4(s.lat), round4(s.lon), areas.indexOf(a), rows.length]);
-    rows.push([s.name, s.brand, s.address.join('|'), s.postcode, hours, bh, flags, cell(p.e10), cell(p.diesel), s.id]);
+    const h = history[s.id];
+    const row: DetailRow = [s.name, s.brand, s.address.join('|'), s.postcode, hours, bh, flags, cell(p.e10), cell(p.diesel), s.id];
+    if (h) {
+      const pair: [Hist | 0, Hist | 0] = [hist(h.e10, given.e10), hist(h.diesel, given.diesel)];
+      if (pair[0] || pair[1]) row.push(pair);
+    }
+    rows.push(row);
   }
   const index: PageIndex = {
     version: meta.collected.replace(/[^0-9TZ]/g, '').slice(0, 15),
@@ -67,6 +81,7 @@ export function makePageData(stations: Station[], prices: Record<string, { e10?:
     points,
     leftOut,
     roads: null,
+    history: null,
   };
   return { index, byArea };
 }
@@ -92,11 +107,17 @@ export function writePageData(root: string) {
   const read = (f: string) => JSON.parse(readFileSync(join(root, f), 'utf8'));
   const st = read('data/stations.json');
   const pr = read('data/prices.json');
-  const { index, byArea } = makePageData(st.stations, pr.prices, read('data/outcodes.json').outcodes, read('data/bank-holidays.json'), {
-    collected: pr.collected,
-    middle: pr.middle,
-    unusualPence: pr.unusualPence,
-  });
+  const hist = existsSync(join(root, 'data/history.json')) ? read('data/history.json') : null;
+  const { index, byArea } = makePageData(
+    st.stations,
+    pr.prices,
+    read('data/outcodes.json').outcodes,
+    read('data/bank-holidays.json'),
+    { collected: pr.collected, middle: pr.middle, unusualPence: pr.unusualPence },
+    hist?.stations ?? {},
+  );
+  // Our own record begins with the first collection kept in the history file (or this one, without it).
+  index.history = { recordedFrom: hist?.recordedFrom ?? pr.collected };
   const out = join(root, 'public', 'data');
   rmSync(out, { recursive: true, force: true });
   mkdirSync(join(out, index.version), { recursive: true });
