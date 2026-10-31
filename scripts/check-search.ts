@@ -28,6 +28,7 @@ import {
   updatedText,
   rankPrices,
   rankText,
+  membersOnly,
   type BankHolidays,
   type Outcodes,
   type Station,
@@ -148,6 +149,13 @@ await check('updated: hours and days, and old after 45 whole days', () => {
   assert.equal(updatedText('2026-09-26T12:00:00Z', now), 'Same price for 34 days');
   assert.equal(isOld('2026-09-15T10:00:00Z', now), false, '45 days');
   assert.equal(isOld('2026-09-14T10:00:00Z', now), true, '46 days');
+});
+
+await check('members only: every Costco, by brand or name, and no one else', () => {
+  const st = (brand: string, name: string) => ({ brand, name }) as unknown as Station;
+  assert.equal(membersOnly(st('COSTCO WHOLESALE', 'COSTCO WHOLESALE BRISTOL')), true);
+  assert.equal(membersOnly(st('Costco Wholesale Sunbury', 'Costco Wholesale Sunbury')), true);
+  assert.equal(membersOnly(st('TESCO', 'Reading Extra')), false);
 });
 
 await check('price position: usual prices lowest first, words for the lowest and pence above it', () => {

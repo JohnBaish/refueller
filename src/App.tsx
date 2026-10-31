@@ -121,6 +121,9 @@ function About() {
         <li>
           <strong>Cheapest</strong> marks the lowest unleaded and the lowest diesel price among the stations shown.
         </li>
+        <li>
+          <strong>Members only</strong> marks Costco, which sells fuel only to its members.
+        </li>
         <li>“Same price for …” is shown in blue when the price has been the same for more than 45 days.</li>
         <li>The small chart under each price shows where it sits among the stations shown, from lowest to highest.</li>
         <li>

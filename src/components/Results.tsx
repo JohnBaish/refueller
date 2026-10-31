@@ -10,6 +10,7 @@ import {
   clockText,
   hoursProblem,
   isOld,
+  membersOnly,
   milesBetween,
   milesText,
   nearestFrom,
@@ -184,6 +185,7 @@ function Table({ rows, now, centreId, calc }: { rows: Row[]; now: number; centre
                 <td>
                   <div className="brand">{r.station.brand}</div>
                   <div className="sname">{tidyName(r.station.name)}</div>
+                  {membersOnly(r.station) && <div className="members">Members only</div>}
                   <div className="addr">{tidyAddress(r.station)}</div>
                   <RowLinks row={r} centreId={centreId} calc={calc} />
                 </td>
@@ -221,6 +223,7 @@ function Cards({ rows, now, centreId, calc }: { rows: Row[]; now: number; centre
             <div>
               <div className="brand">{r.station.brand}</div>
               <div className="sname">{tidyName(r.station.name)}</div>
+                  {membersOnly(r.station) && <div className="members">Members only</div>}
             </div>
             <div className="dist mono">{distanceText(r, centreId)}</div>
           </div>

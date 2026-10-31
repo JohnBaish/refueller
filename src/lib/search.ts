@@ -265,6 +265,10 @@ export function rankText(me: number, all: number[]): string {
 
 // More than 45 days old (John, 28 October: marked, never hidden; 30 October: 45 days, not 30, as a price that hasn't changed may
 // still be right).
+// Costco sells fuel to its members only (costco.co.uk's fuel questions and answers, read through a search summary on 31 October
+// 2026). Marked "Members only" beside the name (John, 31 October); nothing else about the station or its prices changes.
+export const membersOnly = (s: Station) => /costco/i.test(`${s.brand} ${s.name}`);
+
 export const isOld = (iso: string, ms: number) => Math.floor((ms - Date.parse(iso)) / 86_400_000) > 45;
 
 // Fuel Finder gives most names in capitals. Shown in ordinary capitalisation (John, 30 October), except: a name or address line
