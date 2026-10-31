@@ -63,9 +63,11 @@ function journey(from: string, to_: string, fuel: 'e10' | 'diesel', cap = 3) {
   }).filter((c: any) => c && c.extra <= cap);
   cands.sort((a: any, b: any) => a.p.p - b.p.p || a.extra - b.extra);
   const eight = cands.slice(0, 8);
+  const row = (c: any) => ({ brand: c.s.brand, name: S.tidyName(c.s.name), address: S.tidyAddress(c.s), price: c.p.p, upd: S.updatedText(c.p.u, NOW), old: S.isOld(c.p.u, NOW), along: c.along, extra: c.extra, hours: hoursToday(c.s), members: /costco/i.test(c.s.brand + ' ' + c.s.name) });
   const all = eight.map((c: any) => c.p.p).sort((a: number, b: number) => a - b);
   return {
     from, to: to_, fromPlace: oc[from][2], toPlace: oc[to_][2], fuel, cap,
+    all8: cands.map(row),
     direct: direct / MI, straight: Math.hypot(A.easting - B.easting, A.northing - B.northing) / MI, within: cands.length,
     rows: eight.map((c: any) => ({
       brand: c.s.brand, name: S.tidyName(c.s.name), address: S.tidyAddress(c.s), price: c.p.p, upd: S.updatedText(c.p.u, NOW), old: S.isOld(c.p.u, NOW),
@@ -76,4 +78,4 @@ function journey(from: string, to_: string, fuel: 'e10' | 'diesel', cap = 3) {
 const out = [journey('RG1', 'BS1', 'e10'), journey('RG1', 'BS1', 'diesel'), journey('CF10', 'BS1', 'e10')];
 for (const j of out) { console.log(j.from, j.to, j.fuel, 'direct', j.direct.toFixed(1), 'straight', j.straight.toFixed(1), 'within cap', j.within); for (const r of j.rows) console.log('  ', r.price, r.name, r.brand, r.along.toFixed(0), 'mi along,', r.extra.toFixed(1), 'extra |', r.hours, r.motorway ? 'MOTORWAY' : ''); }
 console.log('collected', pr.collected, u);
-writeFileSync('/tmp/claude-0/-home-user/d7a6fee5-4206-5672-972f-81c453fe6f20/scratchpad/journey/journeys.json', JSON.stringify(out));
+writeFileSync('/home/user/refueller/design/mock/journeys-2026-10-31.json', JSON.stringify(out));
