@@ -1243,3 +1243,16 @@ Vercel shows Valid Configuration. At first John's phone said "server can't be fo
 from before the record was there); it opened soon after. `refueller.vercel.app` still works too. The page's canonical and preview
 tags already pointed at this address. Still held back (John, 30 October): Web Analytics, Search Console, the baish.net landing card
 and the overview PDF. Not checked by Claude: this session's network blocks the site and public DNS lookups.
+
+### 2026-10-31 — "Find cheaper fuel near the route": mock-ups (notes only)
+
+**John:** yes to the nine suggestions (route worked out in the browser on OS Open Roads; full postcodes or first half; one optional
+"via"; Unleaded/Diesel; at most 3 extra miles; cheapest first; today's hours; no comparison at first; links on the postcode screen
+and above results; journey in the address, not remembered). **Mock-ups** drawn into the built page in the browser only
+(`design/mock/journey-mock.cjs`; no app code), from the 4.15pm collection on October 31st: `design/previews/journey-*.png`, Reading
+to Bristol (both fuels) and Cardiff to Bristol, computer and phone, light and dark. **Routing:** the first try took the shortest
+route by distance, which went along the A4 through Marlborough rather than the M4; the map was rebuilt with rough speeds by road
+type (motorway 62 mph … B road 30, roundabouts 15; `design/mock/journey-build-timed.py`) so the route is the one a driver would take,
+with miles reported along it (`design/mock/journey-compute.ts`): Reading to Bristol 77.6 miles, Cardiff to Bristol 43.1. **Found:**
+the cheapest stations cluster in the cities at either end (six of the eight for Reading to Bristol are in Bristol); Costco (members
+only) comes top from Cardiff. Both put to John. Wording all draft.
