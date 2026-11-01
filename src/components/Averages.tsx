@@ -7,7 +7,7 @@ import type { PageIndex } from '../lib/pageTypes.ts';
 import { useIsNarrow } from '../lib/responsive.ts';
 import type { Row } from '../lib/search.ts';
 
-// "Average prices" (John, 1 November 2026; option B of the mock-ups): under the list, a chart for unleaded and one for diesel, each
+// "Average prices" (John, 1 November 2026; option B of the mock-ups; no dots on any line, John): under the list, a chart for unleaded and one for diesel, each
 // on its own scale, with the average at these eight stations, in the postcode area and across Great Britain at each collection over
 // the last 30 days. The mean of the usual prices (src/lib/averages.ts). Colours: the eight in the graph's terracotta (as "this
 // station" in the price history), the area in blue (checked with the dataviz validator against terracotta, light and dark), Great
@@ -76,7 +76,7 @@ function Chart({ lines, fuelName, narrow, start, end }: { lines: Line[]; fuelNam
       {shown.map((l) => (
         <g key={l.key}>
           {l.pts.length > 1 && <polyline className={`a-${l.key}`} points={l.pts.map((p) => `${x(p.t)},${y(p.p)}`).join(' ')} />}
-          {(l.key === 'eight' || l.pts.length === 1) && l.pts.map((p) => <circle key={p.t} className={`a-dot a-dot-${l.key}`} cx={x(p.t)} cy={y(p.p)} r={3.5} />)}
+          {l.pts.length === 1 && l.pts.map((p) => <circle key={p.t} className={`a-dot a-dot-${l.key}`} cx={x(p.t)} cy={y(p.p)} r={3.5} />)}
         </g>
       ))}
       {ends.map((e) => (

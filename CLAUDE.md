@@ -1522,3 +1522,9 @@ unchanged, the real file; letting unusual prices count made two checks fail, the
 1200px and 390px with touch, light and dark: RG4, Caversham, RG4 7HN, HS1, B7 and TR21; the tip by pointing and tapping; under the
 list and above the journey planner; hidden in print; no errors, no sideways scroll. Pictures `design/previews/averages-built-*.png`.
 Not merged.
+
+### 2026-11-01 — "Average prices": no dots; "RG postcodes" stays (branch `feature-averages`)
+
+**John:** keep "RG postcodes" as the area's label; the eight stations' line had dots and the others didn't, so all lines now plain
+(a dot only where a line has a single point). Checked: type-check, lint, build; RG4 at 1200px and 390px with touch, light and dark,
+no errors, no sideways scroll. Not merged.

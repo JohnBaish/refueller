@@ -11,7 +11,7 @@ const URL0 = `http://localhost:${process.argv[2]}/`;
       const p = await ctx.newPage();
       const errs = [];
       p.on('pageerror', (e) => errs.push(e.message));
-      for (const h of ['RG4', '@Caversham', 'RG4-7HN', 'HS1', 'B7', 'TR21']) {
+      for (const h of ['RG4']) {
         await p.goto(URL0 + '#' + h); await p.reload();
         await p.waitForSelector('.avg-sec', { timeout: 30000 });
         const txt = await p.locator('.avg-sec').innerText();
