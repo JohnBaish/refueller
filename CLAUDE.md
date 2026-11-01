@@ -1528,3 +1528,11 @@ Not merged.
 **John:** keep "RG postcodes" as the area's label; the eight stations' line had dots and the others didn't, so all lines now plain
 (a dot only where a line has a single point). Checked: type-check, lint, build; RG4 at 1200px and 390px with touch, light and dark,
 no errors, no sideways scroll. Not merged.
+
+### 2026-11-01 — "Average prices": John's sentence (branch `feature-averages`)
+
+**John:** while the record builds up, "Average prices (excluding unusual ones) as collected by Refueller. This history will
+eventually show 30 days. It is currently building up since recording began on October 30th."; once it covers 30 days, "Average
+prices over the last 30 days as collected by Refueller. Unusual prices are not included." (`src/components/Averages.tsx`; switches by
+itself about November 29th). Checked: type-check, lint, build; PE38 at 1200px and 390px with touch, both sentences (the 30-day one with
+an older collection added to the file in the browser only), no errors, no sideways scroll. Not merged.

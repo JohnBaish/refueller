@@ -145,9 +145,10 @@ export function AveragesSection({ index, rows, histories, area }: { index: PageI
     <section className="avg-sec" data-noprint>
       <h3>Average prices</h3>
       <p>
-        The average price of unleaded and diesel at each of Refueller’s collections: at these {WORDS[rows.length]} stations, in {area}{' '}
-        postcodes and across Great Britain, over the last {AVERAGE_DAYS} days
-        {filling ? ` (since recording began on ${dateWords(start, false)})` : ''}. Unusual prices are not included.
+        {/* John's wording (1 November): one sentence while the record builds up, another once it covers the whole 30 days. */}
+        {filling
+          ? `Average prices (excluding unusual ones) as collected by Refueller. This history will eventually show ${AVERAGE_DAYS} days. It is currently building up since recording began on ${dateWords(start, false)}.`
+          : `Average prices over the last ${AVERAGE_DAYS} days as collected by Refueller. Unusual prices are not included.`}
       </p>
       <div className="hist-legend">
         <span>
