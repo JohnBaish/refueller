@@ -453,6 +453,19 @@ and add its tags. Nothing else needs fixing or remaking first.
 - After every push, ask GitHub what it holds (`git ls-remote origin <branch>`)
   rather than trusting "sent": a push from the wrong place can report
   success and send nothing (2026-10-22).
+- **Tidy branches as you go** (John, 2026-11-01). Delete a branch as soon
+  as it's merged into `main`: its commits stay in `main`'s history, so
+  nothing is lost. Keep an unmerged branch only while it holds work worth
+  returning to (parked or in progress), and say in the project's notes
+  that it exists and what's in it. For dead unmerged work, tag it
+  (`archive/<branch>`) before deleting, so its commits survive. Before
+  calling a branch merged, check with full history: cloud copies are often
+  shallow (`git rev-parse --is-shallow-repository`; if `true`, run
+  `git fetch --unshallow origin`), and a shallow copy makes merged
+  branches look unmerged. **Cloud sessions can't delete branches or push
+  tags** (GitHub refuses with 403, seen 2026-11-01), so at the end of a
+  stage list the branches to delete for John, with their repo, rather than
+  leaving them to pile up.
 
 **Preview servers (Claude's checks):** start `vite preview` directly with
 `node node_modules/vite/bin/vite.js preview --port <n> --strictPort` (not
