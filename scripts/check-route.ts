@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { joinChains, speedMph } from './build-route-roads.ts';
-import { endChoice, journey, makeNetwork, readRouteHash, routeCheapest, routeEight, routeHash, routeMiles, todayText, toPlace, type RouteFile, type RouteRow, ROUTE_CORRIDOR_METRES } from '../src/lib/route.ts';
+import { endChoices, journey, makeNetwork, readRouteHash, routeCheapest, routeEight, routeHash, routeMiles, todayText, toPlace, type RouteFile, type RouteRow, ROUTE_CORRIDOR_METRES } from '../src/lib/route.ts';
 import type { Station } from '../src/lib/search.ts';
 
 let failures = 0;
@@ -145,11 +145,16 @@ await check('the eight: a station more than about two miles from the drawn route
   assert.deepEqual(r.rows.map((x) => x.station.id), ['near']);
 });
 
-await check('each end: the cheapest of the eight nearest anyone can buy, nearest first on a tie; left out of the eight on the way', () => {
+await check('each end: the cheapest anyone can buy, nearest first on a tie, then a Costco when cheaper still (John, 1 November); left out of the eight on the way', () => {
   const near = (id: string, p: number | null, fromEnd: number, over: Partial<Station> = {}) => ({ ...row(id, p, 0, 0, over), fromEnd });
-  const eight = [near('a', 171, 0.4), near('costco', 160, 1, { brand: 'COSTCO WHOLESALE' }), near('b', 168, 2), near('c', 168, 1.5), near('d', null, 0.2)];
-  assert.equal(endChoice(eight, 'e10')!.station.id, 'c');
-  assert.equal(endChoice([near('costco', 160, 1, { brand: 'COSTCO WHOLESALE' }), near('d', null, 0.2)], 'e10'), null);
+  const ids = (rs: RouteRow[]) => rs.map((r) => r.station.id);
+  const costco = { brand: 'COSTCO WHOLESALE' };
+  const eight = [near('a', 171, 0.4), near('costco', 160, 1, costco), near('b', 168, 2), near('c', 168, 1.5), near('d', null, 0.2)];
+  assert.deepEqual(ids(endChoices(eight, 'e10')), ['c', 'costco'], 'everyone’s cheapest first, then the cheaper Costco');
+  assert.deepEqual(ids(endChoices([near('a', 165, 0.4), near('costco', 166, 1, costco)], 'e10')), ['a'], 'a dearer Costco is not added');
+  assert.deepEqual(ids(endChoices([near('a', 165, 0.4), near('costco', 165, 1, costco)], 'e10')), ['a'], 'nor one at the same price');
+  assert.deepEqual(ids(endChoices([near('costco', 160, 1, costco), near('d', null, 0.2)], 'e10')), ['costco'], 'a Costco alone when no one else sells the fuel');
+  assert.deepEqual(endChoices([near('d', null, 0.2)], 'e10'), []);
   const r = routeEight([row('c', 168, 1, 0.5), row('e', 170, 5, 0.5)], 'e10', new Set(['c']));
   assert.deepEqual(r.rows.map((x) => x.station.id), ['e']);
 });

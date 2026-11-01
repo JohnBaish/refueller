@@ -254,7 +254,7 @@ export function rankPrices(rows: Row[], fuel: 'e10' | 'diesel'): number[] {
     .sort((a, b) => a - b);
 }
 
-const RANK_WORDS = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+const RANK_WORDS = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
 
 // "Lowest of eight" (ties too), "2.0p above the lowest". Worked in tenths of a penny, so 0.1p differences aren't lost to rounding.
 export function rankText(me: number, all: number[]): string {

@@ -238,11 +238,17 @@ export const toPlace = (lat: number, lon: number): Place => toBritishGrid(lat, l
 export type RouteRow = { station: Station; prices: { e10?: Price; diesel?: Price }; along: number; extra: number; minutes: number; offRoute: number; fromEnd?: number };
 
 // For comparison (John, 31 October): the cheapest of the eight stations nearest each end, as the main list would show them, at a usual
-// price; the cheapest anyone can buy, so not a members-only Costco. Null when none of the eight sells the fuel.
-export function endChoice(eight: RouteRow[], fuel: 'e10' | 'diesel'): RouteRow | null {
-  const usual = eight.filter((r) => r.prices[fuel] && !r.prices[fuel]!.x && !membersOnly(r.station));
-  if (!usual.length) return null;
-  return usual.reduce((a, b) => (b.prices[fuel]!.p < a.prices[fuel]!.p || (b.prices[fuel]!.p === a.prices[fuel]!.p && b.fromEnd! < a.fromEnd!) ? b : a));
+// price, that anyone can buy; and, in fairness to Costco (John, 1 November), a members-only Costco too when it is cheaper still, shown
+// after it. Empty when none of the eight sells the fuel.
+export function endChoices(eight: RouteRow[], fuel: 'e10' | 'diesel'): RouteRow[] {
+  const usual = eight.filter((r) => r.prices[fuel] && !r.prices[fuel]!.x);
+  const lowest = (rs: RouteRow[]) =>
+    rs.length ? rs.reduce((a, b) => (b.prices[fuel]!.p < a.prices[fuel]!.p || (b.prices[fuel]!.p === a.prices[fuel]!.p && b.fromEnd! < a.fromEnd!) ? b : a)) : null;
+  const open = lowest(usual.filter((r) => !membersOnly(r.station)));
+  const costco = lowest(usual.filter((r) => membersOnly(r.station)));
+  const out = open ? [open] : [];
+  if (costco && (!open || costco.prices[fuel]!.p < open.prices[fuel]!.p)) out.push(costco);
+  return out;
 }
 
 // The eight cheapest within three extra miles at a usual price, then in the order you'd reach them; and how many were within the

@@ -22,7 +22,7 @@ import {
   ROUTE_EXTRA_MILES,
   ROUTE_EXTRA_MINUTES,
   ROUTE_CORRIDOR_METRES,
-  endChoice,
+  endChoices,
   type Network,
   type End,
   type RouteRow,
@@ -217,7 +217,7 @@ function Notes({ found, shown, within, now }: { found: Extract<Found, { ok: true
         : shown === within
           ? `${cap(WORDS[within] ?? String(within))} station${within === 1 ? '' : 's'} close to the route ${within === 1 ? 'adds' : 'add'} no more than ${ROUTE_EXTRA_MILES} miles and about ${ROUTE_EXTRA_MINUTES} minutes to it, there and back; here ${within === 1 ? 'it is' : 'they are'}, in the order you’d reach them.`
           : `Of the ${within} stations close to the route that add no more than ${ROUTE_EXTRA_MILES} miles and about ${ROUTE_EXTRA_MINUTES} minutes to it, there and back, these are the eight cheapest, in the order you’d reach them.`}{' '}
-      For comparison, the cheapest of the stations near each end of the journey is added to the list, shown first and last. Distances are by main roads, so
+      For comparison, the cheapest of the stations near each end of the journey is added to the list, shown first and last (and, where that’s a members-only Costco, the cheapest for everyone else too). Distances are by main roads, so
       they’re a guide. Opening hours are today’s. Prices collected at {collectedText(found.index.collected, now)}, as
       reported by each station; they may have changed since.{' '}
       <a href={REPORT_URL} target="_blank" rel="noopener noreferrer">
@@ -252,10 +252,10 @@ export function JourneyResults({ target }: { target: RouteTarget }) {
 
   const chosen = useMemo(() => {
     if (!found?.ok) return null;
-    const start = endChoice(found.startEight, fuel);
-    const end = endChoice(found.endEight, fuel);
-    const leaveOut = new Set([start, end].filter((r): r is RouteRow => !!r).map((r) => r.station.id));
-    return { start, end: end && end.station.id !== start?.station.id ? end : null, ...routeEight(found.candidates, fuel, leaveOut) };
+    const start = endChoices(found.startEight, fuel);
+    const end = endChoices(found.endEight, fuel).filter((r) => !start.some((s) => s.station.id === r.station.id));
+    const leaveOut = new Set([...start, ...end].map((r) => r.station.id));
+    return { start, end, ...routeEight(found.candidates, fuel, leaveOut) };
   }, [found, fuel]);
   if (!target.from || !target.to) return null;
   if (failed)
@@ -280,9 +280,9 @@ export function JourneyResults({ target }: { target: RouteTarget }) {
   // small chart compare all of them.
   type Shown = { r: RouteRow; group: 'start' | 'way' | 'end' };
   const shown: Shown[] = [
-    ...(chosen!.start ? [{ r: chosen!.start, group: 'start' as const }] : []),
+    ...chosen!.start.map((r) => ({ r, group: 'start' as const })),
     ...rows.map((r) => ({ r, group: 'way' as const })),
-    ...(chosen!.end ? [{ r: chosen!.end, group: 'end' as const }] : []),
+    ...chosen!.end.map((r) => ({ r, group: 'end' as const })),
   ];
   const cheapest = routeCheapest(
     shown.map((x) => x.r),

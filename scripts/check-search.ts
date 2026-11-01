@@ -167,6 +167,7 @@ await check('price position: usual prices lowest first, words for the lowest and
   assert.equal(rankText(175.9, all), '3.0p above the lowest');
   assert.equal(rankText(173.0, [172.9, 173.0]), '0.1p above the lowest', 'tenths not lost to rounding');
   assert.equal(rankText(1, [1, 1, 1, 1, 1, 1, 1, 1]), 'Lowest of eight');
+  assert.equal(rankText(1, Array(12).fill(1)), 'Lowest of twelve', 'a journey list can have up to twelve');
   assert.deepEqual(rankPrices([row()], 'e10'), []);
 });
 

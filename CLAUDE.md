@@ -1441,3 +1441,16 @@ Caversham back. Pictures `design/previews/main-places-*.png`. Not merged.
 of the journey is added to the list, shown first and last." (`src/components/Journey.tsx`). Checked: checks, type-check, build; the
 notes read as above at 1200px and 390px with touch. **Raised, not changed:** Costco at the ends (John: if Costco is cheapest near an
 end, show it for members and the cheapest for everyone else too); to discuss first.
+
+### 2026-11-01 — journey ends: a cheaper Costco shown too (branch `wording-2026-11-01`)
+
+**John** (in fairness to Costco), agreeing Claude's three points: where a members-only Costco is the cheapest of the eight nearest an
+end, that end shows the cheapest anyone can buy first and the Costco beneath it; the list can then have up to twelve rows; and the
+notes add "(and, where that's a members-only Costco, the cheapest for everyone else too)" (draft). **What:** `endChoices()` in
+`src/lib/route.ts` (was `endChoice`), the Costco only when strictly cheaper (not at the same price), alone when no one else near
+that end sells the fuel; `Journey.tsx` shows each end's rows; the chart's number words go to twelve (`RANK_WORDS`). Costcos on the
+way were never left out. **Checked:** `npm run check` (new: both rows and their order, a dearer or equal Costco not added, a Costco
+alone, "Lowest of twelve"), lint, type-check, build; in Chromium at 1200px and 390px with touch, light and dark: RG2 to BS1 (Shinfield
+then Costco Reading at the start), CV1 to B7 (Alum Rock then Costco Birmingham at the end), AB32 to DD1 (Costco Aberdeen marked
+"Cheapest (Members only)"), "Lowest of eleven", and CF10 to BS1 and RG1 to BS1 unchanged; no errors, no sideways scroll. Picture
+`design/previews/journey-costco-ends-*.png`. Not merged.
