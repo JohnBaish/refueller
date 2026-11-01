@@ -1747,6 +1747,13 @@ No app code changed.
 
 A "Delete merged branches" workflow (`.github/workflows/tidy-branches.yml`, Run workflow only, nothing scheduled): deletes only branches fully merged into `main`, never `main`, and only if a branch hasn't moved since it was checked; "Only list" (ticked by default) changes nothing; named unmerged branches can be added, each kept as an `archive/<name>` tag first. Added because cloud sessions can't delete branches (John: automate it, with no danger to the websites; the sites build from `main`, and deletions made by the job start no other workflows). Tested against a pretend GitHub here: the trial changed nothing; the real run deleted the merged branch and the named one (kept as a tag), and refused `main`. House style re-copied from clockwheel (§10 mentions it).
 
+### 2026-11-01 — the 4.15pm collection and the first averages run checked (notes only)
+
+Collection `23f2fd1` "Data: 2026-11-01 16:15 UTC": ok, 37 requests, 143 s, 7,539 stations kept, 17 unusual prices, middle prices
+E10 171.9p, diesel 199.6p. The "Price history" workflow committed `38411b0` 13 seconds later, changing both `data/history.json` and
+`data/averages.json` (its first run with the averages): seven collections, 122 groups (Great Britain and 121 postcode areas); latest GB
+172.56p unleaded and 199.19p diesel, RG 176.26p and 201.22p. Vercel built it (success).
+
 ### 2026-11-01 — "Sort by": mock-ups (branch `sort-mockups`, design only)
 
 **John** asked for options to sort the list low to high by unleaded, diesel or distance (distance the default): sortable column
@@ -1801,3 +1808,11 @@ tie-break made it fail, then restored), lint, type-check, build. In Chromium at 
 BS1): prices in order, the tags, one "Cheapest", both notes, back to journey order with the groups, Diesel sorted too, not kept after a
 reload; the main list's sort as before (and the calculator unchanged); no errors, no sideways scroll. Pictures
 `design/previews/journey-sort/built-*.png`. **Couldn't be checked:** a real phone.
+
+### 2026-11-01 — sorting merged to `main`
+
+John said merge ("This looks great"). `feature-sort` merged into `main` after bringing in its data commits; checks, lint, type-check
+and build clean first. Live from Vercel's next build: the main list sorts by distance, unleaded or diesel price (remembered on the
+device), the journey list by journey order, detour or price (not remembered). All the drafted wording stands, including "fewest first"
+and the footer's "how you sorted the list". The `sort-mockups` and `feature-sort` branches are fully merged and can be deleted with the
+"Delete merged branches" workflow.
