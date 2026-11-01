@@ -1594,3 +1594,10 @@ Dorking. For a different route, add a nearby place in Via."; with the visitor's 
 Birmingham give the agreed words; allowing only a 1% rival made it fail, then restored), lint, type-check, build; seven journeys at
 1200px and 390px with touch, light and dark, no errors, no sideways scroll; at phone speed (processor slowed four times) a journey
 takes about 3.5 seconds with loading. Not merged.
+
+### 2026-11-01 — the journey notes' comparison sentence shortened (branch `route-description`)
+
+**John:** "For comparison, the cheapest of the stations near each end of the journey is added to the list, shown first and last (and,
+where that's a members-only Costco, the cheapest for everyone else too)." is now "The cheapest of the stations near the beginning and
+end of the journey are also shown." (`src/components/Journey.tsx`). Checked: type-check, build; Wokingham to Horsham at 1200px and
+390px with touch, no errors, no sideways scroll. Not merged.
