@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { areaName, placeFrom } from './build-places.ts';
 import { findPlace, looksLikePostcode, makePlaceIndex, norm, placeAt, placeLabel, suggest, type PlaceFile } from '../src/lib/places.ts';
+import { nearestDistrict } from '../src/lib/search.ts';
 
 let failures = 0;
 async function check(name: string, fn: () => void | Promise<void>) {
@@ -97,6 +98,19 @@ await check('suggestions: from two letters; whole name first, cities and towns b
 await check('postcode or place: RG1, RG1 8FR and "ec1a 1bb" are postcodes; Reading and Andover are not', () => {
   for (const p of ['RG1', 'RG1 8FR', 'ec1a 1bb', 'SW1A', ' rg4 7hn ']) assert.ok(looksLikePostcode(p), p);
   for (const p of ['Reading', 'Andover', 'St Ives', 'Newport, Isle of Wight']) assert.ok(!looksLikePostcode(p), p);
+});
+
+await check('the main search: road miles from the nearest district middle (John, 1 November): Caversham RG4, Theale RG31, Sheringham NR26', () => {
+  const outcodes = JSON.parse(readFileSync(new URL('../data/outcodes.json', import.meta.url), 'utf8')).outcodes;
+  const at = (label: string) => {
+    const r = findPlace(ix, label);
+    assert.ok(r.ok, label);
+    return r.place;
+  };
+  for (const [label, oc] of [['Caversham', 'RG4'], ['Theale, West Berkshire', 'RG31'], ['Sheringham', 'NR26'], ['Pangbourne', 'RG8']]) {
+    const p = at(label);
+    assert.equal(nearestDistrict(p.lat, p.lon, outcodes), oc, label);
+  }
 });
 
 if (failures) {

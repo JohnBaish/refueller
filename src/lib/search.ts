@@ -340,3 +340,16 @@ export function nearestFrom(lat: number, lon: number, stations: Station[], price
   }
   return rows;
 }
+
+// The postcode district whose middle is nearest a point: where the calculator's road miles start for a place typed by name (John
+// chose this over the place's own district, 1 November, as it is usually closer, and OS's record of a place's district is
+// occasionally wrong: it gives Sheringham NR11, whose middle is near Aylsham).
+export function nearestDistrict(lat: number, lon: number, outcodes: Outcodes): string {
+  let best = '';
+  let bestD = Infinity;
+  for (const [oc, [la, lo]] of Object.entries(outcodes)) {
+    const d = milesBetween(lat, lon, la, lo);
+    if (d < bestD) [best, bestD] = [oc, d];
+  }
+  return best;
+}

@@ -1,11 +1,12 @@
 import { Fragment, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { collectedText, PriceCell, REPORT_URL, useNow } from './Results.tsx';
 import { loadChoices, saveChoices, type Fuel } from '../lib/calc.ts';
-import { loadArea, loadIndex, loadPlaces, loadPostcodes, loadRouteRoads } from '../lib/load.ts';
+import { loadArea, loadIndex, loadPostcodes, loadRouteRoads } from '../lib/load.ts';
+import { getPlaces, PlaceBox } from './PlaceBox.tsx';
 import { fromDetail, type PageIndex } from '../lib/pageTypes.ts';
 import { decodeDistrict } from '../lib/postcodes.ts';
 import { useIsNarrow } from '../lib/responsive.ts';
-import { findPlace, looksLikePostcode, makePlaceIndex, norm, placeAt, placeLabel, suggest, type NamedPlace, type PlaceIndex } from '../lib/places.ts';
+import { findPlace, looksLikePostcode, placeAt, placeLabel, type NamedPlace, type PlaceIndex } from '../lib/places.ts';
 import {
   endTyped,
   isPlace,
@@ -39,107 +40,6 @@ type Field = 'from' | 'via' | 'to';
 const LABEL: Record<Field, string> = { from: 'From', via: 'Via (optional)', to: 'To' };
 // The faint examples in the boxes (John, 1 November).
 const EXAMPLE: Record<Field, string> = { from: 'Reading, RG1 or RG1 8FR', via: 'Andover', to: 'Exeter, EX4 or EX4 6TJ' };
-
-// The place names, loaded the first time a name is typed, and kept for the visit.
-let placeIndex: { file: string; ix: Promise<PlaceIndex> } | null = null;
-async function getPlaces(): Promise<PlaceIndex | null> {
-  const index = await loadIndex();
-  if (!index.places) return null;
-  if (placeIndex?.file !== index.places.file) placeIndex = { file: index.places.file, ix: loadPlaces(index.places.file).then(makePlaceIndex) };
-  return placeIndex.ix.catch((e) => {
-    placeIndex = null;
-    throw e;
-  });
-}
-
-// One box: a postcode or a place name (From, To) or a place name only (Via), with place suggestions as you type.
-function PlaceBox({ field, value, onChange, onPick }: { field: Field; value: string; onChange: (v: string) => void; onPick: (p: NamedPlace) => void }) {
-  const [list, setList] = useState<NamedPlace[]>([]);
-  const [open, setOpen] = useState(false);
-  const [active, setActive] = useState(-1);
-  const id = `jf-${field}`;
-  useEffect(() => {
-    let live = true;
-    const typed = value.trim();
-    if (typed.length < 2 || (field !== 'via' && looksLikePostcode(typed))) {
-      setList([]);
-      return;
-    }
-    getPlaces().then(
-      (ix) => live && setList(ix ? suggest(ix, typed) : []),
-      () => live && setList([]),
-    );
-    return () => {
-      live = false;
-    };
-  }, [value, field]);
-  // Closed once what's typed is exactly one of the places (so it never covers the Find button needlessly).
-  const shown = open && list.length > 0 && !list.some((p) => norm(placeLabel(p)) === norm(value));
-  const pick = (p: NamedPlace) => {
-    onChange(placeLabel(p));
-    onPick(p);
-    setOpen(false);
-    setActive(-1);
-  };
-  return (
-    <div className="jf">
-      <label className="jl" htmlFor={id}>
-        {LABEL[field]}
-      </label>
-      <input
-        id={id}
-        className="input"
-        value={value}
-        onChange={(e) => {
-          onChange(e.target.value);
-          setOpen(true);
-          setActive(-1);
-        }}
-        onFocus={() => setOpen(true)}
-        onBlur={() => setOpen(false)}
-        onKeyDown={(e) => {
-          if (!shown) return;
-          if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-            e.preventDefault();
-            setActive((a) => (e.key === 'ArrowDown' ? Math.min(list.length - 1, a + 1) : Math.max(-1, a - 1)));
-          } else if (e.key === 'Enter' && active >= 0) {
-            e.preventDefault();
-            pick(list[active]);
-          } else if (e.key === 'Escape') setOpen(false);
-        }}
-        placeholder={EXAMPLE[field]}
-        role="combobox"
-        aria-autocomplete="list"
-        aria-expanded={shown}
-        aria-controls={`${id}-list`}
-        aria-activedescendant={shown && active >= 0 ? `${id}-${active}` : undefined}
-        autoCorrect="off"
-        autoComplete="off"
-        spellCheck={false}
-        enterKeyHint={field === 'to' ? 'go' : 'next'}
-        maxLength={60}
-      />
-      {shown && (
-        <ul className="suggest" id={`${id}-list`} role="listbox">
-          {list.map((p, i) => (
-            <li
-              key={`${p.name}|${p.area}|${p.lat}`}
-              id={`${id}-${i}`}
-              role="option"
-              aria-selected={i === active}
-              className={i === active ? 'on' : undefined}
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => pick(p)}
-            >
-              <span className="sg-name">{p.name}</span>
-              {p.area && norm(p.area) !== norm(p.name) && <span className="sg-area">{p.clash ? `${p.area} (${p.district})` : p.area}</span>}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
 
 export function JourneyForm({ target }: { target: RouteTarget }) {
   const initial = (e?: End) => (e ? endTyped(e) : '');
@@ -208,7 +108,7 @@ export function JourneyForm({ target }: { target: RouteTarget }) {
     <form className="search-form" onSubmit={go} noValidate>
       <div className="search journey">
         {(['from', 'via', 'to'] as Field[]).map((f) => (
-          <PlaceBox key={f} field={f} value={typed[f]} onChange={(v) => setTyped((t) => ({ ...t, [f]: v }))} onPick={(p) => setPicked((x) => ({ ...x, [f]: p }))} />
+          <PlaceBox key={f} id={`jf-${f}`} label={LABEL[f]} placeholder={EXAMPLE[f]} postcodes={f !== 'via'} enterKeyHint={f === 'to' ? 'go' : 'next'} value={typed[f]} onChange={(v) => setTyped((t) => ({ ...t, [f]: v }))} onPick={(p) => setPicked((x) => ({ ...x, [f]: p }))} />
         ))}
         <button type="submit" className="btn btn-primary">
           Find

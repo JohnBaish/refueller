@@ -1,5 +1,6 @@
 import { Component, useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import { JourneyForm, JourneyResults } from './components/Journey.tsx';
+import { getPlaces, PlaceBox } from './components/PlaceBox.tsx';
 import { REPORT_URL, Results, type Target } from './components/Results.tsx';
 import { ThemeSwitch } from './components/ThemeSwitch.tsx';
 import { loadIndex } from './lib/load.ts';
@@ -7,12 +8,14 @@ import { ROAD_CREDIT } from './lib/calc.ts';
 import { fullHash } from './lib/postcodes.ts';
 import { readRouteHash, routeHash, type RouteTarget } from './lib/route.ts';
 import { readPostcode, type PostcodeResult } from './lib/search.ts';
+import { findPlace, looksLikePostcode, placeAt, placeLabel, type NamedPlace } from './lib/places.ts';
 
 // The page has two states: the postcode screen, and the results for a postcode or district. It is kept in the address after "#"
 // (#RG4 or #RG4-7HN: browsers never send that part, and the visit statistics drop it) and on this device as the last choice.
 const CHOICE = 'refueller.choice';
 
-// The address after "#": a postcode district (#RG4) or a station (#station/RG/d20f21e97871, "Find stations near this one").
+// The address after "#": a postcode district (#RG4), a place (#@Caversham, or #@Newport, Isle of Wight; John, 1 November) or a
+// station (#station/RG/d20f21e97871, "Find stations near this one").
 // Or a journey (#route/RG1/BS1, src/lib/route.ts), which isn't remembered as the last choice.
 type AppTarget = Target | RouteTarget;
 function fromHash(): AppTarget | null {
@@ -21,10 +24,14 @@ function fromHash(): AppTarget | null {
   if (route) return route;
   const st = /^station\/([A-Za-z]{1,2})\/([0-9a-f]{12})$/.exec(h);
   if (st) return { kind: 'station', area: st[1].toUpperCase(), id: st[2] };
-  return postcodeTarget(h);
+  return choiceTarget(h);
 }
-// "RG4" or "RG4-7HN" (also as kept on the device) into a target.
-function postcodeTarget(h: string): Target | null {
+// "RG4", "RG4-7HN" or "@Caversham" (also as kept on the device) into a target.
+function choiceTarget(h: string): Target | null {
+  if (h.startsWith('@') && h.length > 1) {
+    const [place, at] = h.slice(1).split('~');
+    return { kind: 'place', place, ...(at ? { at } : {}) };
+  }
   const m = /^([A-Z]{1,2}\d[A-Z\d]?)(?:-(\d[A-Z]{2}))?$/.exec(h.toUpperCase());
   return m ? { kind: 'postcode', outcode: m[1], ...(m[2] ? { inward: m[2] } : {}) } : null;
 }
@@ -45,20 +52,51 @@ function remember(choice: string) {
 }
 
 const PROBLEMS: Record<Exclude<PostcodeResult, { ok: true }>['problem'], (typed: string) => string> = {
-  empty: () => 'Please type a postcode, such as RG1 8FR.',
+  empty: () => 'Please type a postcode or a place, such as RG1 8FR or Reading.',
   'not-a-postcode': () => 'That doesn’t look like a postcode. Try one like RG1 or RG1 8FR.',
   'northern-ireland': () => 'Refueller covers Great Britain only for now, so Northern Ireland postcodes aren’t included yet.',
   'not-found': (typed) => `We can’t find ${typed.trim().toUpperCase().split(/\s+/)[0]} among Great Britain’s postcodes. Check it, or try a nearby postcode.`,
 };
 
-function SearchBox({ start, initial }: { start: boolean; initial: string }) {
+const placeHash = (p: NamedPlace) => {
+  const at = placeAt(p);
+  return `@${placeLabel(p)}${at ? `~${at}` : ''}`;
+};
+
+function SearchBox({ start, initial, initialAt }: { start: boolean; initial: string; initialAt?: string }) {
   const [typed, setTyped] = useState(initial);
   const [problem, setProblem] = useState('');
+  // The place picked from the list, to tell apart the few places that share a whole label.
+  const [picked, setPicked] = useState<NamedPlace | null>(null);
   useEffect(() => setTyped(initial), [initial]);
 
   async function go(e: FormEvent) {
     e.preventDefault();
     setProblem('');
+    const t = typed.trim();
+    if (t && !looksLikePostcode(t)) {
+      let ix;
+      try {
+        ix = await getPlaces();
+      } catch {
+        setProblem('Sorry, the places couldn’t be loaded. Check your connection and try again.');
+        return;
+      }
+      const at = picked && placeLabel(picked) === t ? placeAt(picked) : t === initial ? initialAt : undefined;
+      const f = ix ? findPlace(ix, t, at) : ({ ok: false, problem: 'none' } as const);
+      if (!f.ok) {
+        setProblem(
+          f.problem === 'several'
+            ? `There’s more than one ${f.places[0].name}. Choose one from the list as you type, such as “${placeLabel(f.places[0])}”.`
+            : `We can’t find “${t}” among Great Britain’s postcodes, towns, villages and suburbs. Check the spelling, or try a postcode.`,
+        );
+        return;
+      }
+      const choice = placeHash(f.place);
+      remember(choice);
+      location.hash = choice;
+      return;
+    }
     let outcodes;
     try {
       outcodes = (await loadIndex()).outcodes;
@@ -79,18 +117,15 @@ function SearchBox({ start, initial }: { start: boolean; initial: string }) {
   return (
     <form className="search-form" onSubmit={go} noValidate>
       <div className="search">
-        <input
-          className="input"
-          value={typed}
-          onChange={(e) => setTyped(e.target.value)}
-          placeholder="RG1 or RG1 8FR"
-          aria-label="Postcode"
-          autoCapitalize="characters"
-          autoCorrect="off"
-          autoComplete="off"
-          spellCheck={false}
+        <PlaceBox
+          id="where"
+          ariaLabel="Postcode or place"
+          placeholder="Reading, RG1 or RG1 8FR"
+          postcodes
           enterKeyHint="go"
-          maxLength={10}
+          value={typed}
+          onChange={setTyped}
+          onPick={setPicked}
         />
         <button type="submit" className="btn btn-primary">
           Go
@@ -102,7 +137,7 @@ function SearchBox({ start, initial }: { start: boolean; initial: string }) {
         </p>
       )}
       {start && !problem && (
-        <p className="hint">Type your full postcode for the most accurate list, or just the first half (RG1). Nothing you type leaves this page.</p>
+        <p className="hint">Type your full postcode for the most accurate list, just the first half (RG1), or a town, village or suburb. Nothing you type leaves this page.</p>
       )}
     </form>
   );
@@ -147,7 +182,8 @@ function About() {
       </ul>
       <p>
         The choice of the “nearest” eight stations which appear in the list is calculated using the distances in a straight
-        line from your postcode, or from the middle of its district if you only type the first half, so they’re approximate. Stations that Fuel
+        line from your postcode, or from the middle of its district if you only type the first half, or from the middle of the place if you
+        type a place name, so they’re approximate. Stations that Fuel
         Finder lists as temporarily closed are left out, and so are a few whose position on the map is far from their own
         postcode. Opening times are each station’s usual hours, including bank holidays, and may differ on the day.
       </p>
@@ -156,7 +192,7 @@ function About() {
         fuel. It works out how much fuel your money buys at the nearer station, how much less it would cost at this one, and
         how much fuel the extra miles there and back would use, from your car’s miles per gallon (the defaults are typical
         figures: 36 for petrol and 43 for diesel; change them to your car’s). The extra miles are by road from the middle of the
-        postcode district, even when you type a full postcode, using Ordnance Survey’s map of every road; they don’t allow for one-way streets or turns, so a sat
+        postcode district, even when you type a full postcode (for a place name, the nearest district’s middle), using Ordnance Survey’s map of every road; they don’t allow for one-way streets or turns, so a sat
         nav may give a little more. Where there’s no road figure, type your own. The calculation can’t factor in your time, or wear and tear on the car.
       </p>
       <p>
@@ -201,9 +237,9 @@ class SafetyNet extends Component<{ children: ReactNode }, { failed: boolean }> 
 
 const fromRemembered = (): Target | null => {
   const o = remembered();
-  return o ? postcodeTarget(o) : null;
+  return o ? choiceTarget(o) : null;
 };
-const hashOf = (t: AppTarget) => (t.kind === 'route' ? routeHash(t) : t.kind === 'postcode' ? (t.inward ? fullHash(t.outcode, t.inward) : t.outcode) : `station/${t.area}/${t.id}`);
+const hashOf = (t: AppTarget) => (t.kind === 'route' ? routeHash(t) : t.kind === 'postcode' ? (t.inward ? fullHash(t.outcode, t.inward) : t.outcode) : t.kind === 'place' ? `@${t.place}${t.at ? `~${t.at}` : ''}` : `station/${t.area}/${t.id}`);
 
 // The way in to the journey planner: at the bottom, as it is secondary (John, 31 October).
 const JourneyLink = () => (
@@ -254,8 +290,12 @@ export default function App() {
           <div className="page-head">
             <div className="card-kicker">Fuel prices</div>
             <h2>{start ? 'Check fuel prices near you' : 'Refueller'}</h2>
-            {start && <p className="lead">Enter a postcode to see the eight nearest petrol stations, with their unleaded and diesel prices and opening times.</p>}
-            <SearchBox start={start} initial={target?.kind === 'postcode' ? `${target.outcode}${target.inward ? ` ${target.inward}` : ''}` : ''} />
+            {start && <p className="lead">Enter a postcode or a place to see the eight nearest petrol stations, with their unleaded and diesel prices and opening times.</p>}
+            <SearchBox
+              start={start}
+              initial={target?.kind === 'postcode' ? `${target.outcode}${target.inward ? ` ${target.inward}` : ''}` : target?.kind === 'place' ? target.place : ''}
+              initialAt={target?.kind === 'place' ? target.at : undefined}
+            />
           </div>
         )}
         <SafetyNet key={target ? hashOf(target) : ''}>
@@ -286,7 +326,7 @@ export default function App() {
           <p>
             Refueller is a free-to-use personal project by John Baish, not connected with the Fuel Finder service. We don’t
             record anything you do here, apart from anonymous visit statistics (no cookies, no personal data), showing us how
-            the site is used. Your device, rather than the website, stores your last choices (postcode, light or
+            the site is used. Your device, rather than the website, stores your last choices (postcode or place, light or
             dark mode, the fuel you chose, and the calculator’s amount and miles per gallon), so the page opens the same way next time.
           </p>
           <p>

@@ -1414,3 +1414,23 @@ John). **Results:** via Hatfield, High Wycombe out and Slough kept (50 stations 
 the same eight as before. **Checked:** `npm run check` (new: the Hatfield case, and a cheap station far from the route left out),
 lint, type-check, build; the three journeys at 1200px and 390px with touch, light and dark: no errors, no sideways scroll. Pictures
 `design/previews/journey-corridor-*.png`. Not merged.
+
+### 2026-11-01 — place names in the main search (branch `wording-2026-11-01`)
+
+**John:** yes to place names in the main postcode box too, and option (a) for the calculator: its road miles start from the nearest
+postcode district middle (usually closer than the place's own district; Ordnance Survey's record gives Sheringham NR11, whose middle
+is near Aylsham, though its postcodes are NR26). He will look at all the wording together. **What:** the journey planner's box with
+suggestions moved to `src/components/PlaceBox.tsx` (shared, with `getPlaces()`); the main search uses it (example "Reading, RG1 or
+RG1 8FR"; no longer forced into capitals while typing). A place opens `#@Caversham` (or `#@Newport, Isle of Wight`, with `~lat,lon`
+for the few full namesakes) and is remembered on the device like a postcode. `Results.tsx`: a `place` target, measured from the
+place's own point; `nearestDistrict()` in `src/lib/search.ts` for the calculator. **Drafts, for John:** the lead "Enter a postcode or a
+place…"; the hint "Type your full postcode for the most accurate list, just the first half (RG1), or a town, village or suburb.
+Nothing you type leaves this page."; heading "Eight nearest stations to Caversham"; notes "Straight-line distances from the middle of
+Caversham."; calculator "The extra miles are by road from the middle of RG4, not from Caversham itself, so they're a guide."; messages
+for several places of a name, an unknown place, and an old address that no longer matches; additions to About (distances, the
+calculator) and the footer ("postcode or place"). **Checked:** `npm run check` (new: Caversham RG4, Theale RG31, Sheringham NR26,
+Pangbourne RG8), lint, type-check, build; in Chromium at 1200px and 390px with touch, light and dark: suggestions by keys and by tap,
+Caversham's list and calculator note, reopened on Caversham, rg4 7hn, RG4, Newport (choose one), Newport, Isle of Wight, an unknown
+place, BT1, Theale and Sheringham; the journey planner's boxes as before; nothing typed in any request, no errors, no sideways scroll.
+**Noticed:** typing exactly "Cavers" closes the list, as Cavers is a real village (Scottish Borders); typing on ("Caversh") brings
+Caversham back. Pictures `design/previews/main-places-*.png`. Not merged.

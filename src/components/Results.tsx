@@ -6,6 +6,9 @@ import { fromDetail, type PageIndex } from '../lib/pageTypes.ts';
 import { loadArea, loadIndex, loadPostcodes } from '../lib/load.ts';
 import { decodeDistrict } from '../lib/postcodes.ts';
 import { useIsNarrow } from '../lib/responsive.ts';
+import { findPlace, placeLabel } from '../lib/places.ts';
+import { nearestDistrict } from '../lib/search.ts';
+import { getPlaces } from './PlaceBox.tsx';
 import {
   clockText,
   hoursProblem,
@@ -28,7 +31,11 @@ import {
 } from '../lib/search.ts';
 
 // What the eight are centred on: the middle of a postcode district, or one station (#station/RG/d20f21e97871).
-export type Target = { kind: 'postcode'; outcode: string; inward?: string } | { kind: 'station'; area: string; id: string };
+export type Target =
+  | { kind: 'postcode'; outcode: string; inward?: string }
+  | { kind: 'station'; area: string; id: string }
+  // A place typed by name (John, 1 November), kept as its label; `at` tells apart the few that share a whole label.
+  | { kind: 'place'; place: string; at?: string };
 
 export const stationHash = (s: Station) => `#station/${postcodeArea(s.postcode)}/${s.id}`;
 
@@ -251,16 +258,18 @@ function Cards({ rows, now, centreId, calc }: { rows: Row[]; now: number; centre
   );
 }
 
-type Found = { index: PageIndex; lat: number; lon: number; rows: Row[]; histories: Histories; heading: string; from: string; notFound?: string; centreId?: string };
+type Found = { index: PageIndex; lat: number; lon: number; rows: Row[]; histories: Histories; heading: string; from: string; notFound?: string; centreId?: string; district?: string };
 
 // Asked for a station that isn't in this collection (closed since the link was made, say).
 class NotListed extends Error {}
+// Asked for a place by an address that no longer matches one (the place list changed).
+class NoPlace extends Error {}
 
 // The eight nearest stations to the target: positions from the index, then the details of just the postcode areas those eight
 // are in.
 async function find(target: Target, now: number): Promise<Found> {
   const index = await loadIndex();
-  let lat: number, lon: number, heading: string, from: string, centreId: string | undefined, notFound: string | undefined;
+  let lat: number, lon: number, heading: string, from: string, centreId: string | undefined, notFound: string | undefined, district: string | undefined;
   if (target.kind === 'postcode') {
     const [la, lo, place] = index.outcodes[target.outcode];
     [lat, lon, heading, from] = [la, lo, `${target.outcode} (${place})`, `the middle of ${target.outcode}`];
@@ -272,6 +281,14 @@ async function find(target: Target, now: number): Promise<Found> {
       if (at) [lat, lon, heading, from] = [at[0], at[1], `${full} (${place})`, full];
       else notFound = full;
     }
+  } else if (target.kind === 'place') {
+    const ix = await getPlaces();
+    const f = ix ? findPlace(ix, target.place, target.at) : null;
+    if (!f?.ok) throw new NoPlace();
+    const label = placeLabel(f.place);
+    [lat, lon, heading, from] = [f.place.lat, f.place.lon, label, `the middle of ${label}`];
+    // The calculator's road miles start from the nearest postcode district middle (John chose this, 1 November).
+    district = nearestDistrict(lat, lon, index.outcodes);
   } else {
     const a = index.areas.indexOf(target.area);
     if (a < 0) throw new NotListed();
@@ -298,14 +315,14 @@ async function find(target: Target, now: number): Promise<Found> {
     histories[d.station.id] = d.history;
   }
   const rows = nearestFrom(lat, lon, stations, prices, index.outcodes, index.bank, now);
-  return { index, lat, lon, rows, histories, heading, from, notFound, centreId };
+  return { index, lat, lon, rows, histories, heading, from, notFound, centreId, district };
 }
 
 export function Results({ target }: { target: Target }) {
   const now = useNow();
   const narrow = useIsNarrow(720);
   const [found, setFound] = useState<Found | null>(null);
-  const [failed, setFailed] = useState<'' | 'load' | 'not-listed'>('');
+  const [failed, setFailed] = useState<'' | 'load' | 'not-listed' | 'no-place'>('');
   const [attempt, setAttempt] = useState(0);
   const [panel, setPanel] = useState<{ id: string; kind: PanelKind } | null>(null);
   // When a panel opens and doesn't fit on the screen below where it starts (usual on a phone), bring its top into view, so the
@@ -322,7 +339,7 @@ export function Results({ target }: { target: Target }) {
     });
     return () => cancelAnimationFrame(frame);
   }, [panel?.id, panel?.kind]);
-  const key = target.kind === 'postcode' ? `${target.outcode} ${target.inward ?? ''}` : `${target.area}/${target.id}`;
+  const key = target.kind === 'postcode' ? `${target.outcode} ${target.inward ?? ''}` : target.kind === 'place' ? `@${target.place}~${target.at ?? ''}` : `${target.area}/${target.id}`;
 
   useEffect(() => {
     let live = true;
@@ -331,7 +348,7 @@ export function Results({ target }: { target: Target }) {
     setPanel(null);
     find(target, Date.now())
       .then((f) => live && setFound(f))
-      .catch((e) => live && setFailed(e instanceof NotListed ? 'not-listed' : 'load'));
+      .catch((e) => live && setFailed(e instanceof NotListed ? 'not-listed' : e instanceof NoPlace ? 'no-place' : 'load'));
     return () => {
       live = false;
     };
@@ -342,6 +359,12 @@ export function Results({ target }: { target: Target }) {
     return (
       <div className="message" role="alert">
         <p>That station isn’t listed any more. Try a postcode instead.</p>
+      </div>
+    );
+  if (failed === 'no-place')
+    return (
+      <div className="message" role="alert">
+        <p>We can’t find that place. Try typing it again, or a postcode.</p>
       </div>
     );
   if (failed)
@@ -381,7 +404,13 @@ export function Results({ target }: { target: Target }) {
               ? `The extra miles are by road from the middle of ${target.outcode}, not from ${target.outcode} ${target.inward} itself, so they’re a guide.`
               : `The extra miles are by road from the middle of ${target.outcode}, so they’re a guide.`,
         }
-      : { area: target.area, key: target.id, note: `The extra miles are by road from ${found.from}.` };
+      : target.kind === 'place' && found.district
+        ? {
+            area: postcodeArea(found.district),
+            key: found.district,
+            note: `The extra miles are by road from the middle of ${found.district}, not from ${found.heading} itself, so they’re a guide.`,
+          }
+        : { area: target.kind === 'station' ? target.area : '', key: target.kind === 'station' ? target.id : '', note: `The extra miles are by road from ${found.from}.` };
   // One panel open at a time.
   const calc: Calc = {
     open: panel,
