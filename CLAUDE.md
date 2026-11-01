@@ -1898,3 +1898,10 @@ tag `archive/levels-mockups`. Only `main` is left.
 the charts' key: the eight and Great Britain carry their line); `.lv-box` now has its gap above. Checked: `npm run check`, lint,
 build; the nine places at 1200px and 390px with touch, light and dark (`design/mock/levels-check.cjs`): no errors, no sideways
 scroll, nothing typed sent. Pictures `design/previews/levels/built-*.png` refreshed.
+
+### 2026-11-01 — a key above "The wider picture"'s charts: mock-ups (notes only)
+
+**John:** a duplicate of the key, just the orange and the grey, above the charts. Drawn into the built page in the browser only
+(`design/mock/key-mock.cjs`; no app code), RG4 7SS: **A**, one key line under the opening sentence (as before the list moved);
+**B**, the key beside each chart's heading. Pictures `design/previews/key/`, computer and phone, light and dark. No errors, no
+sideways scroll.
