@@ -221,10 +221,10 @@ await check('words: miles and today’s hours', () => {
   assert.equal(routeMiles(38.6), '39 miles');
   const sat = Date.parse('2026-10-31T16:15:00Z'); // a Saturday
   const week = (h: string) => Array(7).fill(h);
-  assert.equal(todayText(st('a', { hours: week('06:00-23:00') }), sat, {}), 'Today 6am to 11pm');
-  assert.equal(todayText(st('a', { hours: week('00:00-23:59') }), sat, {}), 'Open 24 hours today');
-  assert.equal(todayText(st('a', { hours: week('24h') }), sat, {}), 'Open 24 hours today');
-  assert.equal(todayText(st('a', { hours: [...week('06:00-22:00').slice(0, 5), 'closed', 'closed'] }), sat, {}), 'Closed today');
+  assert.equal(todayText(st('a', { hours: week('06:00-23:00') }), sat, {}), 'Open 6am to 11pm');
+  assert.equal(todayText(st('a', { hours: week('00:00-23:59') }), sat, {}), 'Open 24 hours');
+  assert.equal(todayText(st('a', { hours: week('24h') }), sat, {}), 'Open 24 hours');
+  assert.equal(todayText(st('a', { hours: [...week('06:00-22:00').slice(0, 5), 'closed', 'closed'] }), sat, {}), 'Closed');
   assert.equal(todayText(st('a'), sat, {}), 'Opening hours not given');
 });
 

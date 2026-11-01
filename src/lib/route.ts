@@ -317,15 +317,16 @@ export function routeCheapest(rows: RouteRow[], fuel: 'e10' | 'diesel'): boolean
   return rows.map((r) => (membersOnly(r.station) ? r.prices[fuel]!.p === low : r.prices[fuel]!.p === lowOpen));
 }
 
-// Today's opening hours in words: "Today 6am to 11pm", "Open 24 hours today", "Closed today", or the main list's notes.
+// Today's opening hours in words, under a "Today" heading (John, 1 November: no second "today"): "Open 6am to 11pm", "Open 24 hours",
+// "Closed", or the main list's notes.
 export function todayText(s: Station, ms: number, bank: BankHolidays): string {
   if (hoursLookWrong(s)) return 'Opening hours look wrong';
   const u = ukNow(ms);
   const h = hoursOn(s, u.date, u.day, bank);
   if (h === null) return 'Opening hours not given';
-  if (h === 'closed') return 'Closed today';
-  if (h === '24h' || h === '00:00-23:59' || h === '00:00-24:00') return 'Open 24 hours today';
-  return `Today ${clockText(h.slice(0, 5))} to ${clockText(h.slice(6, 11))}`;
+  if (h === 'closed') return 'Closed';
+  if (h === '24h' || h === '00:00-23:59' || h === '00:00-24:00') return 'Open 24 hours';
+  return `Open ${clockText(h.slice(0, 5))} to ${clockText(h.slice(6, 11))}`;
 }
 
 // "0.3 miles", "2.9 miles", "less than 0.1 miles"; "39 miles" from 5 miles up (as the main list).

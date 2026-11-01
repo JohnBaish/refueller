@@ -1619,3 +1619,10 @@ A1(M) and Ely"; "middle only" would also have cut London to Birmingham to "via t
 **Checked:** `npm run check` (new: Caversham to Downham Market and Cardiff to Bristol; counting the whole journey as the middle made it
 fail, then restored), lint, type-check, build; nine journeys at 1200px and 390px with touch, light and dark, no errors, no sideways
 scroll; phone speed about 3.5 to 4.8 seconds with loading. Not merged.
+
+### 2026-11-01 — journey hours: no second "today" (branch `route-description`)
+
+**John:** under the "Today" heading (phone cards and the computer table's column), "Today 6am to 10pm" said today twice. `todayText()`
+now gives "Open 6am to 10pm", "Open 24 hours" and "Closed" (was "Open 24 hours today", "Closed today"); the main list's notes ("Opening
+hours look wrong", "Opening hours not given") are unchanged. Checked: `npm run check` (updated), type-check, build; Wokingham to
+Horsham at 1200px and 390px with touch, no errors, no sideways scroll. Not merged.
