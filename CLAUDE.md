@@ -1633,3 +1633,11 @@ Horsham at 1200px and 390px with touch, no errors, no sideways scroll. Not merge
 text "1.8 miles extra" (`src/components/Journey.tsx`; the unused `.route-extra` styles removed). The computer table keeps its "Extra
 miles" column. Checked: build, checks; Wokingham to Horsham at 390px and 320px with touch and at 1200px, dark, no errors, no sideways
 scroll. Picture `design/previews/detour-row-phone.png`. Not merged.
+
+### 2026-11-01 — the route description and journey tidy-ups merged to `main`
+
+John said merge. `route-description` fast-forwarded into `main` (no new data commits since); checks, lint, type-check and build clean
+first. Live from Vercel's next build: road numbers in `data/route-roads.json`; the route sentence ("via the M25 and Dorking", "mainly by
+the M4"), with the middle of the journey first; "For a different route, add a nearby place in Via."; Via's placeholder "Add a place near
+your route"; the shorter sentence about the stations at each end; "Open 6am to 10pm" under "Today"; the Detour line on phone cards; and
+a unique place typed with its area in full ("Horsham, West Sussex") is found.
