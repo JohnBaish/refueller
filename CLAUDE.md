@@ -1601,3 +1601,10 @@ takes about 3.5 seconds with loading. Not merged.
 where that's a members-only Costco, the cheapest for everyone else too)." is now "The cheapest of the stations near the beginning and
 end of the journey are also shown." (`src/components/Journey.tsx`). Checked: type-check, build; Wokingham to Horsham at 1200px and
 390px with touch, no errors, no sideways scroll. Not merged.
+
+### 2026-11-01 — Via's faint example is now an instruction (branch `route-description`)
+
+**John** (on his phone): with a route shown, the faint "Andover" in an empty Via box looked as if the route went that way. Via's
+placeholder is now "Add a place near your route" (John's wording; From and To keep their examples). It fits: 197px of text in a 255px
+box at 320px wide, 185 in 200 on a computer. Checked: type-check, build; Wokingham to Horsham at 1200px, 390px and 320px with touch,
+dark, no errors. (John isn't worried by iPhone's "AutoFill Contact" bar above the keyboard.) Not merged.

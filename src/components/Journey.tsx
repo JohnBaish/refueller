@@ -40,7 +40,7 @@ const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
 type Field = 'from' | 'via' | 'to';
 const LABEL: Record<Field, string> = { from: 'From', via: 'Via (optional)', to: 'To' };
 // The faint examples in the boxes (John, 1 November).
-const EXAMPLE: Record<Field, string> = { from: 'Reading, RG1 or RG1 8FR', via: 'Andover', to: 'Exeter, EX4 or EX4 6TJ' };
+const EXAMPLE: Record<Field, string> = { from: 'Reading, RG1 or RG1 8FR', via: 'Add a place near your route', to: 'Exeter, EX4 or EX4 6TJ' };
 
 export function JourneyForm({ target }: { target: RouteTarget }) {
   const initial = (e?: End) => (e ? endTyped(e) : '');
