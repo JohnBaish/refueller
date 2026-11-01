@@ -216,8 +216,8 @@ function Notes({ found, shown, within, now }: { found: Extract<Found, { ok: true
         ? `No station close to the route adds less than ${ROUTE_EXTRA_MILES} miles and ${ROUTE_EXTRA_MINUTES} minutes to it, there and back.`
         : shown === within
           ? `${cap(WORDS[within] ?? String(within))} station${within === 1 ? '' : 's'} close to the route ${within === 1 ? 'adds' : 'add'} no more than ${ROUTE_EXTRA_MILES} miles and about ${ROUTE_EXTRA_MINUTES} minutes to it, there and back; here ${within === 1 ? 'it is' : 'they are'}, in the order you’d reach them.`
-          : `Of the ${within} stations close to the route that add no more than ${ROUTE_EXTRA_MILES} miles and about ${ROUTE_EXTRA_MINUTES} minutes to it, there and back, these are the cheapest, in the order you’d reach them.`}{' '}
-      For comparison, the cheapest of the eight stations nearest each end is shown first and last. Distances are by main roads, so
+          : `Of the ${within} stations close to the route that add no more than ${ROUTE_EXTRA_MILES} miles and about ${ROUTE_EXTRA_MINUTES} minutes to it, there and back, these are the eight cheapest, in the order you’d reach them.`}{' '}
+      For comparison, the cheapest of the stations near each end of the journey is added to the list, shown first and last. Distances are by main roads, so
       they’re a guide. Opening hours are today’s. Prices collected at {collectedText(found.index.collected, now)}, as
       reported by each station; they may have changed since.{' '}
       <a href={REPORT_URL} target="_blank" rel="noopener noreferrer">

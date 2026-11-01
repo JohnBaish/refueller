@@ -1434,3 +1434,10 @@ Caversham's list and calculator note, reopened on Caversham, rg4 7hn, RG4, Newpo
 place, BT1, Theale and Sheringham; the journey planner's boxes as before; nothing typed in any request, no errors, no sideways scroll.
 **Noticed:** typing exactly "Cavers" closes the list, as Cavers is a real village (Scottish Borders); typing on ("Caversh") brings
 Caversham back. Pictures `design/previews/main-places-*.png`. Not merged.
+
+### 2026-11-01 — journey notes reworded (branch `wording-2026-11-01`)
+
+**John:** "these are the eight cheapest, in the order you'd reach them" and "For comparison, the cheapest of the stations near each end
+of the journey is added to the list, shown first and last." (`src/components/Journey.tsx`). Checked: checks, type-check, build; the
+notes read as above at 1200px and 390px with touch. **Raised, not changed:** Costco at the ends (John: if Costco is cheapest near an
+end, show it for members and the cheapest for everyone else too); to discuss first.
