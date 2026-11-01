@@ -1461,3 +1461,10 @@ then Costco Reading at the start), CV1 to B7 (Alum Rock then Costco Birmingham a
 comparison sentence is now just "For comparison we also show the cheapest stations nearest the start and end of the journey."; "Opening
 hours are today's, as Refueller can't know when you'll get there." deleted (`src/App.tsx`). The journey page's own notes still say
 "Opening hours are today's." (asked John). Checked: checks, type-check, build; About on RG4 at 1200px and 390px with touch.
+
+### 2026-11-01 — "Opening hours are today's." gone from the journey notes; merged to `main`
+
+**John:** delete it from the journey page's notes too (the table already says "Today …"), then merge. `wording-2026-11-01` merged
+into `main` after bringing in its data commits; checks, lint, type-check and build clean first. Live from Vercel's next build: John's
+wording changes, place names (journey planner and main search) with suggestions, "via" as "passes near", the route corridor, and a
+cheaper members-only Costco shown at the journey's ends.
