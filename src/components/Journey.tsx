@@ -216,8 +216,7 @@ function Notes({ found, shown, within, now }: { found: Extract<Found, { ok: true
       {/* The route described (John, 1 November): its length, the main roads it follows, and how to change it. */}
       Refueller has planned a route of about {Math.round(found.miles)} miles from {found.from.short} to {found.to.short}
       {found.via ? `, passing near ${found.via.short}` : ''}
-      {found.roads.length ? `, by ${roadList(found.roads)}` : ''}. It’s the quickest by main roads at typical speeds, so it may not be the
-      way you’d go. For a different route, add a nearby place in Via.{' '}
+      {found.roads.length ? `, by ${roadList(found.roads)}` : ''}. For a different route, add a nearby place in Via.{' '}
       {within === 0
         ? `No station close to the route adds less than ${ROUTE_EXTRA_MILES} miles and ${ROUTE_EXTRA_MINUTES} minutes to it, there and back.`
         : shown === within

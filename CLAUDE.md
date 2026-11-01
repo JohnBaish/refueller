@@ -1557,3 +1557,14 @@ Via." With Guildford as a via: about 44 miles, "passing near Guildford, by the A
 (new: the road list rules, RG1 to BS1 "the A4, M4 and M32", Wokingham to Horsham with and without Guildford), lint, type-check,
 build; the three journeys at 1200px and 390px with touch, light and dark, no errors, no sideways scroll. **Noticed:** a place whose
 name is unique is labelled by name alone, so "Horsham, West Sussex" typed in full isn't found (only "Horsham"). Not merged.
+
+### 2026-11-01 — full place names found; one sentence dropped; naming towns: an experiment (branch `route-description`)
+
+**John:** make "Horsham, West Sussex" typed in full work (`findPlace()` now also accepts a unique place's name with its area; checked,
+and "Horsham, Cornwall" still isn't found); drop "It's the quickest by main roads at typical speeds, so it may not be the way you'd go.";
+and try naming places on the chosen route to tell it from another of similar time. **Experiment** (`design/mock/route-towns-experiment.ts`,
+not in the page): the next-best route is found by making the chosen route's links 60% slower; towns and cities within about 1.5 miles
+of the chosen route and more than 4 miles from the other (not within 5 miles of either end), up to two, furthest from the other route
+first. Results for 11 journeys put to John, e.g. Wokingham to Horsham "via Leatherhead and Dorking" (next best via Guildford, 5%
+slower), Cambridge to Oxford "via Hatfield and Gerrards Cross" (next best by the A428 and A421, 84 miles, 5% slower), London to
+Birmingham "via Woburn Sands and Bedworth" (towns beside the motorway, not helpful). Checked: checks, lint, build. Not merged.

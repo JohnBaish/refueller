@@ -79,6 +79,9 @@ export function findPlace(ix: PlaceIndex, typed: string, at?: string): PlaceFind
     const exact = byLabel.find((p) => p.lat === lat && p.lon === lon);
     if (exact) return { ok: true, place: exact };
   }
+  // A unique place typed with its area in full ("Horsham, West Sussex"), though its label is just "Horsham" (John, 1 November).
+  const withArea = ix.all.filter((p) => !p.shared && p.area && norm(`${p.name}, ${p.area}`) === q);
+  if (withArea.length === 1) return { ok: true, place: withArea[0] };
   const byName = ix.keys.flatMap((k, i) => (k.name === q || k.other === q ? [ix.all[i]] : []));
   if (byName.length === 1) return { ok: true, place: byName[0] };
   if (byName.length > 1 || byLabel.length > 1) return { ok: false, problem: 'several', places: byName.length ? byName : byLabel };

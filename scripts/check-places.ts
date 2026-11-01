@@ -80,6 +80,10 @@ await check('same-name places must be chosen: Newport alone is ambiguous, "Newpo
     }
   }
   assert.ok(!findPlace(ix, 'Xyzzyton').ok);
+  // A unique place typed with its area in full is found too (John, 1 November).
+  const h = findPlace(ix, 'Horsham, West Sussex');
+  assert.ok(h.ok && h.place.name === 'Horsham');
+  assert.ok(!findPlace(ix, 'Horsham, Cornwall').ok, 'the wrong area isn’t');
 });
 
 await check('suggestions: from two letters; whole name first, cities and towns before villages; a later word matches', () => {
