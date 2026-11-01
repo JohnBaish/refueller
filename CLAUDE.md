@@ -1478,3 +1478,10 @@ Via, To, Find, the hint); above the footer on the postcode screen, between the l
 opens the journey page as before. **Checked:** type-check, lint, build; in Chromium at 1200px and 390px with touch, light and dark: the
 postcode screen and RG4, the section above About, RG1 to BS1 typed there opens `#route/RG1/BS1`, no errors, no sideways scroll.
 Pictures `design/previews/journey-front-*.png`. Not merged.
+
+### 2026-11-01 — a line above "About these figures"; journey planner on the main page merged to `main`
+
+**John** (on his phone): likes it; add a dividing line before "About these figures", like the one above the journey section, then merge.
+`.about` now has the same line and spacing as `.journey-front` (everywhere About shows, the journey page included). Checked: build;
+RG4 and RG1 to BS1 at 1200px and 390px with touch, light and dark: the line, no errors, no sideways scroll. `journey-on-front` merged
+into `main` after bringing in its data commits; checks, lint, type-check and build clean first.
