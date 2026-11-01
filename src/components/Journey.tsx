@@ -34,7 +34,10 @@ import { membersOnly, milesBetween, milesText, postcodeArea, readPostcode, tidyA
 // "Find cheaper fuel near the route" (John, 31 October 2026; option b): the form, then the eight cheapest within three extra
 // miles in the order you'd reach them. Everything is worked out on this device (src/lib/route.ts).
 
-const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight'];
+const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+// One to nine in words, 10 and more in digits (HOUSE-STYLE §13; fresh look 4.2, November 1st 2026).
+const count = (n: number) => (n < 10 ? WORDS[n] : String(n));
+const LIMIT = `${count(ROUTE_EXTRA_MILES)} miles and about ${count(ROUTE_EXTRA_MINUTES)} minutes`;
 const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
 
 type Field = 'from' | 'via' | 'to';
@@ -223,12 +226,13 @@ function Notes({ found, shown, within, now }: { found: Extract<Found, { ok: true
       {/* The route described (John, 1 November): its length, the main roads it follows, and how to change it. */}
       Refueller has planned a route of about {Math.round(found.miles)} miles from {found.from.short} to {found.to.short}
       {found.via ? `, passing near ${found.via.short}` : ''}
-      {found.words ? `, ${found.words}` : ''}. For a different route, add a nearby place in Via.{' '}
+      {found.words ? `, ${found.words}` : ''}. {/* With a place already in Via, "change" it (fresh look 4.4, November 1st 2026). */}
+      {found.via ? 'For a different route, change the place in Via.' : 'For a different route, add a nearby place in Via.'}{' '}
       {within === 0
-        ? `No station close to the route adds less than ${ROUTE_EXTRA_MILES} miles and ${ROUTE_EXTRA_MINUTES} minutes to it, there and back.`
+        ? `There are no stations close to the route that add no more than ${LIMIT} to it, there and back.`
         : shown === within
-          ? `${cap(WORDS[within] ?? String(within))} station${within === 1 ? '' : 's'} close to the route ${within === 1 ? 'adds' : 'add'} no more than ${ROUTE_EXTRA_MILES} miles and about ${ROUTE_EXTRA_MINUTES} minutes to it, there and back; here ${within === 1 ? 'it is' : 'they are'}, in the order you’d reach them.`
-          : `Of the ${within} stations close to the route that add no more than ${ROUTE_EXTRA_MILES} miles and about ${ROUTE_EXTRA_MINUTES} minutes to it, there and back, these are the eight cheapest, in the order you’d reach them.`}{' '}
+          ? `${cap(count(within))} station${within === 1 ? '' : 's'} close to the route ${within === 1 ? 'adds' : 'add'} no more than ${LIMIT} to it, there and back; here ${within === 1 ? 'it is' : 'they are'}, in the order you’d reach them.`
+          : `Of the ${count(within)} stations close to the route that add no more than ${LIMIT} to it, there and back, these are the eight cheapest, in the order you’d reach them.`}{' '}
       The cheapest of the stations near the beginning and end of the journey are also shown. Distances are by main roads, so
       they’re a guide. Prices collected at {collectedText(found.index.collected, now)}, as
       reported by each station; they may have changed since.{' '}

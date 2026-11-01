@@ -99,6 +99,13 @@ await check('words: miles, clock times, names and addresses', () => {
   assert.equal(tidyName('Checkpoint Service station'), 'Checkpoint Service station', 'mixed case left as given');
   assert.equal(tidyName('READING EXTRA - PETROL FILLING STATION'), 'Reading Extra – Petrol Filling Station');
   assert.equal(tidyAddress(st({ address: ['150 OXFORD ROAD', 'READING', 'READING'], postcode: 'RG1 7PJ' })), '150 Oxford Road, Reading, RG1 7PJ');
+  // Fresh look 2.1 (November 1st 2026): town and postcode repeated in the station's own lines, and stray commas, shown once.
+  assert.equal(tidyAddress(st({ address: ['LONENWELL', 'ALFORD, AB33 8EE', 'ALFORD'], postcode: 'AB33 8EE' })), 'Lonenwell, Alford, AB33 8EE');
+  assert.equal(tidyAddress(st({ address: ['TURRIFF SERVICE STATION', 'STATION ROAD, TURRIFF, AB53 4ER', 'TURRIFF'], postcode: 'AB534ER' })), 'Turriff Service Station, Station Road, Turriff, AB53 4ER');
+  assert.equal(tidyAddress(st({ address: ['VICTORIA GARAGE,', 'VICTORIA ROAD,', 'MAUD'], postcode: 'AB42 4NP' })), 'Victoria Garage, Victoria Road, Maud, AB42 4NP');
+  assert.equal(tidyAddress(st({ address: ['NISA, 113-119, HIGH STREET'], postcode: 'AB38 9PB' })), 'Nisa, 113-119, High Street, AB38 9PB', 'house numbers kept');
+  assert.equal(tidyAddress(st({ address: ['BRIDGEWATER RD', 'BRISTOL BS41 8JP', 'BRISTOL BS41 8JP'], postcode: 'BS41 8JP' })), 'Bridgewater Rd, Bristol, BS41 8JP');
+  assert.equal(tidyName('Esso , Little lever filling station ltd'), 'Esso, Little lever filling station ltd');
   // John, 30 October: initials kept (PE33 9RF, KT12 1RZ).
   assert.equal(tidyName('PC&AT Hudson'), 'PC&AT Hudson', 'a name in mixed capitals and small letters is left exactly as typed');
   assert.equal(tidyName('trewellard garage petrol station'), 'Trewellard Garage Petrol Station', 'all small letters: treated like capitals');

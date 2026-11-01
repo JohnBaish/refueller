@@ -306,7 +306,7 @@ export default function App() {
         </SafetyNet>
         {!route && <JourneySection />}
         {!start && <About />}
-        <footer className="footer-notice" data-noprint>
+        <footer className="footer-notice">
           {/* The source lines only where prices are shown; the postcode screen keeps just the project and privacy lines
               (John, 30 October). */}
           {!start && (
@@ -326,13 +326,14 @@ export default function App() {
               <p>Road distances: {ROAD_CREDIT}.</p>
             </>
           )}
-          <p>
+          {/* Printed: the source and credit lines above; not these two (fresh look 2.4, November 1st 2026). */}
+          <p data-noprint>
             Refueller is a free-to-use personal project by John Baish, not connected with the Fuel Finder service. We don’t
             record anything you do here, apart from anonymous visit statistics (no cookies, no personal data), showing us how
             the site is used. Your device, rather than the website, stores your last choices (postcode or place, light or
             dark mode, the fuel you chose, and the calculator’s amount and miles per gallon), so the page opens the same way next time.
           </p>
-          <p>
+          <p data-noprint>
             More free tools at <a href="https://www.baish.net/">www.baish.net</a>. Contact: workshop@baish.net.
           </p>
         </footer>

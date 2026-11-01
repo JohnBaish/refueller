@@ -1641,3 +1641,32 @@ first. Live from Vercel's next build: road numbers in `data/route-roads.json`; t
 the M4"), with the middle of the journey first; "For a different route, add a nearby place in Via."; Via's placeholder "Add a place near
 your route"; the shorter sentence about the stations at each end; "Open 6am to 10pm" under "Today"; the Detour line on phone cards; and
 a unique place typed with its area in full ("Horsham, West Sussex") is found.
+
+### 2026-11-01 — fresh look, and the four quick fixes (branch `fresh-look-fixes`, merged to `main`)
+
+**The review** (`/fresh-look`, at `d686159`, rechecked at `a26b2e3` after the route description; PDF sent to John, nothing changed
+during it). Findings: 2.1 town and postcode repeated in 930 of 7,482 addresses (plus 37 double commas); 2.2 an unknown postcode in the
+address (`#QQ1`, `#BT1`) says "check your connection"; 2.3 the cheapest station's own bar in the small chart is a 2px dash; 2.4 printing
+keeps the search box and drops the credit lines; 3.1 typing a postcode downloads the 430 KB place list; 3.2 "more than one Newport"
+suggests "Newport, Cornwall"; 4.1 a journey from a place to itself says "about 0 miles"; 4.2 the journey notes' numbers ("Of the 9",
+"3 miles … 6 minutes", "less than"); 4.3 a long notes paragraph before the journey list on a phone; 4.4 the Via hint says "add" when Via
+is already filled; 5.1 the search description and link preview describe only the first version; 5.2 Escape doesn't close a panel; 5.3
+no comma in "£50000"; 5.4 the calculator's boxes 43px on a phone; 6.1–6.11 looked at and left alone (6.11: the route sentence read well
+on 43 journeys; a few are road numbers only).
+
+**John:** build the quick fixes (2.1, 2.4, 4.2, 4.4) and merge without asking. The rest wait for his decisions (2.3, 3.2, 4.3, 5.1),
+a preview (3.1), or as optional extras (2.2, 4.1, 5.2–5.4).
+
+**What:** 2.1, `tidyAddress()` in `src/lib/search.ts` splits each tidied line at its commas, drops empty pieces, the postcode (also when
+stuck to a town, "Bristol BS41 8JP") and any piece already shown, then adds the postcode once ("Lonenwell, Alford, AB33 8EE");
+`tidyName()` drops a space before a comma. Display only. 2.4, the search boxes are hidden in print and the footer prints its source and
+credit lines (the privacy and contact lines stay screen-only). 4.2, the journey notes count in words up to nine and say "three miles and
+about six minutes"; the empty case reads "There are no stations close to the route that add no more than three miles and about six
+minutes to it, there and back." (Claude's wording, matching the other cases). 4.4, with a place in Via: "For a different route, change
+the place in Via."
+
+**Checked:** `npm run check` (new address and name checks: AB33, AB53, a double comma, house numbers kept, a postcode stuck to the town),
+lint, type-check, build. Over all 7,482 stations: no address repeats its postcode, none has a double comma, none is left with only a
+postcode. In Chromium, before (`main`) and after: AB33's addresses at 390px with touch; RG4 printed at 1200px (no search box; the three
+credit lines); SN1 to SN25 ("Of the nine"), Reading to Exeter via Andover ("change the place"), RG1 to RG1 (the empty case); no errors, no
+sideways scroll. **Couldn't be checked:** a real printer and a real phone.

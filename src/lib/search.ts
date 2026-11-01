@@ -289,7 +289,7 @@ function word(w: string): string {
 }
 export function tidyName(s: string): string {
   const spaced = s.split(/\s+/).filter(Boolean);
-  if (/[a-z]/.test(s) && /[A-Z]/.test(s)) return spaced.join(' ').replace(/ - /g, ' – ');
+  if (/[a-z]/.test(s) && /[A-Z]/.test(s)) return spaced.join(' ').replace(/ - /g, ' – ').replace(/ ,/g, ',');
   return spaced
     .map((w) => w.toUpperCase())
     .map((w) => {
@@ -297,14 +297,35 @@ export function tidyName(s: string): string {
       return w.split(/([-.&,])/).map((piece, i) => (i % 2 || (amp && piece.length <= 2) ? piece : word(piece))).join('');
     })
     .join(' ')
-    .replace(/ - /g, ' – ');
+    .replace(/ - /g, ' – ')
+    .replace(/ ,/g, ',');
 }
 // A postcode shown with its space, whichever way Fuel Finder gave it ("CW13HD" shows as "CW1 3HD").
 export function postcodeText(postcode: string): string {
   const s = postcode.toUpperCase().replace(/[^A-Z0-9]/g, '');
   return s.length > 4 ? `${s.slice(0, -3)} ${s.slice(-3)}` : s;
 }
-export const tidyAddress = (s: Station) => `${[...new Set(s.address.map(tidyName))].join(', ')}, ${postcodeText(s.postcode)}`;
+// The address as shown: each line tidied, split at its commas, with stray commas and spaces dropped, and a piece shown only once
+// (case aside). The postcode is left out of the lines and added once at the end, as some stations repeat their town and postcode
+// in their own lines ("Lonenwell", "Alford, AB33 8EE", "Alford"; 930 of 7,482 on November 1st 2026). Display only: nothing reported
+// is changed.
+export function tidyAddress(s: Station): string {
+  const pc = s.postcode.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const seen = new Set<string>();
+  const pieces: string[] = [];
+  for (const line of s.address) {
+    for (const raw of tidyName(line).split(',')) {
+      // A postcode stuck to the end of a town ("Bristol BS41 8JP") is taken off too.
+      const tail = raw.trim().toUpperCase().replace(/\s+/g, '');
+      const piece = (tail.endsWith(pc) && tail.length > pc.length ? raw.trim().replace(/\s*[A-Za-z0-9]+\s*[A-Za-z0-9]{3}$/, '') : raw).trim();
+      const key = piece.toUpperCase();
+      if (!piece || key.replace(/[^A-Z0-9]/g, '') === pc || seen.has(key)) continue;
+      seen.add(key);
+      pieces.push(piece);
+    }
+  }
+  return [...pieces, postcodeText(s.postcode)].join(', ');
+}
 
 // --- The eight -----------------------------------------------------------------------------------------------------------
 

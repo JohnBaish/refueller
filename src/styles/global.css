@@ -164,6 +164,9 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
   [data-noprint] { display: none !important; }
   tr, .pcard { break-inside: avoid; }
   .calc, .calc-row, .row-links { display: none !important; }
+  /* The search boxes aren't printed (fresh look 2.4); the footer's source and credit lines are. */
+  .search-form { display: none !important; }
+  .footer-notice { margin-top: 24px; }
 }
 
 /* Dark mode: Hindcaster's agreed colours (HOUSE-STYLE §2), following the device unless the visitor switches
