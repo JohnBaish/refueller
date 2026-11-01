@@ -1756,3 +1756,7 @@ in bold. **Mock-ups** drawn into the built page in the browser only (`design/moc
 strip above the table; phone A, John's strip; phone B, a three-part switch. A line added to the notes: "Sorted by unleaded price,
 lowest first." (draft). Stations without the fuel go last, ties by distance (Claude's, for John). Pictures
 `design/previews/sort/sort-*.png`. No errors, no sideways scroll at 1200px or 390px with touch.
+
+**John's answers (same day):** A on both (column headings on a computer, the strip on a phone); stations without the fuel last;
+ties by distance; unusual prices last; the choice remembered on the device. The journey planner's list to be sortable too (journey
+stage, detour, unleaded, diesel), wording to work out. Tracker: Refueller back to Live and developing.
