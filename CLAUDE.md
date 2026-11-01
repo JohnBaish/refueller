@@ -1710,3 +1710,8 @@ and 1200px: typing "RG4 7HN" in the main box and "RG1" in From downloads no plac
 "An" suggests; `#QQ1` and `#BT1` messages; RG1 to rg1 stopped in the form; `#route/RG1/RG1` and RG1 8FR to RG1 8FT the "less than a
 mile" message; RG1 to RG2 unchanged; "£50,000"; boxes 44px on a phone; Escape closes the panel with the keyboard on "Worth driving
 here?"; no errors, no sideways scroll. Not merged: waiting for John (the 4.1 wording is draft).
+
+### 2026-11-01 — fresh look 3.1 and the optional extras merged to `main`
+
+**John:** the 4.1 wording is agreed; merge. `fresh-look-3` fast-forwarded into `main`; checks, lint, type-check and build clean first.
+Every item from the fresh look is now settled: built (2.1–2.4, 3.1, 3.2, 4.1, 4.2, 4.4, 5.1–5.4) or left as it is (4.3, 6.1–6.11).
