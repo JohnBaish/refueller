@@ -1887,3 +1887,7 @@ country, and in Great Britain, … using Ordnance Survey records."); the other d
 positions, and council areas:", and "since October 31st." when the eight's record starts later). `feature-levels` merged into
 `main` after bringing in its commits; checks, lint, type-check and build clean first. Live from Vercel's next build. The "Price
 history" workflow now keeps every collection's averages at every level.
+
+**Branches tidied (same day):** ran "Delete merged branches" (trial, then the real run): `feature-levels` deleted (merged);
+`levels-mockups` deleted too, named as unmerged because its work went into `main` in the one combined commit, and kept first as the
+tag `archive/levels-mockups`. Only `main` is left.
