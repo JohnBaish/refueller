@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useState, type ReactNode } from 'react';
 import { CalcPanel, type Origin } from './Calc.tsx';
 import { HistoryPanel, type Histories } from './History.tsx';
+import { AveragesSection } from './Averages.tsx';
 import { cheaperFuels } from '../lib/calc.ts';
 import { fromDetail, type PageIndex } from '../lib/pageTypes.ts';
 import { loadArea, loadIndex, loadPostcodes } from '../lib/load.ts';
@@ -451,6 +452,12 @@ export function Results({ target }: { target: Target }) {
         .
       </p>
       {narrow ? <Cards rows={rows} now={now} centreId={found.centreId} calc={calc} /> : <Table rows={rows} now={now} centreId={found.centreId} calc={calc} />}
+      <AveragesSection
+        index={found.index}
+        rows={rows}
+        histories={found.histories}
+        area={target.kind === 'postcode' ? postcodeArea(target.outcode) : target.kind === 'place' ? postcodeArea(found.district ?? '') : target.area}
+      />
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { fuelWord, loadChoices, saveChoices, type Fuel } from '../lib/calc.ts';
-import { average, axisDate, dateWords, historySentence, steps, windowFor, type Hist, type Step } from '../lib/history.ts';
+import { average, axisDate, dateWords, historySentence, steps, trim, windowFor, type Hist, type Step } from '../lib/history.ts';
 import { useIsNarrow } from '../lib/responsive.ts';
 import { tidyName, type Row } from '../lib/search.ts';
 
@@ -9,9 +9,10 @@ export type Histories = Record<string, { e10?: Hist; diesel?: Hist }>;
 const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight'];
 
 // A station's known prices for a fuel: its history (last 14 days, with set times) or just its current price.
-export function stationSteps(row: Row, histories: Histories, fuel: Fuel): Step[] {
+// The area files hold 30 days (for "Average prices"); the graph's 14 come from them (and the last price before, for its start).
+export function stationSteps(row: Row, histories: Histories, fuel: Fuel, windowStart?: number): Step[] {
   const h = histories[row.station.id]?.[fuel];
-  if (h) return steps(h);
+  if (h) return steps(windowStart === undefined ? h : trim(h, windowStart));
   const p = row.prices[fuel];
   return p ? [{ t: Date.parse(p.u), p: p.p }] : [];
 }
@@ -143,9 +144,9 @@ export function HistoryPanel({ row, rows, histories, collected, recordedFrom, on
   const [fuel, setFuel] = useState<Fuel>(() => (row.prices[choices.fuel] ? choices.fuel : row.prices.e10 ? 'e10' : 'diesel'));
   const { start, end } = windowFor(Date.parse(collected));
   const word = fuelWord(fuel);
-  const mine = stationSteps(row, histories, fuel);
+  const mine = stationSteps(row, histories, fuel, start);
   const selling = rows.filter((r) => r.prices[fuel]);
-  const avg = average(selling.map((r) => stationSteps(r, histories, fuel)), start, end);
+  const avg = average(selling.map((r) => stationSteps(r, histories, fuel, start)), start, end);
   const avgLabel = selling.length === rows.length ? `Average of the ${WORDS[rows.length]} shown` : `Average of the ${WORDS[selling.length]} shown that sell ${word}`;
   const geo: Geo = narrow ? { w: 340, h: 230, left: 44, right: 48, top: 14, bottom: 26, xEvery: 4 } : { w: 980, h: 260, left: 44, right: 60, top: 14, bottom: 26, xEvery: 2 };
   const pick = (f: Fuel) => {

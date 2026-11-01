@@ -1500,3 +1500,25 @@ solid, GB dashed); B, two charts side by side (stacked on a phone), unleaded and
 GB grey dashed as in the price history; C, B with medians. Pictures `design/previews/averages-*.png`. A's single scale (165p to
 205p) flattens the changes, as the 27p gap between the fuels sets the scale. Area: the postcode area (RG), named "RG (Reading)";
 area names would need a list of the 121 GB postcode areas' names, still to source. All wording draft.
+
+### 2026-11-01 — "Average prices" built (branch `feature-averages`)
+
+**John:** the mean; option B (unleaded and diesel each on their own chart); three lines, the eight stations shown, the postcode area
+and Great Britain; up to 30 days; under the list, before the journey planner; "not included" rather than "left out". **The record:**
+`src/lib/averages.ts` (which prices count: not unusual ones, except an island's higher price, as on the page; the mean to two
+decimals for Great Britain and each postcode area; 30 days kept; the eight stations' average at each collection from each one's
+price in force then, only once every one has a known price). `scripts/build-history.ts` now also writes `data/averages.json` (each
+collection's averages, from the versions of `data/prices.json` and `data/stations.json` in git; 15 KB with six collections) and keeps
+30 days in `data/history.json` (the price history graph still shows 14: `stationSteps()` trims to its window). The "Price history"
+workflow fetches 33 days of git and commits both files. `scripts/lib/pageData.ts` copies the averages to
+`public/data/averages-<collected>.json` and keeps 30 days in the area files. **The page:** `src/components/Averages.tsx`, after the list:
+"Average prices", a sentence, a key (These eight stations, terracotta; RG postcodes, blue `#2a64a8` / dark `#5f97dc`; Great Britain,
+grey dashed), and the two charts, each on its own scale, with the latest figures at the line ends and a tip at each collection
+(pointing or tapping); hidden in print. The area is the postcode area of the postcode typed, of the nearest district to a place, or of
+a station. **Area names** ("RG (Reading)") are left for now: Wikipedia, the obvious list, is blocked here, and the most common town
+among the area's districts gets some wrong (W would be "City of Westminster"), so the key says "RG postcodes". **Checked:** `npm run
+check` (new `scripts/check-averages.ts`: areas, which prices count, the means, 30 days, the eight's series, the graph's 14 days
+unchanged, the real file; letting unusual prices count made two checks fail, then restored), lint, type-check, build. In Chromium at
+1200px and 390px with touch, light and dark: RG4, Caversham, RG4 7HN, HS1, B7 and TR21; the tip by pointing and tapping; under the
+list and above the journey planner; hidden in print; no errors, no sideways scroll. Pictures `design/previews/averages-built-*.png`.
+Not merged.

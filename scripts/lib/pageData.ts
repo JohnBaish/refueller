@@ -18,11 +18,12 @@ import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync,
 import { join } from 'node:path';
 import { higherPricesUsual, positionAgrees, postcodeArea, type BankHolidays, type Outcodes, type Price, type Station } from '../../src/lib/search.ts';
 import type { DetailRow, PageIndex, PriceCell, RoadFile } from '../../src/lib/pageTypes.ts';
-import { trim, windowFor, withPrice, type Hist } from '../../src/lib/history.ts';
+import { trim, withPrice, type Hist } from '../../src/lib/history.ts';
+import { AVERAGE_DAYS } from '../../src/lib/averages.ts';
 
 export type { DetailRow, PageIndex, PriceCell };
 
-export const SOURCES = ['data/postcodes/README.md', 'data/stations.json', 'data/prices.json', 'data/outcodes.json', 'data/bank-holidays.json', 'data/road-miles.json', 'data/history.json', 'data/route-roads.json', 'data/places.json'];
+export const SOURCES = ['data/postcodes/README.md', 'data/stations.json', 'data/prices.json', 'data/outcodes.json', 'data/bank-holidays.json', 'data/road-miles.json', 'data/history.json', 'data/route-roads.json', 'data/places.json', 'data/averages.json'];
 
 const round4 = (n: number) => Math.round(n * 1e4) / 1e4;
 const cell = (p: Price | undefined): PriceCell => (p ? [p.p, p.u, p.x ? 1 : 0] : 0);
@@ -32,8 +33,9 @@ const unmark = (p: Price | undefined, middle: number | null): Price | undefined 
   p && p.x && typeof middle === 'number' && p.p > middle ? { p: p.p, u: p.u } : p;
 
 export function makePageData(stations: Station[], prices: Record<string, { e10?: Price; diesel?: Price }>, outcodes: Outcodes, bank: BankHolidays, meta: { collected: string; middle: PageIndex['middle']; unusualPence: number }, history: Record<string, { e10?: Hist; diesel?: Hist }> = {}) {
-  const windowStart = windowFor(Date.parse(meta.collected)).start;
-  // The 14 days' prices with the current one added (as shown, unusual marks aside); 0 when the current price is all there is.
+  // Thirty days of prices: the price history shows 14 (src/components/History.tsx trims them), "Average prices" 30.
+  const windowStart = Date.parse(meta.collected) - Math.max(14, AVERAGE_DAYS) * 86_400_000;
+  // The days' prices with the current one added (as shown, unusual marks aside); 0 when the current price is all there is.
   const hist = (h: Hist | undefined, p: Price | undefined): Hist | 0 => {
     if (!h || !p) return 0;
     const all = trim(withPrice(h, p), windowStart);
@@ -88,6 +90,7 @@ export function makePageData(stations: Station[], prices: Record<string, { e10?:
     postcodes: null,
     route: null,
     places: null,
+    averages: null,
   };
   return { index, byArea };
 }
@@ -154,6 +157,13 @@ export function writePageData(root: string) {
     const places = read('data/places.json');
     index.places = { file: `places-${places.made}.json` };
     copyFileSync(join(root, 'data/places.json'), join(out, index.places.file));
+  }
+  // "Average prices" (scripts/build-history.ts), named by the collection it ends with.
+  if (existsSync(join(root, 'data/averages.json'))) {
+    const av = read('data/averages.json');
+    const last = av.collections[av.collections.length - 1]?.[0] ?? 'none';
+    index.averages = { file: `averages-${String(last).replace(/[^0-9TZ]/g, '').slice(0, 15)}.json` };
+    writeFileSync(join(out, index.averages.file), JSON.stringify({ collections: av.collections }));
   }
   writeFileSync(join(out, 'index.json'), JSON.stringify(index));
   return index;

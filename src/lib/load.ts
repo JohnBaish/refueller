@@ -3,6 +3,7 @@
 import type { DetailRow, PageIndex, RoadFile } from './pageTypes.ts';
 import type { RouteFile } from './route.ts';
 import type { PlaceFile } from './places.ts';
+import type { AveragesFile } from './averages.ts';
 
 let index: Promise<PageIndex> | null = null;
 const areas = new Map<string, Promise<DetailRow[]>>();
@@ -85,6 +86,16 @@ export function loadRouteRoads(file: string): Promise<RouteFile> {
     );
   }
   return routeFiles.get(file)!;
+}
+
+// "Average prices", loaded with the results.
+let averagesFile: { file: string; p: Promise<AveragesFile> } | null = null;
+export function loadAverages(file: string): Promise<AveragesFile> {
+  if (averagesFile?.file !== file) averagesFile = { file, p: json<AveragesFile>(`/data/${encodeURIComponent(file)}`) };
+  return averagesFile.p.catch((e) => {
+    averagesFile = null;
+    throw e;
+  });
 }
 
 // The place names for the journey planner, loaded the first time a name is typed there.

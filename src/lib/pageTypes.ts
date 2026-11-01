@@ -34,6 +34,8 @@ export type PageIndex = {
   route: { file: string; credit: string } | null;
   // Place names for the journey planner (data/places.json); null without.
   places: { file: string } | null;
+  // "Average prices" (data/averages.json, src/lib/averages.ts), loaded with the results; null without the file.
+  averages: { file: string } | null;
 };
 
 // One postcode area's road miles: from each postcode district middle (key "RG4") and each station (its 12-character code)

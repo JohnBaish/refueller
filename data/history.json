@@ -1,4 +1,4 @@
-{"note":"Prices each station has had over the last 14 days besides its current one, with the time each was set, from our own collections (scripts/build-history.ts).",
+{"note":"Prices each station has had over the last 30 days besides its current one, with the time each was set, from our own collections (scripts/build-history.ts).",
 "recordedFrom":"2026-10-30T09:08:54.194Z",
 "collected":"2026-11-01T10:15:04.450Z",
 "stations":{
