@@ -1746,3 +1746,10 @@ No app code changed.
 ### 2026-11-01 — "Delete merged branches" workflow (straight to `main`)
 
 A "Delete merged branches" workflow (`.github/workflows/tidy-branches.yml`, Run workflow only, nothing scheduled): deletes only branches fully merged into `main`, never `main`, and only if a branch hasn't moved since it was checked; "Only list" (ticked by default) changes nothing; named unmerged branches can be added, each kept as an `archive/<name>` tag first. Added because cloud sessions can't delete branches (John: automate it, with no danger to the websites; the sites build from `main`, and deletions made by the job start no other workflows). Tested against a pretend GitHub here: the trial changed nothing; the real run deleted the merged branch and the named one (kept as a tag), and refused `main`. House style re-copied from clockwheel (§10 mentions it).
+
+### 2026-11-01 — the 4.15pm collection and the first averages run checked (notes only)
+
+Collection `23f2fd1` "Data: 2026-11-01 16:15 UTC": ok, 37 requests, 143 s, 7,539 stations kept, 17 unusual prices, middle prices
+E10 171.9p, diesel 199.6p. The "Price history" workflow committed `38411b0` 13 seconds later, changing both `data/history.json` and
+`data/averages.json` (its first run with the averages): seven collections, 122 groups (Great Britain and 121 postcode areas); latest GB
+172.56p unleaded and 199.19p diesel, RG 176.26p and 201.22p. Vercel built it (success).
