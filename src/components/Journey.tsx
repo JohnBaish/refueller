@@ -344,16 +344,15 @@ export function JourneyResults({ target }: { target: RouteTarget }) {
               <div className="pcard">
                 <div className="pcard-top">
                   <div>{name(x.r)}</div>
-                  <div className="dist mono route-extra">
-                    {extraText(x.r)}
-                    <div className="route-extra-lbl">extra</div>
-                  </div>
                 </div>
                 <div className="grid">
                   <div className="lbl">{fuelName}</div>
                   <div>{price(x.r, i)}</div>
                   <div className="lbl">{x.group === 'way' ? 'On the way' : 'Where'}</div>
                   <div>{where(x)}</div>
+                  {/* The detour on its own line, like "On the way" (John, 1 November; was at the top right). */}
+                  <div className="lbl">Detour</div>
+                  <div>{Number.isFinite(x.r.extra) ? `${routeMiles(x.r.extra)} extra` : '–'}</div>
                   <div className="lbl">Today</div>
                   <div className="openv">{today(x.r)}</div>
                   <div className="lbl">Address</div>

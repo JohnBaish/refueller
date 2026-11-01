@@ -1626,3 +1626,10 @@ scroll; phone speed about 3.5 to 4.8 seconds with loading. Not merged.
 now gives "Open 6am to 10pm", "Open 24 hours" and "Closed" (was "Open 24 hours today", "Closed today"); the main list's notes ("Opening
 hours look wrong", "Opening hours not given") are unchanged. Checked: `npm run check` (updated), type-check, build; Wokingham to
 Horsham at 1200px and 390px with touch, no errors, no sideways scroll. Not merged.
+
+### 2026-11-01 — the detour on its own line in the phone cards (branch `route-description`)
+
+**John:** the "1.8 miles / extra" at the top right of each journey card moves to a row of its own under "On the way": label "Detour",
+text "1.8 miles extra" (`src/components/Journey.tsx`; the unused `.route-extra` styles removed). The computer table keeps its "Extra
+miles" column. Checked: build, checks; Wokingham to Horsham at 390px and 320px with touch and at 1200px, dark, no errors, no sideways
+scroll. Picture `design/previews/detour-row-phone.png`. Not merged.
