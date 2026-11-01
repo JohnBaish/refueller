@@ -297,3 +297,6 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
   .lv-small { display: block; font-size: 15px; }
   .lv-small b { font-weight: 700; }
 }
+/* The short key above "The wider picture"'s charts: a line of its own on a computer, beside each heading on a phone. */
+.avg-key { display: flex; margin: 4px 0 4px; }
+.avg-key-inline { display: inline-flex; margin: 0 0 0 14px; font-weight: 400; vertical-align: middle; }

@@ -1905,3 +1905,11 @@ scroll, nothing typed sent. Pictures `design/previews/levels/built-*.png` refres
 (`design/mock/key-mock.cjs`; no app code), RG4 7SS: **A**, one key line under the opening sentence (as before the list moved);
 **B**, the key beside each chart's heading. Pictures `design/previews/key/`, computer and phone, light and dark. No errors, no
 sideways scroll.
+
+### 2026-11-01 — the short key above the charts: A on a computer, B on a phone (branch `key-above`, not merged)
+
+**John:** A (one key line over both charts) on a computer, B (beside each chart's heading) on a phone. `Key` in
+`src/components/Averages.tsx` (the orange and the grey, the eight's label as in the list), `.avg-key` and `.avg-key-inline` in
+`global.css`. Checked: `npm run check`, lint, build; RG4 7SS and CF10 1EP at 1200px, 390px and 320px with touch, light and dark
+(`design/mock/key-check.cjs`): one line on the computer, beside both headings on phones (at 320px it drops under the heading), no
+errors, no sideways scroll. Pictures `design/previews/key/built-*.png`.

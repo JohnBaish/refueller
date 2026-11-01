@@ -114,6 +114,22 @@ function Chart({ lines, fuelName, narrow, start, end }: { lines: Line[]; fuelNam
   );
 }
 
+// The charts' two lines: the eight in terracotta, Great Britain in grey and dashed.
+function Key({ label, inline }: { label: string; inline?: boolean }) {
+  return (
+    <span className={`hist-legend avg-key${inline ? ' avg-key-inline' : ''}`}>
+      <span>
+        <i className="a-key-eight" />
+        {label}
+      </span>
+      <span>
+        <i className="a-key-gb" />
+        Great Britain
+      </span>
+    </span>
+  );
+}
+
 export function AveragesSection({ index, rows, histories, where }: { index: PageIndex; rows: Row[]; histories: Histories; where: string }) {
   const narrow = useIsNarrow(720);
   const [page, setPage] = useState<AveragesPage | null>(null);
@@ -172,13 +188,20 @@ export function AveragesSection({ index, rows, histories, where }: { index: Page
           ? `Average prices (excluding unusual ones) as collected by Refueller. This history will eventually show ${AVERAGE_DAYS} days. It is currently building up since recording began on ${dateWords(Date.parse(page.first[0]), false)}.`
           : `Average prices over the last ${AVERAGE_DAYS} days as collected by Refueller. Unusual prices are not included.`}
       </p>
+      {/* A short key above the charts (John, November 1st): one line over both on a computer, beside each chart's heading on a phone,
+          where the diesel chart is far down. The list under the charts is the full key. */}
+      {!narrow && <Key label={eightLabel} />}
       <div className="avg-charts">
         <div className="hist avg-ch">
-          <h4>Unleaded</h4>
+          <h4>
+            Unleaded{narrow && <Key label={eightLabel} inline />}
+          </h4>
           <Chart lines={linesFor('e10')} fuelName="Unleaded" narrow={narrow} start={start} end={end} />
         </div>
         <div className="hist avg-ch">
-          <h4>Diesel</h4>
+          <h4>
+            Diesel{narrow && <Key label={eightLabel} inline />}
+          </h4>
           <Chart lines={linesFor('diesel')} fuelName="Diesel" narrow={narrow} start={start} end={end} />
         </div>
       </div>
