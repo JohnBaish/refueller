@@ -1684,3 +1684,10 @@ search description (146 to 155 characters) put to John in the thread; nothing ch
 **Checked:** `npm run check` (new: Newport's three, the two Habosts named once), lint, type-check, build. In Chromium: AB33 at 390px with
 touch, light and dark, and RG4 at 1200px, before and after; Newport (main search) and Wick (journey) messages; no errors, no sideways
 scroll. Not merged: waiting for John to look at the preview.
+
+### 2026-11-01 — round 2 merged; the search description (branch `fresh-look-2`, merged to `main`)
+
+**John:** merge 2.3 and 3.2; the search description is draft (a). `index.html`'s `<meta name="description">` is now "Free petrol and
+diesel prices near any postcode or place in Great Britain, and the cheapest along your journey. From the Government's Fuel Finder
+service." (154 characters). The preview picture and the link-preview text ("Nearby petrol and diesel prices") are unchanged (John: the
+picture needn't change). Checked: build, checks, lint; the description in the built page. Merged to `main`.
