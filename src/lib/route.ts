@@ -20,11 +20,11 @@ const SNAP_LIMIT = 30_000;
 // Manchester went through the middle of Birmingham rather than round it on the M42.
 export const JUNCTION_SECONDS = 15; // a place further than 30 km from any main road can't be routed
 
-export type RouteFile = { n: number[]; e: number[]; credit: string; made: string };
+export type RouteFile = { n: number[]; e: number[]; credit: string; made: string; r?: string[]; k?: number[] };
 export type Place = { easting: number; northing: number };
 
 const CELL = 5000;
-export type Network = { east: Int32Array; north: Int32Array; head: Int32Array; next: Int32Array; to: Int32Array; metres: Float64Array; seconds: Float64Array; cells: Map<number, number[]> };
+export type Network = { east: Int32Array; north: Int32Array; head: Int32Array; next: Int32Array; to: Int32Array; metres: Float64Array; seconds: Float64Array; cells: Map<number, number[]>; road: Int32Array; roads: string[] };
 
 export function makeNetwork(f: RouteFile): Network {
   const points = f.n.length / 2;
@@ -43,6 +43,7 @@ export function makeNetwork(f: RouteFile): Network {
   const to = new Int32Array(links * 2);
   const metres = new Float64Array(links * 2);
   const seconds = new Float64Array(links * 2);
+  const road = new Int32Array(links * 2).fill(-1);
   for (let i = 0; i < links; i++) {
     const [a, b, m, s] = [f.e[4 * i], f.e[4 * i + 1], f.e[4 * i + 2] * 10, f.e[4 * i + 3]];
     for (const [x, y, k] of [
@@ -52,11 +53,12 @@ export function makeNetwork(f: RouteFile): Network {
       to[k] = y;
       metres[k] = m;
       seconds[k] = s;
+      road[k] = f.k?.[i] ?? -1;
       next[k] = head[x];
       head[x] = k;
     }
   }
-  return { east, north, head, next, to, metres, seconds, cells };
+  return { east, north, head, next, to, metres, seconds, cells, road, roads: f.r ?? [] };
 }
 
 const cellKey = (cx: number, cy: number) => cx * 100_000 + cy;
@@ -83,9 +85,10 @@ export function snap(net: Network, p: Place): { node: number; metres: number } |
 }
 
 // From one point to every other: the quickest route by the rough speeds, giving the metres along it (Infinity where none).
-export function tree(net: Network, start: number): { dist: Float64Array; time: Float64Array; prev: Int32Array } {
+export function tree(net: Network, start: number): { dist: Float64Array; time: Float64Array; prev: Int32Array; via: Int32Array } {
   const n = net.head.length;
   const prev = new Int32Array(n).fill(-1);
+  const via = new Int32Array(n).fill(-1); // the link it was reached by
   const time = new Float64Array(n).fill(Infinity);
   const dist = new Float64Array(n).fill(Infinity);
   time[start] = 0;
@@ -123,6 +126,7 @@ export function tree(net: Network, start: number): { dist: Float64Array; time: F
         time[v] = nt;
         dist[v] = dist[u] + net.metres[k];
         prev[v] = u;
+        via[v] = k;
         heapT.push(nt);
         heapV.push(v);
         for (let i = heapT.length - 1; i > 0; ) {
@@ -134,10 +138,10 @@ export function tree(net: Network, start: number): { dist: Float64Array; time: F
       }
     }
   }
-  return { dist, time, prev };
+  return { dist, time, prev, via };
 }
 
-export type Journey = { ok: true; miles: number; along: Float64Array; extra: Float64Array; minutes: Float64Array; offRoute: Float64Array } | { ok: false; problem: 'far-from-road' | 'no-road' | 'via-far' };
+export type Journey = { ok: true; miles: number; along: Float64Array; extra: Float64Array; minutes: Float64Array; offRoute: Float64Array; roads: RoadRun[] } | { ok: false; problem: 'far-from-road' | 'no-road' | 'via-far' };
 
 // A "via" place is a place the route passes near, not a stop (John, 1 November): the quickest route that passes a main-road point within
 // about 3 miles of it, so Reading to Exeter via Andover keeps to the A303 rather than going into the town and out again.
@@ -210,10 +214,16 @@ export function journey(net: Network, places: Place[], stations: Place[]): Journ
   const offRoute = new Float64Array(stations.length).fill(NaN);
   // The route itself, leg by leg, as road points (walked back from each leg's end).
   const path: number[] = [];
+  const runs: RoadRun[] = [];
   for (let i = 0; i + 1 < e.length; i++) {
     const leg: number[] = [];
-    for (let v = e[i + 1].node; v >= 0; v = v === e[i].node ? -1 : trees[i].prev[v]) leg.push(v);
+    const legLinks: number[] = [];
+    for (let v = e[i + 1].node; v >= 0; v = v === e[i].node ? -1 : trees[i].prev[v]) {
+      leg.push(v);
+      if (v !== e[i].node) legLinks.push(trees[i].via[v]);
+    }
     path.push(...leg.reverse());
+    for (const k of legLinks.reverse()) runs.push({ road: net.roads[net.road[k]] ?? '', metres: net.metres[k] });
   }
   stations.forEach((p, s) => {
     const at = snap(net, p);
@@ -230,10 +240,39 @@ export function journey(net: Network, places: Place[], stations: Place[]): Journ
     });
     if (minutes[s] <= ROUTE_EXTRA_MINUTES) offRoute[s] = distanceToPath(net, path, p.easting, p.northing);
   });
-  return { ok: true, miles: offset / METRES_PER_MILE, along, extra, minutes, offRoute };
+  return { ok: true, miles: offset / METRES_PER_MILE, along, extra, minutes, offRoute, roads: runs };
 }
 
 export const toPlace = (lat: number, lon: number): Place => toBritishGrid(lat, lon);
+
+// The roads the route follows, in order, for describing it (John, 1 November): each link's road number and length.
+export type RoadRun = { road: string; metres: number };
+
+// The main roads in order, joined where the same road carries on, leaving out short stretches (less than a mile) on other roads or
+// none (roundabouts, short links), and any road used for less than ROUTE_ROAD_MILES in all, so only the roads that make the journey
+// are named.
+export const ROUTE_ROAD_MILES = 2;
+export function mainRoads(runs: RoadRun[]): string[] {
+  const join = (rs: RoadRun[]) =>
+    rs.reduce<RoadRun[]>((out, r) => {
+      const last = out[out.length - 1];
+      if (last && last.road === r.road) last.metres += r.metres;
+      else out.push({ ...r });
+      return out;
+    }, []);
+  let rs = join(runs.filter((r) => r.road));
+  rs = join(rs.filter((r) => r.metres >= METRES_PER_MILE));
+  const total = new Map<string, number>();
+  for (const r of rs) total.set(r.road, (total.get(r.road) ?? 0) + r.metres);
+  return join(rs.filter((r) => total.get(r.road)! >= ROUTE_ROAD_MILES * METRES_PER_MILE)).map((r) => r.road);
+}
+
+// "the M4", "the A329(M) and M4", "the A322, M3, M25 and A24"; a road that comes back later is named again.
+export function roadList(roads: string[]): string {
+  if (roads.length === 0) return '';
+  if (roads.length === 1) return `the ${roads[0]}`;
+  return `the ${roads.slice(0, -1).join(', ')} and ${roads[roads.length - 1]}`;
+}
 
 export type RouteRow = { station: Station; prices: { e10?: Price; diesel?: Price }; along: number; extra: number; minutes: number; offRoute: number; fromEnd?: number };
 

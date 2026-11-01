@@ -23,6 +23,8 @@ import {
   ROUTE_EXTRA_MINUTES,
   ROUTE_CORRIDOR_METRES,
   endChoices,
+  mainRoads,
+  roadList,
   type Network,
   type End,
   type RouteRow,
@@ -163,7 +165,7 @@ async function whereIs(index: PageIndex, e: End): Promise<Where> {
   return at ? { lat: at[0], lon: at[1], label: `${full} (${town})`, short: full } : { ...district, notFound: full };
 }
 
-type Found = { ok: true; index: PageIndex; miles: number; candidates: RouteRow[]; startEight: RouteRow[]; endEight: RouteRow[]; from: Where; to: Where; via?: Where } | { ok: false; message: string };
+type Found = { ok: true; index: PageIndex; miles: number; roads: string[]; candidates: RouteRow[]; startEight: RouteRow[]; endEight: RouteRow[]; from: Where; to: Where; via?: Where } | { ok: false; message: string };
 
 async function find(t: Required<Pick<RouteTarget, 'from' | 'to'>> & RouteTarget): Promise<Found> {
   const index = await loadIndex();
@@ -203,7 +205,7 @@ async function find(t: Required<Pick<RouteTarget, 'from' | 'to'>> & RouteTarget)
     return { station, prices, along: j.along[i], extra: j.extra[i], minutes: j.minutes[i], offRoute: j.offRoute[i], ...(d === undefined ? {} : { fromEnd: d }) };
   };
   const candidates = near.map(rowOf);
-  return { ok: true, index, miles: j.miles, candidates, startEight: atStart.map(rowOf), endEight: atEnd.map(rowOf), from, to, via };
+  return { ok: true, index, miles: j.miles, roads: mainRoads(j.roads), candidates, startEight: atStart.map(rowOf), endEight: atEnd.map(rowOf), from, to, via };
 }
 
 function Notes({ found, shown, within, now }: { found: Extract<Found, { ok: true }>; shown: number; within: number; now: number }) {
@@ -211,7 +213,11 @@ function Notes({ found, shown, within, now }: { found: Extract<Found, { ok: true
   return (
     <p className="notes">
       {missing.map((w) => `We couldn’t find ${w.notFound} (it may be new, or mistyped), so the middle of ${w.label.split(' ')[0]} is used. `)}
-      The route is about {Math.round(found.miles)} miles by road{found.via ? `, passing near ${found.via.short}` : ''}.{' '}
+      {/* The route described (John, 1 November): its length, the main roads it follows, and how to change it. */}
+      Refueller has planned a route of about {Math.round(found.miles)} miles from {found.from.short} to {found.to.short}
+      {found.via ? `, passing near ${found.via.short}` : ''}
+      {found.roads.length ? `, by ${roadList(found.roads)}` : ''}. It’s the quickest by main roads at typical speeds, so it may not be the
+      way you’d go. For a different route, add a nearby place in Via.{' '}
       {within === 0
         ? `No station close to the route adds less than ${ROUTE_EXTRA_MILES} miles and ${ROUTE_EXTRA_MINUTES} minutes to it, there and back.`
         : shown === within

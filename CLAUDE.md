@@ -1542,3 +1542,18 @@ an older collection added to the file in the browser only), no errors, no sidewa
 **John:** the section's heading is "The wider picture" (was "Average prices"), then merge. `feature-averages` merged into `main` after
 bringing in its data commits (`data/history.json` and `data/averages.json` rebuilt from `main`'s git history, as the workflow does);
 checks, lint, type-check and build clean first. From the next collection, the "Price history" workflow keeps both files.
+
+### 2026-11-01 — the journey notes describe the route (branch `route-description`)
+
+**John:** a few sentences describing the route the planner has worked out, ending "For a different route, add a nearby place in Via.",
+with Wokingham to Horsham as the example. **What:** `scripts/build-route-roads.ts` now keeps each link's road number from OS Open Roads
+(`r`, the 5,099 numbers; `k`, each link's), rebuilt from the October 2026 download in the scratchpad: the same 76,543 points and
+113,204 links, so routes are unchanged; the file is 1.34 MB compressed (was 1.16). `src/lib/route.ts`: `tree()` records the link each
+point was reached by, `journey()` returns the route's roads in order, `mainRoads()` names them (joining a road that carries on,
+leaving out pieces of less than a mile and roads used for less than two miles in all) and `roadList()` writes "the A4, M4 and M32".
+The notes now open (draft): "Refueller has planned a route of about 49 miles from Wokingham to Horsham, by the A329, A322, M3, M25 and
+A24. It's the quickest by main roads at typical speeds, so it may not be the way you'd go. For a different route, add a nearby place in
+Via." With Guildford as a via: about 44 miles, "passing near Guildford, by the A321, A331, A31 and A281". **Checked:** `npm run check`
+(new: the road list rules, RG1 to BS1 "the A4, M4 and M32", Wokingham to Horsham with and without Guildford), lint, type-check,
+build; the three journeys at 1200px and 390px with touch, light and dark, no errors, no sideways scroll. **Noticed:** a place whose
+name is unique is labelled by name alone, so "Horsham, West Sussex" typed in full isn't found (only "Horsham"). Not merged.

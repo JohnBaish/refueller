@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { joinChains, speedMph } from './build-route-roads.ts';
-import { endChoices, journey, makeNetwork, readRouteHash, routeCheapest, routeEight, routeHash, routeMiles, todayText, toPlace, type RouteFile, type RouteRow, ROUTE_CORRIDOR_METRES } from '../src/lib/route.ts';
+import { endChoices, mainRoads, roadList, journey, makeNetwork, readRouteHash, routeCheapest, routeEight, routeHash, routeMiles, todayText, toPlace, type RouteFile, type RouteRow, ROUTE_CORRIDOR_METRES } from '../src/lib/route.ts';
 import type { Station } from '../src/lib/search.ts';
 
 let failures = 0;
@@ -112,6 +112,29 @@ await check('close to the drawn route: Caversham to Downham Market via Hatfield 
   assert.ok(j.ok);
   assert.ok(j.offRoute[0] <= ROUTE_CORRIDOR_METRES, `Slough ${j.offRoute[0].toFixed(0)} m from the route`);
   assert.ok(j.minutes[1] <= 6 && j.offRoute[1] > ROUTE_CORRIDOR_METRES, `High Wycombe ${j.minutes[1].toFixed(1)} minutes, ${j.offRoute[1].toFixed(0)} m from the route`);
+});
+
+await check('the route described: its main roads in order (John, 1 November)', () => {
+  const mile = 1609.344;
+  // Short pieces and roads used for less than two miles in all aren't named; a road that carries on is named once.
+  assert.deepEqual(mainRoads([{ road: 'A327', metres: 100 }, { road: 'A4', metres: 4.4 * mile }, { road: 'M4', metres: 30 * mile }, { road: '', metres: 300 }, { road: 'M4', metres: 37 * mile }, { road: 'M32', metres: 4.6 * mile }, { road: 'A38', metres: 0.5 * mile }]), ['A4', 'M4', 'M32']);
+  assert.equal(roadList(['M4']), 'the M4');
+  assert.equal(roadList(['A4', 'M4', 'M32']), 'the A4, M4 and M32');
+  assert.equal(roadList([]), '');
+  const places = JSON.parse(readFileSync(new URL('../data/places.json', import.meta.url), 'utf8')).places as [string, string, string, number, number][];
+  const p = (name: string, area: string) => {
+    const x = places.find((q) => q[0] === name && q[2] === area)!;
+    return toPlace(x[3], x[4]);
+  };
+  const rb = journey(net, [at('RG1'), at('BS1')], []);
+  assert.ok(rb.ok);
+  assert.equal(roadList(mainRoads(rb.roads)), 'the A4, M4 and M32');
+  const wh = journey(net, [p('Wokingham', 'Wokingham'), p('Horsham', 'West Sussex')], []);
+  assert.ok(wh.ok);
+  assert.equal(roadList(mainRoads(wh.roads)), 'the A329, A322, M3, M25 and A24');
+  const viaG = journey(net, [p('Wokingham', 'Wokingham'), p('Guildford', 'Surrey'), p('Horsham', 'West Sussex')], []);
+  assert.ok(viaG.ok);
+  assert.equal(roadList(mainRoads(viaG.roads)), 'the A321, A331, A31 and A281');
 });
 
 await check('no road: the Isles of Scilly are reached only by sea or air', () => {

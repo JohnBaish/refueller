@@ -25,7 +25,7 @@ export function speedMph(cls: string, formOfWay: string, primary: boolean): numb
   return 30;
 }
 
-type Link = { a: string; b: string; metres: number; seconds: number; ea: [number, number]; eb: [number, number] };
+type Link = { a: string; b: string; metres: number; seconds: number; ea: [number, number]; eb: [number, number]; road?: string };
 
 // Joins chains through points where exactly two links meet. Loops made only of such points are dropped (rare, and never part of a
 // through route). Exported for the check.
@@ -44,7 +44,7 @@ export function joinChains(links: Link[]) {
   const ends = [...at.keys()].filter((n) => at.get(n)!.length !== 2).sort();
   const index = new Map(ends.map((n, k) => [n, k]));
   const seen = new Uint8Array(links.length);
-  const edges: [number, number, number, number][] = [];
+  const edges: [number, number, number, number, string][] = [];
   for (const n of ends) {
     for (const first of at.get(n)!) {
       if (seen[first]) continue;
@@ -53,11 +53,14 @@ export function joinChains(links: Link[]) {
       let metres = 0;
       let seconds = 0;
       let end: string;
+      // The road number of a joined chain: the one with most length in it (a chain rarely changes number).
+      const byRoad = new Map<string, number>();
       for (;;) {
         seen[link] = 1;
         const l = links[link];
         metres += l.metres;
         seconds += l.seconds;
+        if (l.road) byRoad.set(l.road, (byRoad.get(l.road) ?? 0) + l.metres);
         end = l.a === cur ? l.b : l.a;
         if (index.has(end)) break;
         const other = at.get(end)!.find((j) => j !== link)!;
@@ -65,7 +68,8 @@ export function joinChains(links: Link[]) {
         cur = end;
         link = other;
       }
-      if (index.has(end)) edges.push([index.get(n)!, index.get(end)!, metres, seconds]);
+      const road = [...byRoad].sort((x, y) => y[1] - x[1])[0]?.[0] ?? '';
+      if (index.has(end)) edges.push([index.get(n)!, index.get(end)!, metres, seconds, road]);
     }
   }
   return { points: ends.map((n) => pos.get(n)!), edges };
@@ -91,7 +95,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       if (!e || !KEEP.has(cls)) continue;
       const metres = Number(get('length', at)) || Math.hypot(e[2] - e[0], e[3] - e[1]);
       const mph = speedMph(cls, get('formOfWay', at), get('primary', at) === 'true');
-      links.push({ a: get('startNode', at), b: get('endNode', at), metres, seconds: metres / (mph * 0.44704), ea: [e[0], e[1]], eb: [e[2], e[3]] });
+      links.push({ a: get('startNode', at), b: get('endNode', at), metres, seconds: metres / (mph * 0.44704), ea: [e[0], e[1]], eb: [e[2], e[3]], road: get('roadNumber', at) });
     }
     process.stdout.write(`${file} `);
   }
@@ -100,12 +104,17 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const credit = /Contains Ordnance Survey data[^\n]*/.exec(licence)?.[0].trim();
   if (!credit) throw new Error('No credit line in doc/licence.txt');
   const out = {
-    note: 'Main roads of Great Britain for "Find cheaper fuel near the route" (scripts/build-route-roads.ts). n: points, easting and northing in tens of metres, in pairs; e: links, [point, point, length in tens of metres, rough driving time in seconds] in fours.',
+    note: 'Main roads of Great Britain for "Find cheaper fuel near the route" (scripts/build-route-roads.ts). n: points, easting and northing in tens of metres, in pairs; e: links, [point, point, length in tens of metres, rough driving time in seconds] in fours; r: road numbers; k: each link\'s road number, as its place in r (-1 for none).',
     credit,
     made: new Date().toISOString().slice(0, 10),
     n: points.flatMap(([e, n]) => [Math.round(e / 10), Math.round(n / 10)]),
     e: edges.flatMap(([a, b, m, s]) => [a, b, Math.max(1, Math.round(m / 10)), Math.max(1, Math.round(s))]),
+    // Road numbers (M4, A329(M)), for describing the route (John, 1 November).
+    r: [...new Set(edges.map((x) => x[4]).filter(Boolean))].sort(),
+    k: [] as number[],
   };
+  const roadIndex = new Map(out.r.map((x, i) => [x, i]));
+  out.k = edges.map((x) => (x[4] ? roadIndex.get(x[4])! : -1));
   const root = new URL('..', import.meta.url).pathname;
   writeFileSync(join(root, 'data/route-roads.json'), JSON.stringify(out));
   console.log(`\n${links.length} links kept; ${points.length} points and ${edges.length} joined links written to data/route-roads.json`);
