@@ -12,7 +12,7 @@ Read these first, in this order:
    the numbered open questions).
 2. `PLAN.md`: the staged build. Work one stage at a time, on its branch.
 3. `HOUSE-STYLE.md`: the shared look and ways of working. Copied from
-   `JohnBaish/clockwheel`; last re-copied 2026-10-31 (at clockwheel commit `9edeea5`; `SEO-HANDOVER.md` again 2026-11-01 at `5c5c145`).
+   `JohnBaish/clockwheel`; last re-copied 2026-11-01 (at clockwheel commit `b31863e`; `SEO-HANDOVER.md` at `5c5c145`).
    Clockwheel holds the master copy. If it has changed since, re-copy it and
    note that here. The same goes for `SEO-HANDOVER.md` and
    `.claude/skills/fresh-look/` (the `/fresh-look` review).
@@ -1728,3 +1728,10 @@ SEO-HANDOVER's table; `SEO-HANDOVER.md` re-copied here from it. **Checked:** bui
 no sideways scroll. **For John (live checks this session can't make):** open `https://refueller.baish.net/robots.txt` and
 `/sitemap.xml` (plain text, not the page), and in Search Console, URL Inspection → `https://refueller.baish.net/` → Test live URL →
 Request indexing.
+
+### 2026-11-01 — house style re-copied; Refueller in the baish.net overview (notes only, straight to `main`)
+
+From clockwheel `b31863e`: §1 and §16 describe the baish.net overview in two parts (the words in
+`design/overview/baish-net-overview.md`, the pictures in `baish-net-pictures-2026-11-01.pdf`, John's option C), and §15
+adds Lightreader's 24-hour times as an agreed exception. Refueller has its own section in the words and four pages of
+pictures, taken from the live site (prices from the 10.15am collection). No app code changed.
