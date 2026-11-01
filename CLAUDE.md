@@ -1485,3 +1485,18 @@ Pictures `design/previews/journey-front-*.png`. Not merged.
 `.about` now has the same line and spacing as `.journey-front` (everywhere About shows, the journey page included). Checked: build;
 RG4 and RG1 to BS1 at 1200px and 390px with touch, light and dark: the line, no errors, no sideways scroll. `journey-on-front` merged
 into `main` after bringing in its data commits; checks, lint, type-check and build clean first.
+
+### 2026-11-01 — "Average prices" chart: mock-ups (notes only)
+
+**John:** a chart of average prices recently across Great Britain, built up from our own collections like the price history, a
+line each for diesel and petrol, and the same for the area shown, named in the key; which average? **Worked out from the real
+collections (October 30th to November 1st, six so far; `design/mock/averages-series.py` reads `data/prices.json` and
+`data/stations.json` from git):** GB unleaded mean 172.96p falling to 172.54p, median 172.7p then stuck at 171.9p; diesel mean
+199.28p to 199.18p, median 199.9p then 199.7p; RG (94 stations) unleaded mean 176.77p to 176.26p, median 175.9p then 174.9p.
+Medians sit on the ".9" prices most stations charge, so they move in whole-penny jumps and hide small changes; advice: the mean of
+the usual prices (unusual ones already left out). **Mock-ups** (`design/mock/averages-mock.cjs`, built page in the browser only):
+A, one chart, four lines (unleaded terracotta, diesel blue `#2a64a8` / dark `#5f97dc`, checked with the dataviz validator; area
+solid, GB dashed); B, two charts side by side (stacked on a phone), unleaded and diesel each on its own scale, area in terracotta and
+GB grey dashed as in the price history; C, B with medians. Pictures `design/previews/averages-*.png`. A's single scale (165p to
+205p) flattens the changes, as the 27p gap between the fuels sets the scale. Area: the postcode area (RG), named "RG (Reading)";
+area names would need a list of the 121 GB postcode areas' names, still to source. All wording draft.
