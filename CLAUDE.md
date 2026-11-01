@@ -12,7 +12,7 @@ Read these first, in this order:
    the numbered open questions).
 2. `PLAN.md`: the staged build. Work one stage at a time, on its branch.
 3. `HOUSE-STYLE.md`: the shared look and ways of working. Copied from
-   `JohnBaish/clockwheel`; last re-copied 2026-11-01 (at clockwheel commit `a6cb099`; `SEO-HANDOVER.md` at `5c5c145`).
+   `JohnBaish/clockwheel`; last re-copied 2026-11-01 (at clockwheel commit `5086657`; `SEO-HANDOVER.md` at `5c5c145`).
    Clockwheel holds the master copy. If it has changed since, re-copy it and
    note that here. The same goes for `SEO-HANDOVER.md` and
    `.claude/skills/fresh-look/` (the `/fresh-look` review).
@@ -1822,3 +1822,9 @@ and the footer's "how you sorted the list". The `sort-mockups` and `feature-sort
 At John's request, Claude ran the "Delete merged branches" workflow itself (started through GitHub's API): a trial run first
 (run 41328459377: two merged branches, nothing unmerged), then the real run (run 41328490691), which deleted `feature-sort` and
 `sort-mockups`. Only `main` is left.
+
+### 2026-11-01 — house style re-copied: sessions delete merged branches themselves (notes only, straight to `main`)
+
+From clockwheel `5086657`: §10 now asks a session to run the "Delete merged branches" workflow itself after a merge (trial run
+first, then the real run, then check the branches are gone and log it), rather than listing branches for John (John). No app code
+changed.
