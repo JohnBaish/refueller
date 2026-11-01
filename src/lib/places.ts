@@ -90,3 +90,15 @@ export function findPlace(ix: PlaceIndex, typed: string, at?: string): PlaceFind
 
 // Does it look like a postcode (or the first half of one) rather than a place name? "RG1", "RG1 8FR", "ec1a 1bb".
 export const looksLikePostcode = (typed: string) => /^\s*[A-Za-z]{1,2}\d[A-Za-z\d]?(\s*\d[A-Za-z]{2})?\s*$/.test(typed);
+
+// The first few places sharing a name, biggest first (cities, then towns, suburbs and villages), as they're labelled, for the message
+// that asks the visitor to choose: “Newport, Newport”, “Newport, Isle of Wight” or “Newport, Pembrokeshire” (fresh look 3.2, John,
+// November 1st 2026).
+export function namesakes(places: NamedPlace[], n = 3): string {
+  const labels = [...places]
+    .sort((a, b) => KIND_ORDER[a.kind] - KIND_ORDER[b.kind] || placeLabel(a).length - placeLabel(b).length || placeLabel(a).localeCompare(placeLabel(b), 'en-GB'))
+    .map((p) => `“${placeLabel(p)}”`)
+    .filter((l, i, all) => all.indexOf(l) === i) // two Habosts share a whole label: named once
+    .slice(0, n);
+  return labels.length < 2 ? labels.join('') : `${labels.slice(0, -1).join(', ')} or ${labels[labels.length - 1]}`;
+}

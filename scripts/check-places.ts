@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { areaName, placeFrom } from './build-places.ts';
-import { findPlace, looksLikePostcode, makePlaceIndex, norm, placeAt, placeLabel, suggest, type PlaceFile } from '../src/lib/places.ts';
+import { findPlace, looksLikePostcode, makePlaceIndex, namesakes, norm, placeAt, placeLabel, suggest, type PlaceFile } from '../src/lib/places.ts';
 import { nearestDistrict } from '../src/lib/search.ts';
 
 let failures = 0;
@@ -62,6 +62,9 @@ await check('same-name places must be chosen: Newport alone is ambiguous, "Newpo
   assert.ok(!r.ok && r.problem === 'several' && r.places.length > 5);
   const w = findPlace(ix, 'Newport, Isle of Wight');
   assert.ok(w.ok && w.place.area === 'Isle of Wight');
+  assert.equal(namesakes(!r.ok && r.problem === 'several' ? r.places : []), '“Newport, Newport”, “Newport, Isle of Wight” or “Newport, Pembrokeshire”', 'the choices named, biggest first (fresh look 3.2)');
+  const hb = findPlace(ix, 'Habost');
+  assert.equal(namesakes(!hb.ok && hb.problem === 'several' ? hb.places : []), '“Habost, Na h-Eileanan an Iar (HS2)”', 'a label shared in full is named once');
   const c = findPlace(ix, 'Newport, Newport');
   assert.ok(c.ok && c.place.kind === 'c', 'the Welsh city, by its full label');
   assert.ok(!findPlace(ix, 'Clapham').ok, 'four Claphams');

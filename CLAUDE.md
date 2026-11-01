@@ -1670,3 +1670,17 @@ lint, type-check, build. Over all 7,482 stations: no address repeats its postcod
 postcode. In Chromium, before (`main`) and after: AB33's addresses at 390px with touch; RG4 printed at 1200px (no search box; the three
 credit lines); SN1 to SN25 ("Of the nine"), Reading to Exeter via Andover ("change the place"), RG1 to RG1 (the empty case); no errors, no
 sideways scroll. **Couldn't be checked:** a real printer and a real phone.
+
+### 2026-11-01 — fresh look, round 2: taller bars and the choices named (branch `fresh-look-2`, preview)
+
+**John:** 2.3 to see on a preview; 3.2 name the choices; 4.3 leave; 5.1 the picture probably needn't change, perhaps the words: draft.
+
+**What:** 2.3, the small chart's bars are at least 6px tall (were 2px), so the lowest price shows as a bar in its colour
+(`Rank` in `src/components/Results.tsx`). 3.2, `namesakes()` in `src/lib/places.ts` names up to three places sharing a name, biggest
+first (cities, towns, suburbs, villages), each label once: "There's more than one Newport. Choose one from the list as you type, such as
+“Newport, Newport”, “Newport, Isle of Wight” or “Newport, Pembrokeshire”." (main search and the journey planner). 5.1, three drafts of the
+search description (146 to 155 characters) put to John in the thread; nothing changed yet; the preview picture and its words stay.
+
+**Checked:** `npm run check` (new: Newport's three, the two Habosts named once), lint, type-check, build. In Chromium: AB33 at 390px with
+touch, light and dark, and RG4 at 1200px, before and after; Newport (main search) and Wick (journey) messages; no errors, no sideways
+scroll. Not merged: waiting for John to look at the preview.

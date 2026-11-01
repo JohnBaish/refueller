@@ -82,7 +82,8 @@ function Rank({ me, all }: { me: number; all: number[] }) {
     <div className="rank">
       <svg className="rank-bars" width={all.length * (w + gap) - gap} height={H} aria-hidden="true">
         {all.map((p, k) => {
-          const h = 2 + ((p - lo) / span) * (H - 2);
+          // At least 6px, so the lowest price still shows as a bar in its colour (fresh look 2.3, November 1st 2026; was 2px).
+          const h = 6 + ((p - lo) / span) * (H - 6);
           return <rect key={k} x={k * (w + gap)} y={H - h} width={w} height={h} rx={2} className={p === me ? 'me' : undefined} />;
         })}
       </svg>

@@ -7,7 +7,7 @@ import { getPlaces, PlaceBox } from './PlaceBox.tsx';
 import { fromDetail, type PageIndex } from '../lib/pageTypes.ts';
 import { decodeDistrict } from '../lib/postcodes.ts';
 import { useIsNarrow } from '../lib/responsive.ts';
-import { findPlace, looksLikePostcode, placeAt, placeLabel, type NamedPlace, type PlaceIndex } from '../lib/places.ts';
+import { findPlace, looksLikePostcode, namesakes, placeAt, placeLabel, type NamedPlace, type PlaceIndex } from '../lib/places.ts';
 import {
   endTyped,
   isPlace,
@@ -97,7 +97,7 @@ export function JourneyForm({ target }: { target: RouteTarget }) {
       if (!found.ok) {
         setProblem(
           found.problem === 'several'
-            ? `${name}: there’s more than one ${found.places[0].name}. Choose one from the list as you type, such as “${placeLabel(found.places[0])}”.`
+            ? `${name}: there’s more than one ${found.places[0].name}. Choose one from the list as you type, such as ${namesakes(found.places)}.`
             : `${name}: we can’t find “${t}” among Great Britain’s towns, villages and suburbs. Check the spelling, or try a postcode${f === 'via' ? ' in From or To' : ''}.`,
         );
         return;

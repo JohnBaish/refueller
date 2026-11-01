@@ -8,7 +8,7 @@ import { ROAD_CREDIT } from './lib/calc.ts';
 import { fullHash } from './lib/postcodes.ts';
 import { readRouteHash, routeHash, type RouteTarget } from './lib/route.ts';
 import { readPostcode, type PostcodeResult } from './lib/search.ts';
-import { findPlace, looksLikePostcode, placeAt, placeLabel, type NamedPlace } from './lib/places.ts';
+import { findPlace, looksLikePostcode, namesakes, placeAt, placeLabel, type NamedPlace } from './lib/places.ts';
 
 // The page has two states: the postcode screen, and the results for a postcode or district. It is kept in the address after "#"
 // (#RG4 or #RG4-7HN: browsers never send that part, and the visit statistics drop it) and on this device as the last choice.
@@ -87,7 +87,7 @@ function SearchBox({ start, initial, initialAt }: { start: boolean; initial: str
       if (!f.ok) {
         setProblem(
           f.problem === 'several'
-            ? `There’s more than one ${f.places[0].name}. Choose one from the list as you type, such as “${placeLabel(f.places[0])}”.`
+            ? `There’s more than one ${f.places[0].name}. Choose one from the list as you type, such as ${namesakes(f.places)}.`
             : `We can’t find “${t}” among Great Britain’s postcodes, towns, villages and suburbs. Check the spelling, or try a postcode.`,
         );
         return;
