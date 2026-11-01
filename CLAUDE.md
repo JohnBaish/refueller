@@ -1746,3 +1746,13 @@ No app code changed.
 ### 2026-11-01 — "Delete merged branches" workflow (straight to `main`)
 
 A "Delete merged branches" workflow (`.github/workflows/tidy-branches.yml`, Run workflow only, nothing scheduled): deletes only branches fully merged into `main`, never `main`, and only if a branch hasn't moved since it was checked; "Only list" (ticked by default) changes nothing; named unmerged branches can be added, each kept as an `archive/<name>` tag first. Added because cloud sessions can't delete branches (John: automate it, with no danger to the websites; the sites build from `main`, and deletions made by the job start no other workflows). Tested against a pretend GitHub here: the trial changed nothing; the real run deleted the merged branch and the named one (kept as a tag), and refused `main`. House style re-copied from clockwheel (§10 mentions it).
+
+### 2026-11-01 — "Sort by": mock-ups (branch `sort-mockups`, design only)
+
+**John** asked for options to sort the list low to high by unleaded, diesel or distance (distance the default): sortable column
+headings on a computer, and on a phone a strip above the first card, "Sort by: Distance Unleaded price Diesel price", the active one
+in bold. **Mock-ups** drawn into the built page in the browser only (`design/mock/sort-mock.cjs`; no app code), BS15 4XB with the
+10.15am collection, light and dark: computer A, clickable headings (▲ on the active one, ⇅ on the others); computer B, the phone's
+strip above the table; phone A, John's strip; phone B, a three-part switch. A line added to the notes: "Sorted by unleaded price,
+lowest first." (draft). Stations without the fuel go last, ties by distance (Claude's, for John). Pictures
+`design/previews/sort/sort-*.png`. No errors, no sideways scroll at 1200px or 390px with touch.
