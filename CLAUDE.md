@@ -1839,3 +1839,7 @@ unleaded down 0.8p since October 30th; Reading 1.3p less than Berkshire; Berkshi
 unleaded after the Isle of Wight; South East the dearest of the nine regions for both fuels; England's county averages 169.5p
 (West Yorkshire) to 179.0p (Isle of Wight); Wales the cheapest nation for both fuels, Scotland the dearest. RG postcode area's
 figures match `data/averages.json` exactly. No errors, no sideways scroll at 1200px or 390px with touch, light and dark.
+
+**John's answers (same day):** option B (the list inside "The wider picture", in place of the key; the RG line out of the
+charts); the way facts are chosen and their wording agreed (a ranking at either end first, then a clear gap from the level above,
+then the change since recording began); heading "Averages near here" (where it goes: asked).
