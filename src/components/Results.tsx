@@ -172,14 +172,36 @@ const SORT_WORDS: Record<SortBy, string> = { distance: 'Distance', e10: 'Unleade
 
 // A column heading that sorts the list low to high (John, November 1st 2026: option A on a computer).
 function SortHead({ by, sort, children }: { by: SortBy; sort: SortControl; children: ReactNode }) {
-  const on = sort.by === by;
+  return (
+    <SortTh on={sort.by === by} title={`Sort by ${SORT_WORDS[by].toLowerCase()}, lowest first`} onChoose={() => sort.choose(by)}>
+      {children}
+    </SortTh>
+  );
+}
+
+// The heading itself, shared with the journey list.
+export function SortTh({ on, title, onChoose, children }: { on: boolean; title: string; onChoose: () => void; children: ReactNode }) {
   return (
     <th className={`c sortable${on ? ' on' : ''}`} aria-sort={on ? 'ascending' : 'none'}>
-      <button type="button" onClick={() => sort.choose(by)} title={on ? undefined : `Sort by ${SORT_WORDS[by].toLowerCase()}, lowest first`}>
+      <button type="button" onClick={onChoose} title={on ? undefined : title}>
         {children}
         <span className="sort-mark" aria-hidden="true">{on ? '▲' : '⇅'}</span>
       </button>
     </th>
+  );
+}
+
+// The phone's "Sort by:" strip above the first card, the one in use in bold; shared with the journey list.
+export function SortStrip<K extends string>({ options, by, choose }: { options: [K, string][]; by: K; choose: (k: K) => void }) {
+  return (
+    <div className="sort-strip" role="group" aria-label="Sort the list" data-noprint>
+      <span className="sort-lab">Sort by:</span>
+      {options.map(([k, w]) => (
+        <button key={k} type="button" className={k === by ? 'on' : undefined} aria-pressed={k === by} onClick={() => choose(k)}>
+          {w}
+        </button>
+      ))}
+    </div>
   );
 }
 
@@ -243,14 +265,7 @@ function Cards({ rows, now, centreId, calc, sort }: { rows: Row[]; now: number; 
   const ranks = { e10: rankPrices(rows, 'e10'), diesel: rankPrices(rows, 'diesel') };
   return (
     <>
-    <div className="sort-strip" role="group" aria-label="Sort the list" data-noprint>
-      <span className="sort-lab">Sort by:</span>
-      {SORTS.map((by) => (
-        <button key={by} type="button" className={by === sort.by ? 'on' : undefined} aria-pressed={by === sort.by} onClick={() => sort.choose(by)}>
-          {SORT_WORDS[by]}
-        </button>
-      ))}
-    </div>
+    <SortStrip options={SORTS.map((k): [SortBy, string] => [k, SORT_WORDS[k]])} by={sort.by} choose={sort.choose} />
     <div className="cards">
       {rows.map((r) => (
         <div key={r.station.id} className={`pcard${r.open.open === false ? ' closed' : ''}`}>

@@ -273,3 +273,5 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
 .sort-strip button.on { color: var(--color-text); font-weight: 700; }
 @media print { .sort-strip, .stations th.sortable .sort-mark { display: none; } }
 @media (max-width: 360px) { .sort-strip { font-size: 13.5px; column-gap: 0; } .sort-strip .sort-lab { margin-right: 0; } .sort-strip button { padding: 0 5px; } }
+/* The journey list sorted as one list (John, November 1st 2026, option B): the end stations tagged. */
+.end-tag { display: inline-block; margin: 2px 0 3px; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-note); border: 1px solid currentColor; border-radius: 999px; padding: 1px 8px; }

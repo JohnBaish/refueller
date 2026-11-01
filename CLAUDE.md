@@ -1786,3 +1786,18 @@ itself (the ends have one or two rows, so only "On the way" really changes). **B
 or "Near the end" (blue outline). On this journey B puts Asda Bedminster (near the end, 167.7p) first; A keeps it last. Notes add
 "Sorted by price, lowest first." / "Sorted by detour, shortest first." (drafts). Pictures `design/previews/journey-sort/jsort-*.png`.
 No errors, no sideways scroll at 1200px or 390px with touch.
+
+### 2026-11-01 — sorting the journey list built (branch `feature-sort`, not merged)
+
+**John:** B (one list, the end stations tagged); "Journey order"; the notes drop "in the order you'd reach them" while sorted, and the
+detour note reads "sorted by extra miles of detour"; the journey sort not remembered. **What:** `sortJourney()` and `journeySortNote()` in
+`src/lib/sort.ts` (price or extra miles lowest first, ties in journey order, a station with no detour figure last); `Journey.tsx`: the
+headings Where, Extra miles and the fuel's price are sort buttons (`SortTh`, now shared from `Results.tsx` with `SortStrip`), the phone
+strip "Sort by: Journey order Detour Price"; when sorted the group headings go and the end stations carry "Near the start" or "Near the
+end" (`.end-tag`, the note colour); "Cheapest" and the small charts are worked out in journey order and travel with their station; the
+notes end "Sorted by price, lowest first." or "Sorted by extra miles of detour, fewest first." ("fewest first" Claude's, for John);
+each journey starts in journey order. **Checked:** `npm run check` (new route check: the three orders and the notes; reversing the
+tie-break made it fail, then restored), lint, type-check, build. In Chromium at 1200px, 390px and 320px with touch, light and dark (RG1 to
+BS1): prices in order, the tags, one "Cheapest", both notes, back to journey order with the groups, Diesel sorted too, not kept after a
+reload; the main list's sort as before (and the calculator unchanged); no errors, no sideways scroll. Pictures
+`design/previews/journey-sort/built-*.png`. **Couldn't be checked:** a real phone.

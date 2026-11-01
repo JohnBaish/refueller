@@ -40,3 +40,20 @@ export function saveSort(by: SortBy) {
     // a private window may refuse; sorting still works for the visit
   }
 }
+
+// The journey list (John, November 1st 2026): journey order (the default), the extra miles of detour, or the chosen fuel's price,
+// as one list (option B; the end stations tagged). Ties keep journey order; a station with no detour figure goes last. Not remembered.
+export type JourneySort = 'route' | 'detour' | 'price';
+export function sortJourney<T>(items: T[], by: JourneySort, price: (t: T) => number | undefined, extra: (t: T) => number): T[] {
+  if (by === 'route') return items;
+  const key = (t: T) => {
+    const v = by === 'price' ? price(t) : extra(t);
+    return v === undefined || !Number.isFinite(v) ? Infinity : v;
+  };
+  return items
+    .map((t, i) => ({ t, i, k: key(t) }))
+    .sort((a, b) => (a.k === b.k ? 0 : a.k < b.k ? -1 : 1) || a.i - b.i)
+    .map((x) => x.t);
+}
+export const journeySortNote = (by: JourneySort) =>
+  by === 'price' ? 'Sorted by price, lowest first.' : by === 'detour' ? 'Sorted by extra miles of detour, fewest first.' : '';

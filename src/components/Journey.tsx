@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useMemo, useState, type FormEvent } from 'react';
-import { collectedText, PriceCell, REPORT_URL, useNow } from './Results.tsx';
+import { collectedText, PriceCell, REPORT_URL, SortStrip, SortTh, useNow } from './Results.tsx';
+import { journeySortNote, sortJourney, type JourneySort } from '../lib/sort.ts';
 import { loadChoices, saveChoices, type Fuel } from '../lib/calc.ts';
 import { loadArea, loadIndex, loadPostcodes, loadRouteRoads, loadTowns } from '../lib/load.ts';
 import { rival, routeWords, type Town } from '../lib/routeWords.ts';
@@ -226,7 +227,9 @@ async function find(t: Required<Pick<RouteTarget, 'from' | 'to'>> & RouteTarget)
   return { ok: true, index, miles: j.miles, words, candidates, startEight: atStart.map(rowOf), endEight: atEnd.map(rowOf), from, to, via };
 }
 
-function Notes({ found, shown, within, now }: { found: Extract<Found, { ok: true }>; shown: number; within: number; now: number }) {
+function Notes({ found, shown, within, now, sortBy }: { found: Extract<Found, { ok: true }>; shown: number; within: number; now: number; sortBy: JourneySort }) {
+  // "In the order you'd reach them" only while the list is in that order (John, November 1st 2026).
+  const inOrder = sortBy === 'route' ? ', in the order you’d reach them' : '';
   const missing = [found.from, found.via, found.to].filter((w): w is Where => !!w?.notFound);
   return (
     <p className="notes">
@@ -239,18 +242,24 @@ function Notes({ found, shown, within, now }: { found: Extract<Found, { ok: true
       {within === 0
         ? `There are no stations close to the route that add no more than ${LIMIT} to it, there and back.`
         : shown === within
-          ? `${cap(count(within))} station${within === 1 ? '' : 's'} close to the route ${within === 1 ? 'adds' : 'add'} no more than ${LIMIT} to it, there and back; here ${within === 1 ? 'it is' : 'they are'}, in the order you’d reach them.`
-          : `Of the ${count(within)} stations close to the route that add no more than ${LIMIT} to it, there and back, these are the eight cheapest, in the order you’d reach them.`}{' '}
+          ? `${cap(count(within))} station${within === 1 ? '' : 's'} close to the route ${within === 1 ? 'adds' : 'add'} no more than ${LIMIT} to it, there and back; here ${within === 1 ? 'it is' : 'they are'}${inOrder}.`
+          : `Of the ${count(within)} stations close to the route that add no more than ${LIMIT} to it, there and back, these are the eight cheapest${inOrder}.`}{' '}
       The cheapest of the stations near the beginning and end of the journey are also shown. Distances are by main roads, so
       they’re a guide. Prices collected at {collectedText(found.index.collected, now)}, as
       reported by each station; they may have changed since.{' '}
       <a href={REPORT_URL} target="_blank" rel="noopener noreferrer">
         Report a wrong price
       </a>
-      .
+      .{sortBy !== 'route' && <strong className="sort-note"> {journeySortNote(sortBy)}</strong>}
     </p>
   );
 }
+
+const JOURNEY_SORTS: [JourneySort, string][] = [
+  ['route', 'Journey order'],
+  ['detour', 'Detour'],
+  ['price', 'Price'],
+];
 
 export function JourneyResults({ target }: { target: RouteTarget }) {
   const now = useNow();
@@ -259,6 +268,8 @@ export function JourneyResults({ target }: { target: RouteTarget }) {
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const [fuel, setFuel] = useState<Fuel>(() => loadChoices().fuel);
+  // Not remembered (John, November 1st 2026): each journey starts in journey order.
+  const [sortBy, setSortBy] = useState<JourneySort>('route');
 
   useEffect(() => {
     if (!target.from || !target.to) return;
@@ -302,16 +313,24 @@ export function JourneyResults({ target }: { target: RouteTarget }) {
   const rows = chosen!.rows;
   // Shown together, in this order: the cheapest near the start, the stations on the way, the cheapest near the end. "Cheapest" and the
   // small chart compare all of them.
-  type Shown = { r: RouteRow; group: 'start' | 'way' | 'end' };
-  const shown: Shown[] = [
+  type Shown = { r: RouteRow; group: 'start' | 'way' | 'end'; cheap: ReturnType<typeof routeCheapest>[number] };
+  const inRouteOrder = [
     ...chosen!.start.map((r) => ({ r, group: 'start' as const })),
     ...rows.map((r) => ({ r, group: 'way' as const })),
     ...chosen!.end.map((r) => ({ r, group: 'end' as const })),
   ];
   const cheapest = routeCheapest(
-    shown.map((x) => x.r),
+    inRouteOrder.map((x) => x.r),
     fuel,
   );
+  // Sorted as one list (John, November 1st 2026, option B): the group headings go and the end stations are tagged instead.
+  const shown: Shown[] = sortJourney(
+    inRouteOrder.map((x, i) => ({ ...x, cheap: cheapest[i] })),
+    sortBy,
+    (x) => x.r.prices[fuel]?.p,
+    (x) => x.r.extra,
+  );
+  const grouped = sortBy === 'route';
   const all = shown.map((x) => x.r.prices[fuel]!.p).sort((a, b) => a - b);
   const fuelName = fuel === 'e10' ? 'Unleaded' : 'Diesel';
   const choose = (f: Fuel) => {
@@ -325,12 +344,13 @@ export function JourneyResults({ target }: { target: RouteTarget }) {
       {membersOnly(r.station) && <div className="members">Members only</div>}
     </>
   );
-  const price = (r: RouteRow, i: number) => <PriceCell p={r.prices[fuel]} cheapest={cheapest[i]} fuel={fuel} now={now} all={all} members={membersOnly(r.station)} />;
+  const price = (x: Shown) => <PriceCell p={x.r.prices[fuel]} cheapest={x.cheap} fuel={fuel} now={now} all={all} members={membersOnly(x.r.station)} />;
   const endName = (g: Shown['group']) => (g === 'start' ? found.from : found.to).short;
   const where = (x: Shown) => (x.group === 'way' ? `${routeMiles(x.r.along)} from the start` : `${milesText(x.r.fromEnd!)} from ${endName(x.group)}`);
   const extraText = (r: RouteRow) => (Number.isFinite(r.extra) ? routeMiles(r.extra) : '–');
   const GROUP: Record<Shown['group'], string> = { start: 'Cheapest near the start', way: 'On the way', end: 'Cheapest near the end' };
-  const firstOf = (i: number) => i === 0 || shown[i - 1].group !== shown[i].group;
+  const firstOf = (i: number) => grouped && (i === 0 || shown[i - 1].group !== shown[i].group);
+  const endTag = (x: Shown) => !grouped && x.group !== 'way' && <div className="end-tag">{x.group === 'start' ? 'Near the start' : 'Near the end'}</div>;
   const today = (r: RouteRow) => todayText(r.station, now, found.index.bank);
 
   return (
@@ -347,19 +367,24 @@ export function JourneyResults({ target }: { target: RouteTarget }) {
           </button>
         ))}
       </div>
-      <Notes found={found} shown={rows.length} within={chosen!.within} now={now} />
+      <Notes found={found} shown={rows.length} within={chosen!.within} now={now} sortBy={sortBy} />
       {shown.length === 0 ? null : narrow ? (
+        <>
+        <SortStrip options={JOURNEY_SORTS} by={sortBy} choose={setSortBy} />
         <div className="cards">
           {shown.map((x, i) => (
             <div key={x.r.station.id}>
               {firstOf(i) && <div className="grp">{GROUP[x.group]}</div>}
               <div className="pcard">
                 <div className="pcard-top">
-                  <div>{name(x.r)}</div>
+                  <div>
+                    {endTag(x)}
+                    {name(x.r)}
+                  </div>
                 </div>
                 <div className="grid">
                   <div className="lbl">{fuelName}</div>
-                  <div>{price(x.r, i)}</div>
+                  <div>{price(x)}</div>
                   <div className="lbl">{x.group === 'way' ? 'On the way' : 'Where'}</div>
                   <div>{where(x)}</div>
                   {/* The detour on its own line, like "On the way" (John, 1 November; was at the top right). */}
@@ -374,6 +399,7 @@ export function JourneyResults({ target }: { target: RouteTarget }) {
             </div>
           ))}
         </div>
+        </>
       ) : (
         <div className="table-box">
           <table className="table stations">
@@ -387,9 +413,15 @@ export function JourneyResults({ target }: { target: RouteTarget }) {
             <thead>
               <tr>
                 <th>Station</th>
-                <th className="c">Where</th>
-                <th className="c">Extra miles</th>
-                <th className="c">{fuel === 'e10' ? 'Unleaded (E10)' : 'Diesel'}</th>
+                <SortTh on={sortBy === 'route'} title="Sort in journey order" onChoose={() => setSortBy('route')}>
+                  Where
+                </SortTh>
+                <SortTh on={sortBy === 'detour'} title="Sort by extra miles of detour, fewest first" onChoose={() => setSortBy('detour')}>
+                  Extra miles
+                </SortTh>
+                <SortTh on={sortBy === 'price'} title="Sort by price, lowest first" onChoose={() => setSortBy('price')}>
+                  {fuel === 'e10' ? 'Unleaded (E10)' : 'Diesel'}
+                </SortTh>
                 <th className="c">Today</th>
               </tr>
             </thead>
@@ -405,12 +437,13 @@ export function JourneyResults({ target }: { target: RouteTarget }) {
                   )}
                   <tr>
                     <td>
+                      {endTag(x)}
                       {name(x.r)}
                       <div className="addr">{tidyAddress(x.r.station)}</div>
                     </td>
                     <td className="c">{where(x)}</td>
                     <td className="c mono dist">{extraText(x.r)}</td>
-                    <td className="c">{price(x.r, i)}</td>
+                    <td className="c">{price(x)}</td>
                     <td className="c">{today(x.r)}</td>
                   </tr>
                 </Fragment>

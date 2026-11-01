@@ -243,6 +243,25 @@ await check('the address: route/RG1/BS1, a full postcode, a via, and a bare "rou
   assert.deepEqual(twin.to, { place: 'Habost, Na h-Eileanan an Iar (HS2)', at: '58.2,-6.3' });
 });
 
+await check('sorting the journey list: journey order unchanged; price and detour lowest first, ties in journey order, no detour figure last', async () => {
+  const { sortJourney, journeySortNote } = await import('../src/lib/sort.ts');
+  const items = [
+    { id: 'start', p: 172.9, x: 1.0 },
+    { id: 'a', p: 169.9, x: 1.1 },
+    { id: 'b', p: 168.9, x: 0.3 },
+    { id: 'c', p: 169.9, x: Infinity },
+    { id: 'd', p: 168.9, x: 2.2 },
+    { id: 'end', p: 167.7, x: 2.0 },
+  ];
+  const ids = (by: 'route' | 'price' | 'detour') => sortJourney(items, by, (t) => t.p, (t) => t.x).map((t) => t.id).join(' ');
+  assert.equal(ids('route'), 'start a b c d end');
+  assert.equal(ids('price'), 'end b d a c start');
+  assert.equal(ids('detour'), 'b start a end d c');
+  assert.equal(journeySortNote('detour'), 'Sorted by extra miles of detour, fewest first.');
+  assert.equal(journeySortNote('price'), 'Sorted by price, lowest first.');
+  assert.equal(journeySortNote('route'), '');
+});
+
 if (failures) {
   console.log(`\n${failures} route check(s) failed.`);
   process.exit(1);
