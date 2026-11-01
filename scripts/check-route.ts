@@ -158,6 +158,9 @@ await check('the route in a few words: places and roads, telling it from the nex
   assert.equal(say(p('Bath', 'Bath and North East Somerset'), p('Southampton', 'City of Southampton')), 'via Salisbury', 'a city first');
   assert.equal(say(p('Guildford', 'Surrey'), p('Brighton', 'City of Brighton and Hove')), 'via Horsham and the A272', 'a place and a road');
   assert.equal(say(p('London', 'Greater London'), p('Birmingham', 'Birmingham')), 'via the M1 and M6', 'one "the" for two roads');
+  // The middle of the journey first, the ends to fill the second place (John, 1 November).
+  assert.equal(say(p('Caversham', 'Reading'), p('Downham Market', 'Norfolk')), 'via the A1(M) and Ely', 'the fork in the middle');
+  assert.equal(say(p('Cardiff', 'Cardiff'), p('Bristol', 'City of Bristol')), 'via the M49 and A4');
   assert.ok(isMotorway('M4') && isMotorway('A1(M)') && !isMotorway('A329'));
 });
 

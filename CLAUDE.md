@@ -1608,3 +1608,14 @@ end of the journey are also shown." (`src/components/Journey.tsx`). Checked: typ
 placeholder is now "Add a place near your route" (John's wording; From and To keep their examples). It fits: 197px of text in a 255px
 box at 320px wide, 185 in 200 on a computer. Checked: type-check, build; Wokingham to Horsham at 1200px, 390px and 320px with touch,
 dark, no errors. (John isn't worried by iPhone's "AutoFill Contact" bar above the keyboard.) Not merged.
+
+### 2026-11-01 — route sentence: the middle of the journey first (branch `route-description`)
+
+**John** (Caversham to Downham Market said "via the M4 and Ely"; the next-best route, 152 miles and 9% slower, goes by the M40, M25 and
+M11 past Bishop's Stortford and Newmarket): yes to the gentler refinement. `routeWords()` now names first the differences whose
+stretch has its middle in the middle three-fifths of the journey, then those near the ends to fill the second place. On 21 journeys
+(`design/mock/route-middle-compare.ts`, with the two versions tried) only Caversham and Reading to Downham Market change, to "via the
+A1(M) and Ely"; "middle only" would also have cut London to Birmingham to "via the M1" and Cardiff to Bristol to "via the M49".
+**Checked:** `npm run check` (new: Caversham to Downham Market and Cardiff to Bristol; counting the whole journey as the middle made it
+fail, then restored), lint, type-check, build; nine journeys at 1200px and 390px with touch, light and dark, no errors, no sideways
+scroll; phone speed about 3.5 to 4.8 seconds with loading. Not merged.

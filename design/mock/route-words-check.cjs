@@ -2,7 +2,7 @@
 // journey takes with the processor slowed to phone speed (4x).
 const { chromium } = require('playwright');
 const URL0 = `http://localhost:${process.argv[2]}/`;
-const trips = ['route/@Wokingham/@Horsham', 'route/@Wokingham/@Horsham/@Guildford, Surrey', 'route/RG1/BS1', 'route/@Bath/@Southampton', 'route/@Carlisle/@Newcastle upon Tyne', 'route/@York/@Scarborough, North Yorkshire', 'route/CF10/BS1'];
+const trips = ['route/@Caversham/@Downham Market', 'route/@London/@Birmingham', 'route/@Wokingham/@Horsham', 'route/@Wokingham/@Horsham/@Guildford, Surrey', 'route/RG1/BS1', 'route/@Bath/@Southampton', 'route/@Carlisle/@Newcastle upon Tyne', 'route/@York/@Scarborough, North Yorkshire', 'route/CF10/BS1'];
 (async () => {
   const b = await chromium.launch();
   for (const [dev, opts] of [['computer', { viewport: { width: 1200, height: 900 } }], ['phone', { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 }]]) {

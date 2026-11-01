@@ -3,7 +3,9 @@
 //   1. The route is split into stretches. A motorway stretch is named by its number; any other road by the town or city it passes
 //      through or close by (within about two miles), a city first, else by its number.
 //   2. If the next-best route takes nearly as long (within 15% of the time), name up to two stretches that route doesn't use (at
-//      least 5 miles, or a tenth of the journey), a city first, then the longest: they tell the two apart.
+//      least 5 miles, or a tenth of the journey): first those in the middle three-fifths of the journey (the ends are usually obvious
+//      from where you start and finish), a city first, then the longest; then those near the ends to fill the second place (John,
+//      1 November: Caversham to Downham Market reads "via the A1(M) and Ely", not "via the M4 and Ely").
 //   3. Otherwise name the single longest stretch ("mainly by the M4", "via Bodmin").
 //   4. At most two names, in the order you'd reach them. Towns at either end (within about 5 miles) are never named.
 // All worked out on the visitor's device, like the route itself.
@@ -77,7 +79,7 @@ export function stretches(net: Network, p: Path): Stretch[] {
   return join(rs.filter((x) => total.get(x.road)! >= 2 * MILE));
 }
 
-type Item = { place: boolean; name: string; miles: number; distinct: boolean; at: number; city: boolean };
+type Item = { place: boolean; name: string; miles: number; distinct: boolean; at: number; city: boolean; mid: number };
 
 // The words after "from X to Y,": "via the M25 and Dorking", "mainly by the M4", or "" if there's nothing to name.
 export function routeWords(net: Network, chosen: Path, rivalRoute: (Path & { seconds: number }) | null, towns: Town[], from: Place, to: Place): string {
@@ -86,22 +88,27 @@ export function routeWords(net: Network, chosen: Path, rivalRoute: (Path & { sec
   const rivalRoads = new Set(rivalRoute ? stretches(net, rivalRoute).map((s) => s.road) : []);
   const nearEnd = (t: Town) => Math.min(Math.hypot(t.e - from.easting, t.n - from.northing), Math.hypot(t.e - to.easting, t.n - to.northing)) < END_METRES;
   const items: Item[] = [];
+  // How far along the journey each stretch's middle is, as a fraction of its length.
+  const cum: number[] = [0];
+  for (const k of chosen.links) cum.push(cum[cum.length - 1] + net.metres[k]);
+  const whole = cum[cum.length - 1] || 1;
   for (const s of stretches(net, chosen)) {
+    const mid = (cum[s.from] + cum[s.to]) / 2 / whole;
     const seg = chosen.nodes.slice(s.from, s.to + 1);
     const miles = s.metres / MILE;
     if (!isMotorway(s.road)) {
-      const mid = seg[Math.floor(seg.length / 2)];
-      const fromMid = (t: Town) => Math.hypot(t.e - net.east[mid], t.n - net.north[mid]);
+      const centre = seg[Math.floor(seg.length / 2)];
+      const fromMid = (t: Town) => Math.hypot(t.e - net.east[centre], t.n - net.north[centre]);
       const town = towns
         .filter((t) => !nearEnd(t) && distTo(net, seg, t.e, t.n) < THROUGH_METRES)
         .sort((a, b) => (a.city ? 0 : 1) - (b.city ? 0 : 1) || fromMid(a) - fromMid(b))[0];
       if (town) {
         const distinct = !!rivalRoute && distTo(net, rivalRoute.nodes, town.e, town.n) > APART_METRES;
-        items.push({ place: true, name: town.name, miles, distinct, at: s.from, city: town.city });
+        items.push({ place: true, name: town.name, miles, distinct, at: s.from, city: town.city, mid });
         continue;
       }
     }
-    items.push({ place: false, name: s.road, miles, distinct: !!rivalRoute && !rivalRoads.has(s.road), at: s.from, city: false });
+    items.push({ place: false, name: s.road, miles, distinct: !!rivalRoute && !rivalRoads.has(s.road), at: s.from, city: false, mid });
   }
   // A place or road that carries on from one stretch to the next is one item.
   const merged = items.reduce<Item[]>((out, x) => {
@@ -114,7 +121,9 @@ export function routeWords(net: Network, chosen: Path, rivalRoute: (Path & { sec
   const rank = (a: Item, b: Item) => (a.city ? 0 : 1) - (b.city ? 0 : 1) || b.miles - a.miles;
   const telling = merged.filter((x) => x.distinct && x.miles >= Math.max(5, total / 10));
   const useRival = close && telling.length > 0;
-  const pick = (useRival ? [...telling].sort(rank).slice(0, 2) : [...merged].sort(rank).slice(0, 1)).sort((a, b) => a.at - b.at);
+  const inMiddle = (x: Item) => x.mid >= 0.2 && x.mid <= 0.8;
+  const ordered = [...telling.filter(inMiddle).sort(rank), ...telling.filter((x) => !inMiddle(x)).sort(rank)];
+  const pick = (useRival ? ordered.slice(0, 2) : [...merged].sort(rank).slice(0, 1)).sort((a, b) => a.at - b.at);
   // "the M25 and Dorking"; "the M1 and M6" (one "the" for two roads together); "Salisbury".
   const words = pick.map((x, i) => (x.place ? x.name : i > 0 && !pick[i - 1].place ? x.name : `the ${x.name}`));
   const list = words.length === 1 ? words[0] : `${words[0]} and ${words[1]}`;
