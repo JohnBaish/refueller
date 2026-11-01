@@ -122,13 +122,14 @@ function About() {
         Only unleaded (E10) and standard diesel are shown. A price below 100p or above 300p a litre is assumed to be a mistake and
         left out.
       </p>
-      <p>The list:</p>
       <ul>
         <li>
-          “Cheapest” marks the lowest unleaded and the lowest diesel price among the stations shown. When that is at Costco, it says “Cheapest (Members only)”, and the lowest price anyone can buy is marked “Cheapest” too.
+          “Cheapest” marks the lowest unleaded and the lowest diesel price among the stations shown.
         </li>
         <li>
-          <strong>Members only</strong> marks Costco, which sells fuel only to its members.
+          Costco only sells fuel to its members. Its filling stations are always shown if they’re in the nearest eight but with a
+          “Members only” flag. If Costco’s fuel is the cheapest, two “Cheapest” flags are shown, one for Costco members and the
+          standard one for everyone else.
         </li>
         <li>“Same price for …” is shown in blue when the price has been the same for more than 45 days, in case it’s wrong.</li>
         <li>The small chart under each price shows where it sits among the stations shown, from lowest to highest.</li>
@@ -145,8 +146,8 @@ function About() {
         </li>
       </ul>
       <p>
-        Distances are in a straight line from your postcode, or from the middle of its district if you only type the first half,
-        so they’re approximate. Stations that Fuel
+        The choice of the “nearest” eight stations which appear in the list is calculated using the distances in a straight
+        line from your postcode, or from the middle of its district if you only type the first half, so they’re approximate. Stations that Fuel
         Finder lists as temporarily closed are left out, and so are a few whose position on the map is far from their own
         postcode. Opening times are each station’s usual hours, including bank holidays, and may differ on the day.
       </p>

@@ -1365,3 +1365,9 @@ not the unusual-price sentence (put back to "…never marked as the cheapest.");
 now says "(the defaults are typical figures: 36 for petrol and 43 for diesel; change them to your car's)". Checks, type-check, build.
 
 **Later, John:** the opening sentence of About ends at "…Fuel Finder service." (the clause about stations reporting removed).
+
+**Later still, John:** the distances sentence now reads "The choice of the “nearest” eight stations which appear in the list is calculated
+using the distances in a straight line from your postcode, or from the middle of its district if you only type the first half, so they're
+approximate."; "The list:" removed; the Costco sentence dropped from the "Cheapest" bullet, and the Members only bullet replaced (not bold):
+"Costco only sells fuel to its members. Its filling stations are always shown if they're in the nearest eight but with a “Members only”
+flag. If Costco's fuel is the cheapest, two “Cheapest” flags are shown, one for Costco members and the standard one for everyone else."
