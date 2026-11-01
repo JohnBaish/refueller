@@ -1822,3 +1822,20 @@ and the footer's "how you sorted the list". The `sort-mockups` and `feature-sort
 At John's request, Claude ran the "Delete merged branches" workflow itself (started through GitHub's API): a trial run first
 (run 41328459377: two merged branches, nothing unmerged), then the real run (run 41328490691), which deleted `feature-sort` and
 `sort-mockups`. Only `main` is left.
+
+### 2026-11-01 — averages at every level: mock-ups A and B (branch `levels-mockups`, design only)
+
+**John** asked for a card of average prices just before the journey planner, at every level for RG4 7SS (these eight, RG4,
+Reading, Berkshire, South East, England, Great Britain), each with a fact. **John decided:** RG4 goes (five stations, four of them
+in the eight); a mix of facts, the most interesting; keep the averages longer than 30 days; no government weekly figures (UK not
+GB, measured differently). He asked to see both versions. **Mock-ups** drawn into the built page in the browser only
+(`design/mock/levels-mock.cjs`; no app code), from the 4.15pm collection on November 1st: **A**, John's card, "Averages around you"
+(draft heading), after "The wider picture"; **B**, the same list inside "The wider picture", in place of its key, with the RG line
+taken out of the charts. Pictures `design/previews/levels/`. **How the figures were made** (scratchpad only, not kept): each
+station's postcode looked up in OS Open Names (October 2026 download, checksum matched) for its council, region and country, the
+ceremonial county from Hindcaster's Lieutenancies Act table, unusual prices left out; the 104 stations whose postcodes Open Names
+doesn't have are left out of the levels below Great Britain (a fallback by position is needed if built). Facts (drafts): eight,
+unleaded down 0.8p since October 30th; Reading 1.3p less than Berkshire; Berkshire the second dearest of England's counties for
+unleaded after the Isle of Wight; South East the dearest of the nine regions for both fuels; England's county averages 169.5p
+(West Yorkshire) to 179.0p (Isle of Wight); Wales the cheapest nation for both fuels, Scotland the dearest. RG postcode area's
+figures match `data/averages.json` exactly. No errors, no sideways scroll at 1200px or 390px with touch, light and dark.
