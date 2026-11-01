@@ -325,7 +325,7 @@ export default function App() {
             Refueller is a free-to-use personal project by John Baish, not connected with the Fuel Finder service. We don’t
             record anything you do here, apart from anonymous visit statistics (no cookies, no personal data), showing us how
             the site is used. Your device, rather than the website, stores your last choices (postcode or place, light or
-            dark mode, the fuel you chose, and the calculator’s amount and miles per gallon), so the page opens the same way next time.
+            dark mode, how you sorted the list, the fuel you chose, and the calculator’s amount and miles per gallon), so the page opens the same way next time.
           </p>
           <p data-noprint>
             More free tools at{' '}

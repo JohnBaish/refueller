@@ -1760,3 +1760,18 @@ lowest first." (draft). Stations without the fuel go last, ties by distance (Cla
 **John's answers (same day):** A on both (column headings on a computer, the strip on a phone); stations without the fuel last;
 ties by distance; unusual prices last; the choice remembered on the device. The journey planner's list to be sortable too (journey
 stage, detour, unleaded, diesel), wording to work out. Tracker: Refueller back to Live and developing.
+
+### 2026-11-01 — sorting the list built (branch `feature-sort`, not merged)
+
+**John:** build the main list's sort first; the journey planner's sort is a second stage, with mock-ups first. **What:** `src/lib/sort.ts`
+(`sortRows()`: distance unchanged; a price sort puts usual prices lowest first, then unusual ones, then stations without the fuel, ties
+to the nearer; `sortNote()`; the choice kept as `refueller.sort`, removed when back on distance). `Results.tsx`: on a computer the
+Distance, Unleaded (E10) and Diesel headings are buttons (`SortHead`, ▲ on the one in use, ⇅ on the others, `aria-sort`); on a phone the
+strip "Sort by: Distance Unleaded price Diesel price" above the first card, the one in use in bold, each 44px tall; "Sorted by unleaded
+price, lowest first." in bold at the end of the notes. Display only: "Cheapest", the small charts and "Worth driving here?" still work
+from the nearest-first list (checked: the calculator's text identical either way). Hidden in print (strip and arrows). Footer's
+privacy sentence now includes "how you sorted the list" (draft, for John). **Checked:** `npm run check` (new: the order rules; putting
+unusual prices among the usual ones made it fail, then restored), lint, type-check, build. In Chromium at 1200px, 390px and 320px with
+touch, light and dark (BS15 4XB): prices in order after sorting, the note, the choice kept after a reload, Diesel and back to Distance,
+the keyboard on a heading, print; no errors, no sideways scroll. At 320px "Diesel price" wraps to a second line. Pictures
+`design/previews/sort/built-*.png`. **Couldn't be checked:** a real phone.

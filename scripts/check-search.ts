@@ -347,5 +347,18 @@ await check('full postcodes: positions packed and unpacked exactly; the real fil
   assert.equal(decodeDistrict(all.RG4).get('7ZZ'), undefined);
 });
 
+await check('sorting the list: distance unchanged; price lowest first, ties nearest first, unusual then none last; remembered key', async () => {
+  const { sortRows, sortNote } = await import('../src/lib/sort.ts');
+  const row = (id: string, miles: number, e10?: number, unusual = false, diesel?: number) =>
+    ({ station: { id } as Station, miles, open: { open: true }, cheapest: { e10: false, diesel: false }, prices: { ...(e10 ? { e10: { p: e10, u: 'x', ...(unusual ? { x: 1 } : {}) } } : {}), ...(diesel ? { diesel: { p: diesel, u: 'x' } } : {}) } }) as unknown as Row;
+  const rows = [row('a', 0.5, 172.9), row('b', 0.9, 169.9), row('c', 1.2, undefined), row('d', 1.4, 129.9, true), row('e', 1.6, 169.9), row('f', 2, 168.9)];
+  assert.deepEqual(sortRows(rows, 'distance').map((r) => r.station.id), ['a', 'b', 'c', 'd', 'e', 'f']);
+  assert.deepEqual(sortRows(rows, 'e10').map((r) => r.station.id), ['f', 'b', 'e', 'a', 'd', 'c']);
+  assert.deepEqual(sortRows(rows, 'diesel').map((r) => r.station.id), ['a', 'b', 'c', 'd', 'e', 'f'], 'none sell diesel: nearest first');
+  assert.deepEqual(rows.map((r) => r.station.id), ['a', 'b', 'c', 'd', 'e', 'f'], 'the list itself not changed');
+  assert.equal(sortNote('diesel'), 'Sorted by diesel price, lowest first.');
+  assert.equal(sortNote('distance'), '');
+});
+
 console.log(failures === 0 ? '\nAll search checks passed.' : `\n${failures} search check(s) FAILED.`);
 process.exitCode = failures === 0 ? 0 : 1;

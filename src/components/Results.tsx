@@ -10,6 +10,7 @@ import { useIsNarrow } from '../lib/responsive.ts';
 import { findPlace, placeLabel } from '../lib/places.ts';
 import { nearestDistrict, POSTCODE_PROBLEMS, readPostcode } from '../lib/search.ts';
 import { getPlaces } from './PlaceBox.tsx';
+import { loadSort, saveSort, sortNote, sortRows, SORTS, type SortBy } from '../lib/sort.ts';
 import {
   clockText,
   hoursProblem,
@@ -166,7 +167,23 @@ function RowLinks({ row, centreId, calc }: { row: Row; centreId?: string; calc: 
 
 const distanceText = (row: Row, centreId?: string) => (row.station.id === centreId ? 'This station' : milesText(row.miles));
 
-function Table({ rows, now, centreId, calc }: { rows: Row[]; now: number; centreId?: string; calc: Calc }) {
+type SortControl = { by: SortBy; choose: (by: SortBy) => void };
+const SORT_WORDS: Record<SortBy, string> = { distance: 'Distance', e10: 'Unleaded price', diesel: 'Diesel price' };
+
+// A column heading that sorts the list low to high (John, November 1st 2026: option A on a computer).
+function SortHead({ by, sort, children }: { by: SortBy; sort: SortControl; children: ReactNode }) {
+  const on = sort.by === by;
+  return (
+    <th className={`c sortable${on ? ' on' : ''}`} aria-sort={on ? 'ascending' : 'none'}>
+      <button type="button" onClick={() => sort.choose(by)} title={on ? undefined : `Sort by ${SORT_WORDS[by].toLowerCase()}, lowest first`}>
+        {children}
+        <span className="sort-mark" aria-hidden="true">{on ? '▲' : '⇅'}</span>
+      </button>
+    </th>
+  );
+}
+
+function Table({ rows, now, centreId, calc, sort }: { rows: Row[]; now: number; centreId?: string; calc: Calc; sort: SortControl }) {
   const ranks = { e10: rankPrices(rows, 'e10'), diesel: rankPrices(rows, 'diesel') };
   return (
     <div className="table-box">
@@ -181,9 +198,9 @@ function Table({ rows, now, centreId, calc }: { rows: Row[]; now: number; centre
         <thead>
           <tr>
             <th>Station</th>
-            <th className="c">Distance</th>
-            <th className="c">Unleaded (E10)</th>
-            <th className="c">Diesel</th>
+            <SortHead by="distance" sort={sort}>Distance</SortHead>
+            <SortHead by="e10" sort={sort}>Unleaded (E10)</SortHead>
+            <SortHead by="diesel" sort={sort}>Diesel</SortHead>
             <th className="c">Open</th>
           </tr>
         </thead>
@@ -222,9 +239,18 @@ function Table({ rows, now, centreId, calc }: { rows: Row[]; now: number; centre
   );
 }
 
-function Cards({ rows, now, centreId, calc }: { rows: Row[]; now: number; centreId?: string; calc: Calc }) {
+function Cards({ rows, now, centreId, calc, sort }: { rows: Row[]; now: number; centreId?: string; calc: Calc; sort: SortControl }) {
   const ranks = { e10: rankPrices(rows, 'e10'), diesel: rankPrices(rows, 'diesel') };
   return (
+    <>
+    <div className="sort-strip" role="group" aria-label="Sort the list" data-noprint>
+      <span className="sort-lab">Sort by:</span>
+      {SORTS.map((by) => (
+        <button key={by} type="button" className={by === sort.by ? 'on' : undefined} aria-pressed={by === sort.by} onClick={() => sort.choose(by)}>
+          {SORT_WORDS[by]}
+        </button>
+      ))}
+    </div>
     <div className="cards">
       {rows.map((r) => (
         <div key={r.station.id} className={`pcard${r.open.open === false ? ' closed' : ''}`}>
@@ -257,6 +283,7 @@ function Cards({ rows, now, centreId, calc }: { rows: Row[]; now: number; centre
         </div>
       ))}
     </div>
+    </>
   );
 }
 
@@ -335,6 +362,11 @@ export function Results({ target }: { target: Target }) {
   const [noPostcode, setNoPostcode] = useState('');
   const [attempt, setAttempt] = useState(0);
   const [panel, setPanel] = useState<{ id: string; kind: PanelKind } | null>(null);
+  const [sortBy, setSortBy] = useState<SortBy>(loadSort);
+  const chooseSort = (by: SortBy) => {
+    setSortBy(by);
+    saveSort(by);
+  };
   // When a panel opens and doesn't fit on the screen below where it starts (usual on a phone), bring its top into view, so the
   // visitor sees what they asked for without scrolling (John, 31 October).
   useEffect(() => {
@@ -421,6 +453,9 @@ export function Results({ target }: { target: Target }) {
     now,
   );
   const closed = rows.filter((r) => r.open.open === false).length;
+  // The order shown; everything else (cheapest, the calculator) still works from the nearest-first list.
+  const shown = sortRows(rows, sortBy);
+  const sort: SortControl = { by: sortBy, choose: chooseSort };
   const nowUk = ukNow(now);
   const nowText = `${['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][nowUk.day]} ${clockText(`${String(Math.floor(nowUk.mins / 60)).padStart(2, '0')}:${String(nowUk.mins % 60).padStart(2, '0')}`)}`;
   const stale = now - Date.parse(found.index.collected) > 24 * 3_600_000;
@@ -480,9 +515,9 @@ export function Results({ target }: { target: Target }) {
         <a href={REPORT_URL} target="_blank" rel="noopener noreferrer">
           Report a wrong price
         </a>
-        .
+        .{sortBy !== 'distance' && <strong className="sort-note"> {sortNote(sortBy)}</strong>}
       </p>
-      {narrow ? <Cards rows={rows} now={now} centreId={found.centreId} calc={calc} /> : <Table rows={rows} now={now} centreId={found.centreId} calc={calc} />}
+      {narrow ? <Cards rows={shown} now={now} centreId={found.centreId} calc={calc} sort={sort} /> : <Table rows={shown} now={now} centreId={found.centreId} calc={calc} sort={sort} />}
       <AveragesSection
         index={found.index}
         rows={rows}
