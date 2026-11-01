@@ -1454,3 +1454,10 @@ alone, "Lowest of twelve"), lint, type-check, build; in Chromium at 1200px and 3
 then Costco Reading at the start), CV1 to B7 (Alum Rock then Costco Birmingham at the end), AB32 to DD1 (Costco Aberdeen marked
 "Cheapest (Members only)"), "Lowest of eleven", and CF10 to BS1 and RG1 to BS1 unchanged; no errors, no sideways scroll. Picture
 `design/previews/journey-costco-ends-*.png`. Not merged.
+
+### 2026-11-01 — About's journey paragraph tightened (branch `wording-2026-11-01`)
+
+**John:** "Keeping to the route Refueller works out …" deleted; "A “via” place is handled as one the route passes near, …"; the
+comparison sentence is now just "For comparison we also show the cheapest stations nearest the start and end of the journey."; "Opening
+hours are today's, as Refueller can't know when you'll get there." deleted (`src/App.tsx`). The journey page's own notes still say
+"Opening hours are today's." (asked John). Checked: checks, type-check, build; About on RG4 at 1200px and 390px with touch.
