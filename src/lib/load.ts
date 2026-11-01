@@ -88,6 +88,16 @@ export function loadRouteRoads(file: string): Promise<RouteFile> {
   return routeFiles.get(file)!;
 }
 
+// The cities and towns for describing a journey's route: [name, easting, northing, 1 for a city].
+let townsFile: { file: string; p: Promise<[string, number, number, number][]> } | null = null;
+export function loadTowns(file: string): Promise<[string, number, number, number][]> {
+  if (townsFile?.file !== file) townsFile = { file, p: json<[string, number, number, number][]>(`/data/${encodeURIComponent(file)}`) };
+  return townsFile.p.catch((e) => {
+    townsFile = null;
+    throw e;
+  });
+}
+
 // "Average prices", loaded with the results.
 let averagesFile: { file: string; p: Promise<AveragesFile> } | null = null;
 export function loadAverages(file: string): Promise<AveragesFile> {

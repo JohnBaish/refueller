@@ -20,6 +20,7 @@ import { higherPricesUsual, positionAgrees, postcodeArea, type BankHolidays, typ
 import type { DetailRow, PageIndex, PriceCell, RoadFile } from '../../src/lib/pageTypes.ts';
 import { trim, withPrice, type Hist } from '../../src/lib/history.ts';
 import { AVERAGE_DAYS } from '../../src/lib/averages.ts';
+import { toBritishGrid } from './grid.ts';
 
 export type { DetailRow, PageIndex, PriceCell };
 
@@ -91,6 +92,7 @@ export function makePageData(stations: Station[], prices: Record<string, { e10?:
     route: null,
     places: null,
     averages: null,
+    towns: null,
   };
   return { index, byArea };
 }
@@ -157,6 +159,16 @@ export function writePageData(root: string) {
     const places = read('data/places.json');
     index.places = { file: `places-${places.made}.json` };
     copyFileSync(join(root, 'data/places.json'), join(out, index.places.file));
+    // Just the cities and towns, with their positions on the grid in metres, for describing a journey's route (a few KB, loaded with the
+    // road map).
+    index.towns = { file: `towns-${places.made}.json` };
+    const towns = (places.places as [string, string, string, number, number, string][])
+      .filter((p) => p[5] === 'c' || p[5] === 't')
+      .map((p) => {
+        const g = toBritishGrid(p[3], p[4]);
+        return [p[0], Math.round(g.easting), Math.round(g.northing), p[5] === 'c' ? 1 : 0];
+      });
+    writeFileSync(join(out, index.towns.file), JSON.stringify(towns));
   }
   // "Average prices" (scripts/build-history.ts), named by the collection it ends with.
   if (existsSync(join(root, 'data/averages.json'))) {

@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { joinChains, speedMph } from './build-route-roads.ts';
+import { rival, routeWords, isMotorway, type Town } from '../src/lib/routeWords.ts';
 import { endChoices, mainRoads, roadList, journey, makeNetwork, readRouteHash, routeCheapest, routeEight, routeHash, routeMiles, todayText, toPlace, type RouteFile, type RouteRow, ROUTE_CORRIDOR_METRES } from '../src/lib/route.ts';
 import type { Station } from '../src/lib/search.ts';
 
@@ -135,6 +136,29 @@ await check('the route described: its main roads in order (John, 1 November)', (
   const viaG = journey(net, [p('Wokingham', 'Wokingham'), p('Guildford', 'Surrey'), p('Horsham', 'West Sussex')], []);
   assert.ok(viaG.ok);
   assert.equal(roadList(mainRoads(viaG.roads)), 'the A321, A331, A31 and A281');
+});
+
+await check('the route in a few words: places and roads, telling it from the next-best route (John, 1 November)', () => {
+  const places = JSON.parse(readFileSync(new URL('../data/places.json', import.meta.url), 'utf8')).places as [string, string, string, number, number, string][];
+  const towns: Town[] = places.filter((q) => q[5] === 'c' || q[5] === 't').map((q) => {
+    const g = toPlace(q[3], q[4]);
+    return { name: q[0], e: Math.round(g.easting), n: Math.round(g.northing), city: q[5] === 'c' };
+  });
+  const p = (name: string, area: string) => {
+    const x = places.find((q) => q[0] === name && q[2] === area)!;
+    return toPlace(x[3], x[4]);
+  };
+  const say = (a: ReturnType<typeof toPlace>, b: ReturnType<typeof toPlace>) => {
+    const j = journey(net, [a, b], []);
+    assert.ok(j.ok);
+    return routeWords(net, { nodes: j.path, links: j.links }, rival(net, j.start, j.end, j.links), towns, a, b);
+  };
+  assert.equal(say(p('Wokingham', 'Wokingham'), p('Horsham', 'West Sussex')), 'via the M25 and Dorking', 'a close rival via Guildford');
+  assert.equal(say(p('Reading', 'Reading'), p('Bristol', 'City of Bristol')), 'mainly by the M4', 'no real rival: the longest stretch');
+  assert.equal(say(p('Bath', 'Bath and North East Somerset'), p('Southampton', 'City of Southampton')), 'via Salisbury', 'a city first');
+  assert.equal(say(p('Guildford', 'Surrey'), p('Brighton', 'City of Brighton and Hove')), 'via Horsham and the A272', 'a place and a road');
+  assert.equal(say(p('London', 'Greater London'), p('Birmingham', 'Birmingham')), 'via the M1 and M6', 'one "the" for two roads');
+  assert.ok(isMotorway('M4') && isMotorway('A1(M)') && !isMotorway('A329'));
 });
 
 await check('no road: the Isles of Scilly are reached only by sea or air', () => {

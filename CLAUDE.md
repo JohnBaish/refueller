@@ -1580,3 +1580,17 @@ longest stretch ("mainly by the M4" for a road, "via Bodmin" for a place). Resul
 Dorking", "mainly by the M4", "via Salisbury", "via Horsham and the A272", "via the M1 and M6", "via Hexham", "via Cirencester". Weak
 spots: York to Scarborough says Norton-on-Derwent rather than Malton (Open Names gives no sizes for towns); Cardiff to Bristol "via
 the M49 and A4". Not built; waiting for John.
+
+### 2026-11-01 — the route sentence: places and roads, built (branch `route-description`)
+
+**John:** build the agreed rule. **What:** `src/lib/routeWords.ts` (`rival()`: the next-best route, the chosen route's links made 60%
+slower; `stretches()`; `routeWords()`: motorways by number, other roads by the town or city within about two miles, a city first; if
+the rival is within 15% of the time, up to two stretches it doesn't use, of at least 5 miles or a tenth of the journey; otherwise the
+single longest, "mainly by the M4"; never a town within about 5 miles of either end). `journey()` now returns its path, links and end
+points. The page data has `towns-<made>.json` (the 1,426 cities and towns from `data/places.json`, grid positions, 19 KB compressed),
+loaded with the road map. The notes read "Refueller has planned a route of about 49 miles from Wokingham to Horsham, via the M25 and
+Dorking. For a different route, add a nearby place in Via."; with the visitor's own via, "…passing near Guildford." and no other names.
+**Checked:** `npm run check` (new: Wokingham to Horsham, Reading to Bristol, Bath to Southampton, Guildford to Brighton and London to
+Birmingham give the agreed words; allowing only a 1% rival made it fail, then restored), lint, type-check, build; seven journeys at
+1200px and 390px with touch, light and dark, no errors, no sideways scroll; at phone speed (processor slowed four times) a journey
+takes about 3.5 seconds with loading. Not merged.

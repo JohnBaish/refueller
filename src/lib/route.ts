@@ -141,7 +141,7 @@ export function tree(net: Network, start: number): { dist: Float64Array; time: F
   return { dist, time, prev, via };
 }
 
-export type Journey = { ok: true; miles: number; along: Float64Array; extra: Float64Array; minutes: Float64Array; offRoute: Float64Array; roads: RoadRun[] } | { ok: false; problem: 'far-from-road' | 'no-road' | 'via-far' };
+export type Journey = { ok: true; miles: number; along: Float64Array; extra: Float64Array; minutes: Float64Array; offRoute: Float64Array; roads: RoadRun[]; path: number[]; links: number[]; start: number; end: number } | { ok: false; problem: 'far-from-road' | 'no-road' | 'via-far' };
 
 // A "via" place is a place the route passes near, not a stop (John, 1 November): the quickest route that passes a main-road point within
 // about 3 miles of it, so Reading to Exeter via Andover keeps to the A303 rather than going into the town and out again.
@@ -214,6 +214,7 @@ export function journey(net: Network, places: Place[], stations: Place[]): Journ
   const offRoute = new Float64Array(stations.length).fill(NaN);
   // The route itself, leg by leg, as road points (walked back from each leg's end).
   const path: number[] = [];
+  const pathLinks: number[] = [];
   const runs: RoadRun[] = [];
   for (let i = 0; i + 1 < e.length; i++) {
     const leg: number[] = [];
@@ -223,7 +224,10 @@ export function journey(net: Network, places: Place[], stations: Place[]): Journ
       if (v !== e[i].node) legLinks.push(trees[i].via[v]);
     }
     path.push(...leg.reverse());
-    for (const k of legLinks.reverse()) runs.push({ road: net.roads[net.road[k]] ?? '', metres: net.metres[k] });
+    for (const k of legLinks.reverse()) {
+      runs.push({ road: net.roads[net.road[k]] ?? '', metres: net.metres[k] });
+      pathLinks.push(k);
+    }
   }
   stations.forEach((p, s) => {
     const at = snap(net, p);
@@ -240,7 +244,8 @@ export function journey(net: Network, places: Place[], stations: Place[]): Journ
     });
     if (minutes[s] <= ROUTE_EXTRA_MINUTES) offRoute[s] = distanceToPath(net, path, p.easting, p.northing);
   });
-  return { ok: true, miles: offset / METRES_PER_MILE, along, extra, minutes, offRoute, roads: runs };
+  // A via point appears twice in the path (end of one leg, start of the next); harmless for distances.
+  return { ok: true, miles: offset / METRES_PER_MILE, along, extra, minutes, offRoute, roads: runs, path, links: pathLinks, start: start.node, end: end.node };
 }
 
 export const toPlace = (lat: number, lon: number): Place => toBritishGrid(lat, lon);

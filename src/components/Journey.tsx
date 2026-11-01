@@ -1,7 +1,8 @@
 import { Fragment, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { collectedText, PriceCell, REPORT_URL, useNow } from './Results.tsx';
 import { loadChoices, saveChoices, type Fuel } from '../lib/calc.ts';
-import { loadArea, loadIndex, loadPostcodes, loadRouteRoads } from '../lib/load.ts';
+import { loadArea, loadIndex, loadPostcodes, loadRouteRoads, loadTowns } from '../lib/load.ts';
+import { rival, routeWords, type Town } from '../lib/routeWords.ts';
 import { getPlaces, PlaceBox } from './PlaceBox.tsx';
 import { fromDetail, type PageIndex } from '../lib/pageTypes.ts';
 import { decodeDistrict } from '../lib/postcodes.ts';
@@ -23,8 +24,6 @@ import {
   ROUTE_EXTRA_MINUTES,
   ROUTE_CORRIDOR_METRES,
   endChoices,
-  mainRoads,
-  roadList,
   type Network,
   type End,
   type RouteRow,
@@ -130,6 +129,11 @@ export function JourneyForm({ target }: { target: RouteTarget }) {
   );
 }
 
+// The cities and towns for describing the route, loaded with the road map (none if the file is missing: the route is still described
+// by its roads).
+const getTowns = (index: PageIndex): Promise<Town[]> =>
+  index.towns ? loadTowns(index.towns.file).then((rows) => rows.map(([name, e, n, c]) => ({ name, e, n, city: c === 1 })), () => []) : Promise.resolve([]);
+
 // The network and the stations' positions, worked out once per visit.
 let network: { file: string; net: Promise<Network> } | null = null;
 const getNetwork = (file: string) => {
@@ -165,7 +169,7 @@ async function whereIs(index: PageIndex, e: End): Promise<Where> {
   return at ? { lat: at[0], lon: at[1], label: `${full} (${town})`, short: full } : { ...district, notFound: full };
 }
 
-type Found = { ok: true; index: PageIndex; miles: number; roads: string[]; candidates: RouteRow[]; startEight: RouteRow[]; endEight: RouteRow[]; from: Where; to: Where; via?: Where } | { ok: false; message: string };
+type Found = { ok: true; index: PageIndex; miles: number; words: string; candidates: RouteRow[]; startEight: RouteRow[]; endEight: RouteRow[]; from: Where; to: Where; via?: Where } | { ok: false; message: string };
 
 async function find(t: Required<Pick<RouteTarget, 'from' | 'to'>> & RouteTarget): Promise<Found> {
   const index = await loadIndex();
@@ -177,7 +181,7 @@ async function find(t: Required<Pick<RouteTarget, 'from' | 'to'>> & RouteTarget)
     if (e instanceof CantFind) return { ok: false, message: `We can’t find “${e.message}”. Check it in the boxes above and press Find again.` };
     throw e;
   }
-  const net = await getNetwork(index.route.file);
+  const [net, towns] = await Promise.all([getNetwork(index.route.file), getTowns(index)]);
   const places = [from, ...(via ? [via] : []), to].map((w) => toPlace(w.lat, w.lon));
   const j = journey(net, places, getStationPlaces(index));
   if (!j.ok)
@@ -205,7 +209,10 @@ async function find(t: Required<Pick<RouteTarget, 'from' | 'to'>> & RouteTarget)
     return { station, prices, along: j.along[i], extra: j.extra[i], minutes: j.minutes[i], offRoute: j.offRoute[i], ...(d === undefined ? {} : { fromEnd: d }) };
   };
   const candidates = near.map(rowOf);
-  return { ok: true, index, miles: j.miles, roads: mainRoads(j.roads), candidates, startEight: atStart.map(rowOf), endEight: atEnd.map(rowOf), from, to, via };
+  // The route in a few words (src/lib/routeWords.ts). With a via, the visitor has chosen the route already, so only "passing near" it.
+  const [a, b] = [places[0], places[places.length - 1]];
+  const words = via ? '' : routeWords(net, { nodes: j.path, links: j.links }, rival(net, j.start, j.end, j.links), towns, a, b);
+  return { ok: true, index, miles: j.miles, words, candidates, startEight: atStart.map(rowOf), endEight: atEnd.map(rowOf), from, to, via };
 }
 
 function Notes({ found, shown, within, now }: { found: Extract<Found, { ok: true }>; shown: number; within: number; now: number }) {
@@ -216,7 +223,7 @@ function Notes({ found, shown, within, now }: { found: Extract<Found, { ok: true
       {/* The route described (John, 1 November): its length, the main roads it follows, and how to change it. */}
       Refueller has planned a route of about {Math.round(found.miles)} miles from {found.from.short} to {found.to.short}
       {found.via ? `, passing near ${found.via.short}` : ''}
-      {found.roads.length ? `, by ${roadList(found.roads)}` : ''}. For a different route, add a nearby place in Via.{' '}
+      {found.words ? `, ${found.words}` : ''}. For a different route, add a nearby place in Via.{' '}
       {within === 0
         ? `No station close to the route adds less than ${ROUTE_EXTRA_MILES} miles and ${ROUTE_EXTRA_MINUTES} minutes to it, there and back.`
         : shown === within
