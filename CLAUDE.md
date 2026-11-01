@@ -1816,3 +1816,9 @@ and build clean first. Live from Vercel's next build: the main list sorts by dis
 device), the journey list by journey order, detour or price (not remembered). All the drafted wording stands, including "fewest first"
 and the footer's "how you sorted the list". The `sort-mockups` and `feature-sort` branches are fully merged and can be deleted with the
 "Delete merged branches" workflow.
+
+### 2026-11-01 — merged branches deleted (notes only, straight to `main`)
+
+At John's request, Claude ran the "Delete merged branches" workflow itself (started through GitHub's API): a trial run first
+(run 41328459377: two merged branches, nothing unmerged), then the real run (run 41328490691), which deleted `feature-sort` and
+`sort-mockups`. Only `main` is left.
