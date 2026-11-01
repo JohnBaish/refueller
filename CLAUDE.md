@@ -1775,3 +1775,14 @@ unusual prices among the usual ones made it fail, then restored), lint, type-che
 touch, light and dark (BS15 4XB): prices in order after sorting, the note, the choice kept after a reload, Diesel and back to Distance,
 the keyboard on a heading, print; no errors, no sideways scroll. At 320px "Diesel price" wraps to a second line. Pictures
 `design/previews/sort/built-*.png`. **Couldn't be checked:** a real phone.
+
+### 2026-11-01 — sorting the journey list: mock-ups (branch `feature-sort`, design only)
+
+**John:** hold the merge and do the journey planner too. Mock-ups drawn into the built page in the browser only
+(`design/mock/journey-sort-mock.cjs`; no app code), RG1 to BS1 with the 10.15am prices, computer and phone, light and dark: the same
+controls as the main list (headings Where ▸ journey order, Extra miles ▸ detour, the fuel's price; on a phone "Sort by: Journey order
+Detour Price"). The journey list shows one fuel at a time, so "Price" is that fuel's. **A:** the three groups kept, each sorted within
+itself (the ends have one or two rows, so only "On the way" really changes). **B:** one list, the end stations tagged "Near the start"
+or "Near the end" (blue outline). On this journey B puts Asda Bedminster (near the end, 167.7p) first; A keeps it last. Notes add
+"Sorted by price, lowest first." / "Sorted by detour, shortest first." (drafts). Pictures `design/previews/journey-sort/jsort-*.png`.
+No errors, no sideways scroll at 1200px or 390px with touch.
