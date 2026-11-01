@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { loadIndex, loadPlaces } from '../lib/load.ts';
-import { looksLikePostcode, makePlaceIndex, norm, placeLabel, suggest, type NamedPlace, type PlaceIndex } from '../lib/places.ts';
+import { looksLikePostcode, makePlaceIndex, mayBePostcode, norm, placeLabel, suggest, type NamedPlace, type PlaceIndex } from '../lib/places.ts';
 
 // The place names, loaded the first time a name is typed, and kept for the visit.
 let placeIndex: { file: string; ix: Promise<PlaceIndex> } | null = null;
@@ -33,7 +33,9 @@ export function PlaceBox({ id, label, ariaLabel, placeholder, postcodes, enterKe
   useEffect(() => {
     let live = true;
     const typed = value.trim();
-    if (typed.length < 2 || (postcodes && looksLikePostcode(typed))) {
+    // Where a postcode can be typed, no suggestions (and no place list downloaded) while it could still be the start of one: one or
+    // two letters, or letters then a digit ("RG", "RG4 7H"). Names come from the third letter (fresh look 3.1, November 1st 2026).
+    if (typed.length < 2 || (postcodes && (looksLikePostcode(typed) || mayBePostcode(typed)))) {
       setList([]);
       return;
     }

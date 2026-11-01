@@ -7,7 +7,7 @@ import { loadIndex } from './lib/load.ts';
 import { ROAD_CREDIT } from './lib/calc.ts';
 import { fullHash } from './lib/postcodes.ts';
 import { readRouteHash, routeHash, type RouteTarget } from './lib/route.ts';
-import { readPostcode, type PostcodeResult } from './lib/search.ts';
+import { POSTCODE_PROBLEMS, readPostcode } from './lib/search.ts';
 import { findPlace, looksLikePostcode, namesakes, placeAt, placeLabel, type NamedPlace } from './lib/places.ts';
 
 // The page has two states: the postcode screen, and the results for a postcode or district. It is kept in the address after "#"
@@ -51,12 +51,6 @@ function remember(choice: string) {
   }
 }
 
-const PROBLEMS: Record<Exclude<PostcodeResult, { ok: true }>['problem'], (typed: string) => string> = {
-  empty: () => 'Please type a postcode or a place, such as RG1 8FR or Reading.',
-  'not-a-postcode': () => 'That doesn’t look like a postcode. Try one like RG1 or RG1 8FR.',
-  'northern-ireland': () => 'Refueller covers Great Britain only for now, so Northern Ireland postcodes aren’t included yet.',
-  'not-found': (typed) => `We can’t find ${typed.trim().toUpperCase().split(/\s+/)[0]} among Great Britain’s postcodes. Check it, or try a nearby postcode.`,
-};
 
 const placeHash = (p: NamedPlace) => {
   const at = placeAt(p);
@@ -106,7 +100,7 @@ function SearchBox({ start, initial, initialAt }: { start: boolean; initial: str
     }
     const r = readPostcode(typed, outcodes);
     if (!r.ok) {
-      setProblem(PROBLEMS[r.problem](typed));
+      setProblem(POSTCODE_PROBLEMS[r.problem](typed));
       return;
     }
     const choice = r.inward ? fullHash(r.outcode, r.inward) : r.outcode;

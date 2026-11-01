@@ -9,6 +9,7 @@ import { decodeDistrict } from '../lib/postcodes.ts';
 import { useIsNarrow } from '../lib/responsive.ts';
 import { findPlace, looksLikePostcode, namesakes, placeAt, placeLabel, type NamedPlace, type PlaceIndex } from '../lib/places.ts';
 import {
+  endHash,
   endTyped,
   isPlace,
   journey,
@@ -105,6 +106,11 @@ export function JourneyForm({ target }: { target: RouteTarget }) {
       const at = placeAt(found.place);
       read[f] = { place: placeLabel(found.place), ...(at ? { at } : {}) };
     }
+    // The same place in From and To (fresh look 4.1, November 1st 2026; draft wording).
+    if (read.from && read.to && endHash(read.from) === endHash(read.to)) {
+      setProblem('From and To are the same place. Type where you’re going in To.');
+      return;
+    }
     location.hash = routeHash({ kind: 'route', ...read } as RouteTarget);
   }
 
@@ -197,6 +203,8 @@ async function find(t: Required<Pick<RouteTarget, 'from' | 'to'>> & RouteTarget)
             ? `There’s no main road within about three miles of ${via?.short ?? 'the via place'}, so Refueller can’t route the journey past it.`
             : 'One of those places is too far from a main road for Refueller to work out a journey.',
     };
+  // Ends less than a mile apart by road, or the same place typed into the address (fresh look 4.1; draft wording).
+  if (j.miles < 1) return { ok: false, message: 'From and To are less than a mile apart by road, so there’s no journey to plan.' };
   const near = index.points.map((p, i) => ({ p, i })).filter(({ i }) => j.extra[i] <= ROUTE_EXTRA_MILES && j.minutes[i] <= ROUTE_EXTRA_MINUTES && j.offRoute[i] <= ROUTE_CORRIDOR_METRES);
   // The eight stations nearest each end, as the main list finds them (in a straight line), for the comparison at either end.
   const nearestTo = (w: Where) =>

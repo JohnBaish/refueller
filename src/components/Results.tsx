@@ -8,7 +8,7 @@ import { loadArea, loadIndex, loadPostcodes } from '../lib/load.ts';
 import { decodeDistrict } from '../lib/postcodes.ts';
 import { useIsNarrow } from '../lib/responsive.ts';
 import { findPlace, placeLabel } from '../lib/places.ts';
-import { nearestDistrict } from '../lib/search.ts';
+import { nearestDistrict, POSTCODE_PROBLEMS, readPostcode } from '../lib/search.ts';
 import { getPlaces } from './PlaceBox.tsx';
 import {
   clockText,
@@ -266,6 +266,9 @@ type Found = { index: PageIndex; lat: number; lon: number; rows: Row[]; historie
 class NotListed extends Error {}
 // Asked for a place by an address that no longer matches one (the place list changed).
 class NoPlace extends Error {}
+// A postcode district in the address that isn't one of Great Britain's (#QQ1, or #BT1 in Northern Ireland): said plainly, as the search
+// box would, not as a failed download (fresh look 2.2, November 1st 2026).
+class NoPostcode extends Error {}
 
 // The eight nearest stations to the target: positions from the index, then the details of just the postcode areas those eight
 // are in.
@@ -273,6 +276,10 @@ async function find(target: Target, now: number): Promise<Found> {
   const index = await loadIndex();
   let lat: number, lon: number, heading: string, from: string, centreId: string | undefined, notFound: string | undefined, district: string | undefined;
   if (target.kind === 'postcode') {
+    if (!index.outcodes[target.outcode]) {
+      const r = readPostcode(target.outcode, index.outcodes);
+      throw new NoPostcode(POSTCODE_PROBLEMS[r.ok ? 'not-found' : r.problem](target.outcode));
+    }
     const [la, lo, place] = index.outcodes[target.outcode];
     [lat, lon, heading, from] = [la, lo, `${target.outcode} (${place})`, `the middle of ${target.outcode}`];
     // A full postcode: its own position, from its area's file. One not in the file (new, or mistyped) falls back to the district.
@@ -325,6 +332,7 @@ export function Results({ target }: { target: Target }) {
   const narrow = useIsNarrow(720);
   const [found, setFound] = useState<Found | null>(null);
   const [failed, setFailed] = useState<'' | 'load' | 'not-listed' | 'no-place'>('');
+  const [noPostcode, setNoPostcode] = useState('');
   const [attempt, setAttempt] = useState(0);
   const [panel, setPanel] = useState<{ id: string; kind: PanelKind } | null>(null);
   // When a panel opens and doesn't fit on the screen below where it starts (usual on a phone), bring its top into view, so the
@@ -341,22 +349,44 @@ export function Results({ target }: { target: Target }) {
     });
     return () => cancelAnimationFrame(frame);
   }, [panel?.id, panel?.kind]);
+  // Escape closes the open panel and puts the keyboard back on the link that opened it (fresh look 5.2, November 1st 2026).
+  useEffect(() => {
+    if (!panel) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      document.querySelector<HTMLElement>('.link-btn[aria-expanded="true"]')?.focus();
+      setPanel(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [panel]);
   const key = target.kind === 'postcode' ? `${target.outcode} ${target.inward ?? ''}` : target.kind === 'place' ? `@${target.place}~${target.at ?? ''}` : `${target.area}/${target.id}`;
 
   useEffect(() => {
     let live = true;
     setFailed('');
+    setNoPostcode('');
     setFound(null);
     setPanel(null);
     find(target, Date.now())
       .then((f) => live && setFound(f))
-      .catch((e) => live && setFailed(e instanceof NotListed ? 'not-listed' : e instanceof NoPlace ? 'no-place' : 'load'));
+      .catch((e) => {
+        if (!live) return;
+        if (e instanceof NoPostcode) setNoPostcode(e.message);
+        else setFailed(e instanceof NotListed ? 'not-listed' : e instanceof NoPlace ? 'no-place' : 'load');
+      });
     return () => {
       live = false;
     };
     // `key` stands for the target, so a new object for the same place doesn't search again.
   }, [key, attempt]);
 
+  if (noPostcode)
+    return (
+      <div className="message" role="alert">
+        <p>{noPostcode}</p>
+      </div>
+    );
   if (failed === 'not-listed')
     return (
       <div className="message" role="alert">

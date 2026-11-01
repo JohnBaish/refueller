@@ -55,6 +55,8 @@ await check('words and typing: money, miles in the box, numbers typed', () => {
   assert.equal(money(99.6), '£1.00');
   assert.equal(pounds(50), '£50');
   assert.equal(pounds(42.5), '£42.50');
+  assert.equal(pounds(50000), '£50,000', 'commas from a thousand (fresh look 5.3)');
+  assert.equal(money(2858800), '£28,588.00');
   assert.equal(milesBox(3.8), '3.8');
   assert.equal(milesBox(4), '4');
   assert.equal(milesBox(4.96), '5');

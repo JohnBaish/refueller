@@ -89,6 +89,8 @@ export function findPlace(ix: PlaceIndex, typed: string, at?: string): PlaceFind
 }
 
 // Does it look like a postcode (or the first half of one) rather than a place name? "RG1", "RG1 8FR", "ec1a 1bb".
+// Could it still become a postcode as more is typed? "R", "RG", "RG4", "RG4 7", "RG4 7H": one or two letters, then a digit and more.
+export const mayBePostcode = (typed: string) => /^\s*[A-Za-z]{1,2}(\d[A-Za-z\d]*(\s*\d[A-Za-z]{0,2})?)?\s*$/.test(typed);
 export const looksLikePostcode = (typed: string) => /^\s*[A-Za-z]{1,2}\d[A-Za-z\d]?(\s*\d[A-Za-z]{2})?\s*$/.test(typed);
 
 // The first few places sharing a name, biggest first (cities, then towns, suburbs and villages), as they're labelled, for the message

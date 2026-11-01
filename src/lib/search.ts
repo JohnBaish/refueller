@@ -43,6 +43,14 @@ export function readPostcode(typed: string, outcodes: Outcodes): PostcodeResult 
   return outcode in outcodes ? { ok: true, outcode, ...(inward ? { inward } : {}) } : { ok: false, problem: 'not-found' };
 }
 
+// What the search box says about a postcode it can't use; also said for one in the address after "#" (fresh look 2.2).
+export const POSTCODE_PROBLEMS: Record<Exclude<PostcodeResult, { ok: true }>['problem'], (typed: string) => string> = {
+  empty: () => 'Please type a postcode or a place, such as RG1 8FR or Reading.',
+  'not-a-postcode': () => 'That doesn’t look like a postcode. Try one like RG1 or RG1 8FR.',
+  'northern-ireland': () => 'Refueller covers Great Britain only for now, so Northern Ireland postcodes aren’t included yet.',
+  'not-found': (typed) => `We can’t find ${typed.trim().toUpperCase().split(/\s+/)[0]} among Great Britain’s postcodes. Check it, or try a nearby postcode.`,
+};
+
 // --- Distances ---------------------------------------------------------------------------------------------------------
 
 export function milesBetween(lat1: number, lon1: number, lat2: number, lon2: number): number {

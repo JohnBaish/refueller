@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { areaName, placeFrom } from './build-places.ts';
-import { findPlace, looksLikePostcode, makePlaceIndex, namesakes, norm, placeAt, placeLabel, suggest, type PlaceFile } from '../src/lib/places.ts';
+import { findPlace, looksLikePostcode, makePlaceIndex, mayBePostcode, namesakes, norm, placeAt, placeLabel, suggest, type PlaceFile } from '../src/lib/places.ts';
 import { nearestDistrict } from '../src/lib/search.ts';
 
 let failures = 0;
@@ -55,6 +55,11 @@ await check('real places: Andover, Exeter, Reading, Caversham, Wimbledon, Cardif
     assert.ok(r.ok, typed);
     assert.equal(placeLabel(r.place), label);
   }
+});
+
+await check('no place suggestions while what is typed could still be a postcode (fresh look 3.1)', () => {
+  for (const t of ['R', 'RG', 'rg4', 'RG4 7', 'RG4 7H', 'EC1A', 'St ']) assert.ok(mayBePostcode(t) || looksLikePostcode(t), t);
+  for (const t of ['Rea', 'Reading', 'Ely', 'St A', 'Newport']) assert.ok(!mayBePostcode(t) && !looksLikePostcode(t), t);
 });
 
 await check('same-name places must be chosen: Newport alone is ambiguous, "Newport, Isle of Wight" is not', () => {

@@ -152,7 +152,7 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
   .pcard .centre-link { margin-top: 2px; }
   .fuel-btn { min-height: 44px; }
   .calc-fields { flex-direction: column; row-gap: var(--space-4); }
-  .calc-box .input { font-size: 16px; }
+  .calc-box .input { font-size: 16px; min-height: 44px; } /* 44px tap target (fresh look 5.4) */
   .theme-switch-label { display: none; }
 }
 /* Any touch screen, whatever its width (an iPad gets the computer layout): 16px boxes, so iPhone and iPad don't zoom. */

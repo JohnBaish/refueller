@@ -32,11 +32,13 @@ export function sums(spendPounds: number, mpg: number, extraMiles: number, neare
 // "57p", "£1.03", "£12.40".
 export function money(pence: number): string {
   const p = Math.round(pence);
-  return p < 100 ? `${p}p` : `£${(p / 100).toFixed(2)}`;
+  return p < 100 ? `${p}p` : `£${(p / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 // The spend as typed back: "£50", "£42.50".
-export const pounds = (n: number) => (Number.isInteger(n) ? `£${n}` : `£${n.toFixed(2)}`);
+// With commas from a thousand: "£50,000" (fresh look 5.3).
+export const pounds = (n: number) =>
+  `£${n.toLocaleString('en-GB', Number.isInteger(n) ? {} : { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 // Extra miles as shown in the box: one decimal under 5, whole miles from 5 (as the distance column).
 export function milesBox(m: number): string {

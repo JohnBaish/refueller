@@ -1691,3 +1691,22 @@ scroll. Not merged: waiting for John to look at the preview.
 diesel prices near any postcode or place in Great Britain, and the cheapest along your journey. From the Government's Fuel Finder
 service." (154 characters). The preview picture and the link-preview text ("Nearby petrol and diesel prices") are unchanged (John: the
 picture needn't change). Checked: build, checks, lint; the description in the built page. Merged to `main`.
+
+### 2026-11-01 — fresh look 3.1 and the optional extras (branch `fresh-look-3`, preview)
+
+**John:** make 3.1 and all the optional extras (2.2, 4.1, 5.2, 5.3, 5.4).
+
+**What:** 3.1, `mayBePostcode()` in `src/lib/places.ts`: in a box that takes a postcode, no suggestions (and no place list downloaded)
+while what's typed could still become one ("RG", "RG4 7H"); names get suggestions from the third letter ("Rea"). Via (places only)
+still suggests from two letters. 2.2, a district in the address that isn't Great Britain's (`#QQ1`, `#BT1`) gets the search box's own
+message, not "couldn't be loaded" (the messages moved to `POSTCODE_PROBLEMS` in `src/lib/search.ts`, shared by `App.tsx` and
+`Results.tsx`). 4.1, drafts for John: the form says "From and To are the same place. Type where you're going in To."; a journey less
+than a mile by road (or the same place in the address) says "From and To are less than a mile apart by road, so there's no journey to
+plan." 5.2, Escape closes "Price history" or "Worth driving here?" and puts the keyboard back on its link. 5.3, amounts from a thousand
+have commas ("£50,000"). 5.4, the calculator's boxes are 44px tall on a phone (computer unchanged).
+
+**Checked:** `npm run check` (new: what may still be a postcode; "£50,000"), lint, type-check, build. In Chromium at 390px with touch
+and 1200px: typing "RG4 7HN" in the main box and "RG1" in From downloads no place list; "Re" no suggestions, "Rea" Reading first; Via
+"An" suggests; `#QQ1` and `#BT1` messages; RG1 to rg1 stopped in the form; `#route/RG1/RG1` and RG1 8FR to RG1 8FT the "less than a
+mile" message; RG1 to RG2 unchanged; "£50,000"; boxes 44px on a phone; Escape closes the panel with the keyboard on "Worth driving
+here?"; no errors, no sideways scroll. Not merged: waiting for John (the 4.1 wording is draft).
