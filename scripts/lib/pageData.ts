@@ -6,6 +6,8 @@
 //   <area>.json       the details of each postcode area's stations (names, addresses, hours, prices), a few KB each.
 //   roads-<built>/<area>.json  the calculator's road miles (data/road-miles.json) from that area's postcode districts and
 //                     stations, loaded only when a "Worth driving here?" panel opens (about 6 KB compressed for RG).
+//   places-<made>.json  the place names (data/places.json), loaded only when a name is typed in the journey planner (about 420 KB
+//                     compressed).
 //   route-<made>.json the main roads (data/route-roads.json), loaded only when someone plans a journey (about 1.2 MB compressed).
 // The page loads the index, finds the eight nearest stations, then loads only the areas those eight are in. Every visitor
 // loads the same files whatever they type, so nothing about a search reaches the server.
@@ -20,7 +22,7 @@ import { trim, windowFor, withPrice, type Hist } from '../../src/lib/history.ts'
 
 export type { DetailRow, PageIndex, PriceCell };
 
-export const SOURCES = ['data/postcodes/README.md', 'data/stations.json', 'data/prices.json', 'data/outcodes.json', 'data/bank-holidays.json', 'data/road-miles.json', 'data/history.json', 'data/route-roads.json'];
+export const SOURCES = ['data/postcodes/README.md', 'data/stations.json', 'data/prices.json', 'data/outcodes.json', 'data/bank-holidays.json', 'data/road-miles.json', 'data/history.json', 'data/route-roads.json', 'data/places.json'];
 
 const round4 = (n: number) => Math.round(n * 1e4) / 1e4;
 const cell = (p: Price | undefined): PriceCell => (p ? [p.p, p.u, p.x ? 1 : 0] : 0);
@@ -85,6 +87,7 @@ export function makePageData(stations: Station[], prices: Record<string, { e10?:
     history: null,
     postcodes: null,
     route: null,
+    places: null,
   };
   return { index, byArea };
 }
@@ -145,6 +148,12 @@ export function writePageData(root: string) {
     const roads = read('data/route-roads.json');
     index.route = { file: `route-${roads.made}.json`, credit: roads.credit };
     copyFileSync(join(root, 'data/route-roads.json'), join(out, index.route.file));
+  }
+  // Place names for the journey planner (scripts/build-places.ts), loaded only when a name is typed there.
+  if (existsSync(join(root, 'data/places.json'))) {
+    const places = read('data/places.json');
+    index.places = { file: `places-${places.made}.json` };
+    copyFileSync(join(root, 'data/places.json'), join(out, index.places.file));
   }
   writeFileSync(join(out, 'index.json'), JSON.stringify(index));
   return index;

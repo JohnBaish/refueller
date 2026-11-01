@@ -1,11 +1,14 @@
 import { Fragment, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { collectedText, PriceCell, REPORT_URL, useNow } from './Results.tsx';
 import { loadChoices, saveChoices, type Fuel } from '../lib/calc.ts';
-import { loadArea, loadIndex, loadPostcodes, loadRouteRoads } from '../lib/load.ts';
+import { loadArea, loadIndex, loadPlaces, loadPostcodes, loadRouteRoads } from '../lib/load.ts';
 import { fromDetail, type PageIndex } from '../lib/pageTypes.ts';
 import { decodeDistrict } from '../lib/postcodes.ts';
 import { useIsNarrow } from '../lib/responsive.ts';
+import { findPlace, looksLikePostcode, makePlaceIndex, norm, placeAt, placeLabel, suggest, type NamedPlace, type PlaceIndex } from '../lib/places.ts';
 import {
+  endTyped,
+  isPlace,
   journey,
   makeNetwork,
   pcText,
@@ -19,7 +22,7 @@ import {
   ROUTE_EXTRA_MINUTES,
   endChoice,
   type Network,
-  type Pc,
+  type End,
   type RouteRow,
   type RouteTarget,
 } from '../lib/route.ts';
@@ -33,68 +36,179 @@ const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
 
 type Field = 'from' | 'via' | 'to';
 const LABEL: Record<Field, string> = { from: 'From', via: 'Via (optional)', to: 'To' };
+// The faint examples in the boxes (John, 1 November).
+const EXAMPLE: Record<Field, string> = { from: 'Reading, RG1 or RG1 8FR', via: 'Andover', to: 'Exeter, EX4 or EX4 6TJ' };
+
+// The place names, loaded the first time a name is typed, and kept for the visit.
+let placeIndex: { file: string; ix: Promise<PlaceIndex> } | null = null;
+async function getPlaces(): Promise<PlaceIndex | null> {
+  const index = await loadIndex();
+  if (!index.places) return null;
+  if (placeIndex?.file !== index.places.file) placeIndex = { file: index.places.file, ix: loadPlaces(index.places.file).then(makePlaceIndex) };
+  return placeIndex.ix.catch((e) => {
+    placeIndex = null;
+    throw e;
+  });
+}
+
+// One box: a postcode or a place name (From, To) or a place name only (Via), with place suggestions as you type.
+function PlaceBox({ field, value, onChange, onPick }: { field: Field; value: string; onChange: (v: string) => void; onPick: (p: NamedPlace) => void }) {
+  const [list, setList] = useState<NamedPlace[]>([]);
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(-1);
+  const id = `jf-${field}`;
+  useEffect(() => {
+    let live = true;
+    const typed = value.trim();
+    if (typed.length < 2 || (field !== 'via' && looksLikePostcode(typed))) {
+      setList([]);
+      return;
+    }
+    getPlaces().then(
+      (ix) => live && setList(ix ? suggest(ix, typed) : []),
+      () => live && setList([]),
+    );
+    return () => {
+      live = false;
+    };
+  }, [value, field]);
+  // Closed once what's typed is exactly one of the places (so it never covers the Find button needlessly).
+  const shown = open && list.length > 0 && !list.some((p) => norm(placeLabel(p)) === norm(value));
+  const pick = (p: NamedPlace) => {
+    onChange(placeLabel(p));
+    onPick(p);
+    setOpen(false);
+    setActive(-1);
+  };
+  return (
+    <div className="jf">
+      <label className="jl" htmlFor={id}>
+        {LABEL[field]}
+      </label>
+      <input
+        id={id}
+        className="input"
+        value={value}
+        onChange={(e) => {
+          onChange(e.target.value);
+          setOpen(true);
+          setActive(-1);
+        }}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+        onKeyDown={(e) => {
+          if (!shown) return;
+          if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            setActive((a) => (e.key === 'ArrowDown' ? Math.min(list.length - 1, a + 1) : Math.max(-1, a - 1)));
+          } else if (e.key === 'Enter' && active >= 0) {
+            e.preventDefault();
+            pick(list[active]);
+          } else if (e.key === 'Escape') setOpen(false);
+        }}
+        placeholder={EXAMPLE[field]}
+        role="combobox"
+        aria-autocomplete="list"
+        aria-expanded={shown}
+        aria-controls={`${id}-list`}
+        aria-activedescendant={shown && active >= 0 ? `${id}-${active}` : undefined}
+        autoCorrect="off"
+        autoComplete="off"
+        spellCheck={false}
+        enterKeyHint={field === 'to' ? 'go' : 'next'}
+        maxLength={60}
+      />
+      {shown && (
+        <ul className="suggest" id={`${id}-list`} role="listbox">
+          {list.map((p, i) => (
+            <li
+              key={`${p.name}|${p.area}|${p.lat}`}
+              id={`${id}-${i}`}
+              role="option"
+              aria-selected={i === active}
+              className={i === active ? 'on' : undefined}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => pick(p)}
+            >
+              <span className="sg-name">{p.name}</span>
+              {p.area && norm(p.area) !== norm(p.name) && <span className="sg-area">{p.clash ? `${p.area} (${p.district})` : p.area}</span>}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
 
 export function JourneyForm({ target }: { target: RouteTarget }) {
-  const initial = (p?: Pc) => (p ? pcText(p).replace(' ', ' ') : '');
+  const initial = (e?: End) => (e ? endTyped(e) : '');
   const [typed, setTyped] = useState<Record<Field, string>>({ from: initial(target.from), via: initial(target.via), to: initial(target.to) });
   const [problem, setProblem] = useState('');
+  // The place picked from each box's list, to tell apart the few places that share a whole label.
+  const [picked, setPicked] = useState<Partial<Record<Field, NamedPlace>>>({});
   useEffect(() => setTyped({ from: initial(target.from), via: initial(target.via), to: initial(target.to) }), [target.from, target.via, target.to]);
 
   async function go(e: FormEvent) {
     e.preventDefault();
     setProblem('');
     let outcodes;
+    let places: PlaceIndex | null;
     try {
       outcodes = (await loadIndex()).outcodes;
+      places = Object.values(typed).some((t) => t.trim() && !looksLikePostcode(t)) ? await getPlaces() : null;
     } catch {
-      setProblem('Sorry, the postcodes couldn’t be loaded. Check your connection and try again.');
+      setProblem('Sorry, the postcodes and places couldn’t be loaded. Check your connection and try again.');
       return;
     }
-    const read: Partial<Record<Field, Pc>> = {};
+    const read: Partial<Record<Field, End>> = {};
     for (const f of ['from', 'via', 'to'] as Field[]) {
-      if (f === 'via' && !typed.via.trim()) continue;
-      const r = readPostcode(typed[f], outcodes);
-      if (!r.ok) {
-        const name = f === 'via' ? 'Via' : LABEL[f];
-        setProblem(
-          r.problem === 'empty'
-            ? `Please type a postcode in ${name}, such as RG1 8FR.`
-            : r.problem === 'northern-ireland'
+      const t = typed[f].trim();
+      const name = f === 'via' ? 'Via' : LABEL[f];
+      if (f === 'via' && !t) continue;
+      if (!t) {
+        setProblem(`Please type a place or a postcode in ${name}, such as ${f === 'from' ? 'Reading or RG1' : 'Exeter or EX4'}.`);
+        return;
+      }
+      if (looksLikePostcode(t)) {
+        if (f === 'via') {
+          setProblem('Via takes a place name, such as Andover, rather than a postcode.');
+          return;
+        }
+        const r = readPostcode(t, outcodes);
+        if (!r.ok) {
+          setProblem(
+            r.problem === 'northern-ireland'
               ? `${name}: Refueller covers Great Britain only for now, so Northern Ireland postcodes aren’t included yet.`
-              : r.problem === 'not-found'
-                ? `${name}: we can’t find ${typed[f].trim().toUpperCase().split(/\s+/)[0]} among Great Britain’s postcodes.`
-                : `${name}: that doesn’t look like a postcode. Try one like RG1 or RG1 8FR.`,
+              : `${name}: we can’t find ${t.toUpperCase().split(/\s+/)[0]} among Great Britain’s postcodes.`,
+          );
+          return;
+        }
+        read[f] = { outcode: r.outcode, ...(r.inward ? { inward: r.inward } : {}) };
+        continue;
+      }
+      const chosen = picked[f] && placeLabel(picked[f]) === t ? picked[f] : undefined;
+      const prior = target[f] && isPlace(target[f]) && target[f].place === t ? target[f].at : undefined;
+      const found = places ? findPlace(places, t, chosen ? placeAt(chosen) : prior) : ({ ok: false, problem: 'none' } as const);
+      if (!found.ok) {
+        setProblem(
+          found.problem === 'several'
+            ? `${name}: there’s more than one ${found.places[0].name}. Choose one from the list as you type, such as “${placeLabel(found.places[0])}”.`
+            : `${name}: we can’t find “${t}” among Great Britain’s towns, villages and suburbs. Check the spelling, or try a postcode${f === 'via' ? ' in From or To' : ''}.`,
         );
         return;
       }
-      read[f] = { outcode: r.outcode, ...(r.inward ? { inward: r.inward } : {}) };
+      const at = placeAt(found.place);
+      read[f] = { place: placeLabel(found.place), ...(at ? { at } : {}) };
     }
-    location.hash = routeHash({ kind: 'route', ...read });
+    location.hash = routeHash({ kind: 'route', ...read } as RouteTarget);
   }
 
-  const box = (f: Field) => (
-    <label className="jf" key={f}>
-      <span className="jl">{LABEL[f]}</span>
-      <input
-        className="input"
-        value={typed[f]}
-        onChange={(e) => setTyped({ ...typed, [f]: e.target.value })}
-        placeholder={f === 'via' ? 'RG1 or RG1 8FR' : ''}
-        autoCapitalize="characters"
-        autoCorrect="off"
-        autoComplete="off"
-        spellCheck={false}
-        enterKeyHint={f === 'to' ? 'go' : 'next'}
-        maxLength={10}
-      />
-    </label>
-  );
   return (
     <form className="search-form" onSubmit={go} noValidate>
       <div className="search journey">
-        {box('from')}
-        {box('via')}
-        {box('to')}
+        {(['from', 'via', 'to'] as Field[]).map((f) => (
+          <PlaceBox key={f} field={f} value={typed[f]} onChange={(v) => setTyped((t) => ({ ...t, [f]: v }))} onPick={(p) => setPicked((x) => ({ ...x, [f]: p }))} />
+        ))}
         <button type="submit" className="btn btn-primary">
           Find
         </button>
@@ -104,7 +218,10 @@ export function JourneyForm({ target }: { target: RouteTarget }) {
           {problem}
         </p>
       ) : (
-        <p className="hint">Full postcodes or just the first half (RG1). The route is worked out on this page: nothing you type leaves it.</p>
+        <p className="hint">
+          From and To take a place or a postcode (the full postcode, or just the first half). Via takes a place: the route passes near it
+          rather than through it. It’s all worked out on this page: nothing you type leaves it.
+        </p>
       )}
     </form>
   );
@@ -125,16 +242,24 @@ const getStationPlaces = (index: PageIndex) => {
   return stationPlaces.places;
 };
 
-type Where = { lat: number; lon: number; label: string; notFound?: string };
-async function whereIs(index: PageIndex, p: Pc): Promise<Where> {
-  const [lat, lon, place] = index.outcodes[p.outcode] ?? [];
-  if (lat === undefined) throw new Error('unknown district');
-  const district = { lat, lon, label: `${p.outcode} (${place.split(' / ')[0]})` };
-  if (!p.inward) return district;
-  const file = index.postcodes ? await loadPostcodes(index.postcodes.folder, postcodeArea(p.outcode)) : {};
-  const at = file[p.outcode] ? decodeDistrict(file[p.outcode]).get(p.inward) : undefined;
-  const full = pcText(p);
-  return at ? { lat: at[0], lon: at[1], label: `${full} (${place.split(' / ')[0]})` } : { ...district, notFound: full };
+type Where = { lat: number; lon: number; label: string; short: string; notFound?: string };
+class CantFind extends Error {}
+async function whereIs(index: PageIndex, e: End): Promise<Where> {
+  if (isPlace(e)) {
+    const ix = await getPlaces();
+    const found = ix ? findPlace(ix, e.place, e.at) : null;
+    if (!found?.ok) throw new CantFind(e.place);
+    return { lat: found.place.lat, lon: found.place.lon, label: placeLabel(found.place), short: found.place.name };
+  }
+  const [lat, lon, place] = index.outcodes[e.outcode] ?? [];
+  if (lat === undefined) throw new CantFind(e.outcode);
+  const town = place.split(' / ')[0];
+  const district = { lat, lon, label: `${e.outcode} (${town})`, short: e.outcode };
+  if (!e.inward) return district;
+  const file = index.postcodes ? await loadPostcodes(index.postcodes.folder, postcodeArea(e.outcode)) : {};
+  const at = file[e.outcode] ? decodeDistrict(file[e.outcode]).get(e.inward) : undefined;
+  const full = pcText(e);
+  return at ? { lat: at[0], lon: at[1], label: `${full} (${town})`, short: full } : { ...district, notFound: full };
 }
 
 type Found = { ok: true; index: PageIndex; miles: number; candidates: RouteRow[]; startEight: RouteRow[]; endEight: RouteRow[]; from: Where; to: Where; via?: Where } | { ok: false; message: string };
@@ -142,7 +267,13 @@ type Found = { ok: true; index: PageIndex; miles: number; candidates: RouteRow[]
 async function find(t: Required<Pick<RouteTarget, 'from' | 'to'>> & RouteTarget): Promise<Found> {
   const index = await loadIndex();
   if (!index.route) return { ok: false, message: 'Sorry, the road map isn’t available at the moment. Try again later.' };
-  const [from, to, via] = await Promise.all([whereIs(index, t.from), whereIs(index, t.to), t.via ? whereIs(index, t.via) : Promise.resolve(undefined)]);
+  let from: Where, to: Where, via: Where | undefined;
+  try {
+    [from, to, via] = await Promise.all([whereIs(index, t.from), whereIs(index, t.to), t.via ? whereIs(index, t.via) : Promise.resolve(undefined)]);
+  } catch (e) {
+    if (e instanceof CantFind) return { ok: false, message: `We can’t find “${e.message}”. Check it in the boxes above and press Find again.` };
+    throw e;
+  }
   const net = await getNetwork(index.route.file);
   const places = [from, ...(via ? [via] : []), to].map((w) => toPlace(w.lat, w.lon));
   const j = journey(net, places, getStationPlaces(index));
@@ -152,7 +283,9 @@ async function find(t: Required<Pick<RouteTarget, 'from' | 'to'>> & RouteTarget)
       message:
         j.problem === 'no-road'
           ? 'There’s no road route between those places (a ferry may be needed), so Refueller can’t work out a journey.'
-          : 'One of those places is too far from a main road for Refueller to work out a journey.',
+          : j.problem === 'via-far'
+            ? `There’s no main road within about three miles of ${via?.short ?? 'the via place'}, so Refueller can’t route the journey past it.`
+            : 'One of those places is too far from a main road for Refueller to work out a journey.',
     };
   const near = index.points.map((p, i) => ({ p, i })).filter(({ i }) => j.extra[i] <= ROUTE_EXTRA_MILES && j.minutes[i] <= ROUTE_EXTRA_MINUTES);
   // The eight stations nearest each end, as the main list finds them (in a straight line), for the comparison at either end.
@@ -177,7 +310,7 @@ function Notes({ found, shown, within, now }: { found: Extract<Found, { ok: true
   return (
     <p className="notes">
       {missing.map((w) => `We couldn’t find ${w.notFound} (it may be new, or mistyped), so the middle of ${w.label.split(' ')[0]} is used. `)}
-      The route is about {Math.round(found.miles)} miles by road{found.via ? `, via ${found.via.label}` : ''}.{' '}
+      The route is about {Math.round(found.miles)} miles by road{found.via ? `, passing near ${found.via.short}` : ''}.{' '}
       {within === 0
         ? `No station adds less than ${ROUTE_EXTRA_MILES} miles and ${ROUTE_EXTRA_MINUTES} minutes to it, there and back.`
         : shown === within
@@ -214,7 +347,7 @@ export function JourneyResults({ target }: { target: RouteTarget }) {
     return () => {
       live = false;
     };
-  }, [target.from?.outcode, target.from?.inward, target.to?.outcode, target.to?.inward, target.via?.outcode, target.via?.inward, attempt]);
+  }, [target.from && endTyped(target.from), target.to && endTyped(target.to), target.via?.place, attempt]);
 
   const chosen = useMemo(() => {
     if (!found?.ok) return null;
@@ -268,7 +401,7 @@ export function JourneyResults({ target }: { target: RouteTarget }) {
     </>
   );
   const price = (r: RouteRow, i: number) => <PriceCell p={r.prices[fuel]} cheapest={cheapest[i]} fuel={fuel} now={now} all={all} members={membersOnly(r.station)} />;
-  const endName = (g: Shown['group']) => (g === 'start' ? found.from : found.to).label.split(' (')[0];
+  const endName = (g: Shown['group']) => (g === 'start' ? found.from : found.to).short;
   const where = (x: Shown) => (x.group === 'way' ? `${routeMiles(x.r.along)} from the start` : `${milesText(x.r.fromEnd!)} from ${endName(x.group)}`);
   const extraText = (r: RouteRow) => (Number.isFinite(r.extra) ? routeMiles(r.extra) : '–');
   const GROUP: Record<Shown['group'], string> = { start: 'Cheapest near the start', way: 'On the way', end: 'Cheapest near the end' };
@@ -279,7 +412,7 @@ export function JourneyResults({ target }: { target: RouteTarget }) {
     <>
       <div className="results-head">
         <h3>
-          {rows.length ? `${cap(WORDS[rows.length])} cheaper station${rows.length === 1 ? '' : 's'}` : 'No stations'} near the route from {found.from.label} to {found.to.label}
+          {rows.length ? `${cap(WORDS[rows.length])} cheaper station${rows.length === 1 ? '' : 's'}` : 'No stations'} near the route from {found.from.label} to {found.to.label}{found.via ? `, via ${found.via.short}` : ''}
         </h3>
       </div>
       <div className="fuel-btns route-fuel" role="group" aria-label="Fuel">

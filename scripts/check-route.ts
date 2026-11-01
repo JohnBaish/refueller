@@ -83,6 +83,23 @@ await check('via: the journey goes through it, and is longer than going direct',
   assert.ok(via.miles > direct.miles + 10, `${via.miles} via Oxford, ${direct.miles} direct`);
 });
 
+await check('via means "passes near", not a stop: Reading to Exeter via Andover keeps to the A303; via Royal Wootton Bassett is the M4 as before', () => {
+  const places = JSON.parse(readFileSync(new URL('../data/places.json', import.meta.url), 'utf8')).places as [string, string, string, number, number][];
+  const place = (name: string) => {
+    const p = places.find((x) => x[0] === name)!;
+    return toPlace(p[3], p[4]);
+  };
+  const direct = journey(net, [at('RG1'), at('EX1')], []);
+  const andover = journey(net, [at('RG1'), place('Andover'), at('EX1')], []);
+  const rwb = journey(net, [at('RG1'), place('Royal Wootton Bassett'), at('EX1')], []);
+  assert.ok(direct.ok && andover.ok && rwb.ok);
+  assert.ok(andover.miles < direct.miles - 10, `via Andover the A303 is shorter in miles (${andover.miles.toFixed(0)} against ${direct.miles.toFixed(0)})`);
+  close(rwb.miles, direct.miles, 0.5);
+  // A town off any main road by more than about 3 miles can't be a via; a far-flung one is reported as such.
+  const sea = journey(net, [at('RG1'), toPlace(50.2, -3.5), at('EX1')], []);
+  assert.ok(!sea.ok && sea.problem === 'via-far');
+});
+
 await check('no road: the Isles of Scilly are reached only by sea or air', () => {
   const j = journey(net, [at('TR1'), at('TR21')], []);
   assert.equal(j.ok, false);
@@ -138,11 +155,17 @@ await check('words: miles and today’s hours', () => {
 
 await check('the address: route/RG1/BS1, a full postcode, a via, and a bare "route"', () => {
   assert.deepEqual(readRouteHash('route/rg1/bs1'), { kind: 'route', from: { outcode: 'RG1' }, to: { outcode: 'BS1' }, via: undefined });
-  const t = readRouteHash('route/RG1-8FR/BS1/OX1')!;
-  assert.equal(routeHash(t), 'route/RG1-8FR/BS1/OX1');
+  const t = readRouteHash('route/RG1-8FR/BS1/@Oxford')!;
+  assert.equal(routeHash(t), 'route/RG1-8FR/BS1/@Oxford');
   assert.deepEqual(readRouteHash('route'), { kind: 'route' });
   assert.deepEqual(readRouteHash('route/RG1'), { kind: 'route' });
   assert.equal(readRouteHash('RG4'), null);
+  const places = readRouteHash('route/@Reading/@Exeter/@Andover')!;
+  assert.deepEqual(places, { kind: 'route', from: { place: 'Reading' }, to: { place: 'Exeter' }, via: { place: 'Andover' } });
+  assert.equal(routeHash(places), 'route/@Reading/@Exeter/@Andover');
+  assert.equal(readRouteHash('route/RG1/EX4/SP10')!.via, undefined, 'via takes a place only');
+  const twin = readRouteHash('route/RG1/@Habost, Na h-Eileanan an Iar (HS2)~58.2,-6.3')!;
+  assert.deepEqual(twin.to, { place: 'Habost, Na h-Eileanan an Iar (HS2)', at: '58.2,-6.3' });
 });
 
 if (failures) {

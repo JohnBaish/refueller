@@ -199,9 +199,15 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
 
 /* "Find cheaper fuel near the route" (31 October): the three boxes, the way in at the bottom, and the extra miles on a phone. */
 .journey { align-items: flex-end; }
-.jf { display: flex; flex-direction: column; gap: 4px; }
+.jf { display: flex; flex-direction: column; gap: 4px; position: relative; }
 .jl { font-size: 12px; font-weight: 600; color: var(--color-neutral-700); }
-.search.journey .input { width: 170px; }
+.search.journey .input { width: 230px; text-transform: none; }
+/* Place suggestions under a box as you type (John, 1 November). */
+.suggest { position: absolute; top: 100%; left: 0; z-index: 20; min-width: 100%; width: max-content; max-width: min(360px, 90vw); margin: 4px 0 0; padding: 4px 0; list-style: none; background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: 12px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12); max-height: 320px; overflow-y: auto; }
+.suggest li { display: flex; align-items: baseline; gap: 8px; padding: 9px 14px; cursor: pointer; font-size: 14px; }
+.suggest li.on, .suggest li:hover { background: var(--color-neutral-100); }
+.sg-name { font-weight: 600; }
+.sg-area { color: var(--color-neutral-700); font-size: 12.5px; }
 .route-fuel { margin-top: 10px; margin-bottom: 0; }
 .route-extra { text-align: right; }
 .route-extra-lbl { font-size: 11.5px; font-weight: 400; color: var(--color-neutral-700); }
@@ -210,6 +216,8 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
 @media (max-width: 720px) {
   .search.journey .jf { flex: 1 1 100%; }
   .search.journey .input { width: 100%; }
+  .suggest { width: 100%; max-width: none; }
+  .suggest li { min-height: 44px; align-items: center; }
   .search.journey .btn { flex: 1 1 100%; }
   .journey-link a { display: inline-block; min-height: 44px; line-height: 44px; }
 }

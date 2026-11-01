@@ -1376,3 +1376,28 @@ flag. If Costco's fuel is the cheapest, two “Cheapest” flags are shown, one 
 can't factor in your time, or wear and tear on the car." (About's calculator paragraph); "The official data only gives each station's
 current price and the date that price came into effect, so the history is Refueller's own record, taken at each collection."; "shows only
 its later change". Noted for John: on the journey page the list and chart cover up to ten (the eight on the way and the two ends).
+
+### 2026-11-01 — journey planner: place names, and "via" means "passes near" (branch `wording-2026-11-01`)
+
+**John:** place names as agreed (cities, towns, villages and suburbs, no hamlets; From and To take a place or a postcode; Via a place
+only, to keep it simple; suggestions as you type; Welsh and Gaelic names accepted); a "via" place is an indication of the route, not a
+stop (Reading to Exeter via Andover keeps to the A303); the faint examples "Reading, RG1 or RG1 8FR", "Andover", "Exeter, EX4 or EX4
+6TJ"; kept on this branch; more wording to come from John. **Places:** `scripts/build-places.ts` (`npm run places <Open Names folder>`)
+makes `data/places.json` from OS Open Names: 30,374 places (71 cities, 1,355 towns, 15,155 villages, 13,793 suburbs: "Suburban Area"
+and "Other Settlement", as Caversham, Wimbledon and Clapham in London are "Other Settlement"), the English name shown and the other
+kept, county or council area in English, and the postcode district only where needed to tell places apart; 435 KB compressed, copied by
+`scripts/lib/pageData.ts` to `public/data/places-<made>.json` and loaded only when a name is typed. Richmond in London isn't in Open
+Names as a settlement at all (only Richmond, North Yorkshire, and a Sheffield suburb). **The page:** `src/lib/places.ts` (matching,
+suggestions, same-name places: "Andover" where unique, "Newport, Isle of Wight" where shared, "Sutton, Shropshire (TF9)" where name and
+area are shared; 56 labels still shared by tiny places, e.g. two Habosts in HS2, are told apart by the position kept with the one picked
+from the list); `src/components/Journey.tsx` (each box a suggestion list: keys, mouse or tap; closed once what's typed is exactly a
+place; messages for several places of a name, an unknown place, a postcode in Via); `src/lib/route.ts` (`VIA_NEAR_METRES` 5,000: the
+quickest route passing a main-road point within about 3 miles of the via place; the address `#route/@Reading/@Exeter/@Andover`).
+**Wording (drafts):** under Find, "From and To take a place or a postcode (the full postcode, or just the first half). Via takes a place:
+the route passes near it rather than through it. It's all worked out on this page: nothing you type leaves it."; the heading "…from
+Reading to Exeter, via Andover"; notes "…passing near Andover."; an About sentence on what "via" means; the footer's "Postcode
+positions" now "Postcode and place positions" (the same OS line covers both). **Checked:** `npm run check` (new `scripts/check-places.ts`,
+and route checks: via Andover 139 miles against 155 direct, via Royal Wootton Bassett the same as direct, a via out at sea refused, place
+addresses), lint, type-checks, build. In Chromium at 1200px and 390px with touch, light and dark: suggestions by keys and by tap, Reading
+to Exeter via Andover (140 miles), a Newport, Via with SP10, an unknown place, postcodes with a place via; nothing typed in any request,
+no errors, no sideways scroll. Pictures `design/previews/places-*.png`. Not merged.

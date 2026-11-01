@@ -135,15 +135,43 @@ export function tree(net: Network, start: number): { dist: Float64Array; time: F
   return { dist, time };
 }
 
-export type Journey = { ok: true; miles: number; along: Float64Array; extra: Float64Array; minutes: Float64Array } | { ok: false; problem: 'far-from-road' | 'no-road' };
+export type Journey = { ok: true; miles: number; along: Float64Array; extra: Float64Array; minutes: Float64Array } | { ok: false; problem: 'far-from-road' | 'no-road' | 'via-far' };
 
-// The journey through `places` (start, optional via, end), and for every station point its miles along the journey and its extra
-// miles (NaN where it can't be reached by road).
+// A "via" place is a place the route passes near, not a stop (John, 1 November): the quickest route that passes a main-road point within
+// about 3 miles of it, so Reading to Exeter via Andover keeps to the A303 rather than going into the town and out again.
+export const VIA_NEAR_METRES = 5000;
+
+// The journey from the first place to the last (through a "via" in between, if given), and for every station point its miles along the
+// journey and its extra miles and minutes (NaN where it can't be reached by road).
 export function journey(net: Network, places: Place[], stations: Place[]): Journey {
-  const ends = places.map((p) => snap(net, p));
-  if (ends.some((e) => !e)) return { ok: false, problem: 'far-from-road' };
-  const e = ends as { node: number; metres: number }[];
-  const trees = e.map((x) => tree(net, x.node));
+  const start = snap(net, places[0]);
+  const end = snap(net, places[places.length - 1]);
+  if (!start || !end) return { ok: false, problem: 'far-from-road' };
+  const fromStart = tree(net, start.node);
+  const fromEnd = tree(net, end.node);
+  if (!Number.isFinite(fromStart.dist[end.node])) return { ok: false, problem: 'no-road' };
+  let e: { node: number; metres: number }[] = [start, end];
+  let trees = [fromStart, fromEnd];
+  if (places.length === 3) {
+    const v = places[1];
+    let best = -1;
+    let bestTime = Infinity;
+    let near = 0;
+    const cx = Math.floor(v.easting / CELL);
+    const cy = Math.floor(v.northing / CELL);
+    const reach = Math.ceil(VIA_NEAR_METRES / CELL);
+    for (let dx = -reach; dx <= reach; dx++)
+      for (let dy = -reach; dy <= reach; dy++)
+        for (const i of net.cells.get(cellKey(cx + dx, cy + dy)) ?? []) {
+          if (Math.hypot(net.east[i] - v.easting, net.north[i] - v.northing) > VIA_NEAR_METRES) continue;
+          near++;
+          const t = fromStart.time[i] + fromEnd.time[i];
+          if (t < bestTime) [best, bestTime] = [i, t];
+        }
+    if (best < 0) return { ok: false, problem: near ? 'no-road' : 'via-far' };
+    e = [start, { node: best, metres: 0 }, end];
+    trees = [fromStart, tree(net, best), fromEnd];
+  }
   // The straight-line joins to and from the main roads are taken at 20 mph (town streets), for the times only.
   const joinSeconds = (m: number) => m / (20 * 0.44704);
   const legs: { direct: number; directTime: number; offset: number }[] = [];
@@ -229,21 +257,34 @@ export function routeMiles(m: number): string {
 
 // The address after "#": route/<from>/<to> or route/<from>/<to>/<via>, each "RG1" or "RG1-8FR".
 export type Pc = { outcode: string; inward?: string };
-export type RouteTarget = { kind: 'route'; from?: Pc; to?: Pc; via?: Pc };
+// A place typed by name (src/lib/places.ts), kept as its label, e.g. "Andover, Hampshire".
+export type PlaceName = { place: string; at?: string };
+export type End = Pc | PlaceName;
+export type RouteTarget = { kind: 'route'; from?: End; to?: End; via?: PlaceName };
 const PC = /^([A-Z]{1,2}\d[A-Z\d]?)(?:-(\d[A-Z]{2}))?$/;
-const readPc = (s: string | undefined): Pc | undefined => {
+const readEnd = (s: string | undefined): End | undefined => {
+  if (s?.startsWith('@') && s.length > 1) {
+    const [place, at] = s.slice(1).split('~');
+    return { place, ...(at ? { at } : {}) };
+  }
   const m = s ? PC.exec(s.toUpperCase()) : null;
   return m ? { outcode: m[1], ...(m[2] ? { inward: m[2] } : {}) } : undefined;
 };
+export const isPlace = (e: End): e is PlaceName => 'place' in e;
+// The address after "#": route/<from>/<to>[/<via>], each end "RG1", "RG1-8FR" or "@Exeter, Devon", the via "@Andover, Hampshire".
 export function readRouteHash(h: string): RouteTarget | null {
   if (h !== 'route' && !h.startsWith('route/')) return null;
   const [, from, to, via] = h.split('/');
-  const t: RouteTarget = { kind: 'route', from: readPc(from), to: readPc(to), via: readPc(via) };
+  const v = readEnd(via);
+  const t: RouteTarget = { kind: 'route', from: readEnd(from), to: readEnd(to), via: v && isPlace(v) ? v : undefined };
   return t.from && t.to ? t : { kind: 'route' };
 }
 export const pcHash = (p: Pc) => (p.inward ? `${p.outcode}-${p.inward}` : p.outcode);
-export const pcText = (p: Pc) => (p.inward ? `${p.outcode} ${p.inward}` : p.outcode);
+export const pcText = (p: Pc) => (p.inward ? `${p.outcode}\u00a0${p.inward}` : p.outcode);
+export const endHash = (e: End) => (isPlace(e) ? `@${e.place}${e.at ? `~${e.at}` : ''}` : pcHash(e));
+// As typed in a box: "RG1 8FR" or "Exeter, Devon".
+export const endTyped = (e: End) => (isPlace(e) ? e.place : pcText(e).replace('\u00a0', ' '));
 export function routeHash(t: RouteTarget): string {
   if (!t.from || !t.to) return 'route';
-  return `route/${pcHash(t.from)}/${pcHash(t.to)}${t.via ? `/${pcHash(t.via)}` : ''}`;
+  return `route/${endHash(t.from)}/${endHash(t.to)}${t.via ? `/${endHash(t.via)}` : ''}`;
 }

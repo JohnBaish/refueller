@@ -32,6 +32,8 @@ export type PageIndex = {
   // The main roads for "Find cheaper fuel near the route" (data/route-roads.json): the file, e.g. "route-2026-10-31.json", and the OS
   // credit line; null without.
   route: { file: string; credit: string } | null;
+  // Place names for the journey planner (data/places.json); null without.
+  places: { file: string } | null;
 };
 
 // One postcode area's road miles: from each postcode district middle (key "RG4") and each station (its 12-character code)

@@ -2,6 +2,7 @@
 // index, then the postcode areas the eight nearest stations are in. Nothing about a search is in any request.
 import type { DetailRow, PageIndex, RoadFile } from './pageTypes.ts';
 import type { RouteFile } from './route.ts';
+import type { PlaceFile } from './places.ts';
 
 let index: Promise<PageIndex> | null = null;
 const areas = new Map<string, Promise<DetailRow[]>>();
@@ -84,4 +85,14 @@ export function loadRouteRoads(file: string): Promise<RouteFile> {
     );
   }
   return routeFiles.get(file)!;
+}
+
+// The place names for the journey planner, loaded the first time a name is typed there.
+let placeFile: { file: string; p: Promise<PlaceFile> } | null = null;
+export function loadPlaces(file: string): Promise<PlaceFile> {
+  if (placeFile?.file !== file) placeFile = { file, p: json<PlaceFile>(`/data/${encodeURIComponent(file)}`) };
+  return placeFile.p.catch((e) => {
+    placeFile = null;
+    throw e;
+  });
 }

@@ -170,7 +170,9 @@ function About() {
         device, from Ordnance Survey’s map of motorways, A roads and B roads, using rough speeds for each kind of road. It lists
         the eight cheapest stations that add no more than three miles and about six minutes to the journey, there and back (a short
         detour through a busy town can take much longer than its miles suggest), in the order you’d reach
-        them. For comparison it also shows the cheapest of the eight stations nearest the start and the end, as the main list
+        them. A “via” place is one the route passes near, within about three miles, rather than a stop: so Reading to Exeter via
+        Andover keeps to the A303, and via Royal Wootton Bassett it keeps to the M4. Place names come from Ordnance Survey’s list
+        of cities, towns, villages and suburbs. For comparison it also shows the cheapest of the eight stations nearest the start and the end, as the main list
         would find them (a members-only Costco aside). One-way streets and turns aren’t known and minor roads are left out, so the distances are a guide. Opening hours
         are today’s, as Refueller can’t know when you’ll get there.
       </p>
@@ -274,7 +276,7 @@ export default function App() {
                 .
               </p>
               <p>
-                Postcode positions: Contains OS data © Crown Copyright and database rights 2026. Contains Royal Mail data © Royal
+                Postcode and place positions: Contains OS data © Crown Copyright and database rights 2026. Contains Royal Mail data © Royal
                 Mail copyright and database right 2026. Contains National Statistics data © Crown copyright and database right 2026.
               </p>
               <p>Road distances: {ROAD_CREDIT}.</p>
