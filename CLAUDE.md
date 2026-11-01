@@ -1568,3 +1568,15 @@ of the chosen route and more than 4 miles from the other (not within 5 miles of 
 first. Results for 11 journeys put to John, e.g. Wokingham to Horsham "via Leatherhead and Dorking" (next best via Guildford, 5%
 slower), Cambridge to Oxford "via Hatfield and Gerrards Cross" (next best by the A428 and A421, 84 miles, 5% slower), London to
 Birmingham "via Woburn Sands and Bedworth" (towns beside the motorway, not helpful). Checked: checks, lint, build. Not merged.
+
+### 2026-11-01 — a rule for the route sentence: places and roads (experiment, branch `route-description`)
+
+**John:** some descriptions read better with places than road numbers; find a rule for the best mix, keeping the principles (towns
+only where they help, not towns beside motorways; only when another route is close). **Rule tried** (`design/mock/route-mix-experiment.ts`,
+not in the page): each stretch of the route is a motorway (named by its number) or another road (named by the town or city it passes
+within about two miles of, a city first, else by its number). If the next-best route is within 15% of the time, name up to two
+stretches it doesn't share, of at least 5 miles or a tenth of the journey, a city first, then the longest; otherwise name the single
+longest stretch ("mainly by the M4" for a road, "via Bodmin" for a place). Results for 20 journeys put to John, e.g. "via the M25 and
+Dorking", "mainly by the M4", "via Salisbury", "via Horsham and the A272", "via the M1 and M6", "via Hexham", "via Cirencester". Weak
+spots: York to Scarborough says Norton-on-Derwent rather than Malton (Open Names gives no sizes for towns); Cardiff to Bristol "via
+the M49 and A4". Not built; waiting for John.
