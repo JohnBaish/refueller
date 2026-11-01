@@ -1371,3 +1371,8 @@ using the distances in a straight line from your postcode, or from the middle of
 approximate."; "The list:" removed; the Costco sentence dropped from the "Cheapest" bullet, and the Members only bullet replaced (not bold):
 "Costco only sells fuel to its members. Its filling stations are always shown if they're in the nearest eight but with a “Members only”
 flag. If Costco's fuel is the cheapest, two “Cheapest” flags are shown, one for Costco members and the standard one for everyone else."
+
+**Then, John:** "among the eight stations on the list" (Cheapest bullet); "among the eight stations" (the small chart); "The calculation
+can't factor in your time, or wear and tear on the car." (About's calculator paragraph); "The official data only gives each station's
+current price and the date that price came into effect, so the history is Refueller's own record, taken at each collection."; "shows only
+its later change". Noted for John: on the journey page the list and chart cover up to ten (the eight on the way and the two ends).

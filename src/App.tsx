@@ -124,7 +124,7 @@ function About() {
       </p>
       <ul>
         <li>
-          “Cheapest” marks the lowest unleaded and the lowest diesel price among the stations shown.
+          “Cheapest” marks the lowest unleaded and the lowest diesel price among the eight stations on the list.
         </li>
         <li>
           Costco only sells fuel to its members. Its filling stations are always shown if they’re in the nearest eight but with a
@@ -132,7 +132,7 @@ function About() {
           standard one for everyone else.
         </li>
         <li>“Same price for …” is shown in blue when the price has been the same for more than 45 days, in case it’s wrong.</li>
-        <li>The small chart under each price shows where it sits among the stations shown, from lowest to highest.</li>
+        <li>The small chart under each price shows where it sits among the eight stations, from lowest to highest.</li>
         <li>
           A blue “Unusual price” note means the price is more than 30p away from the middle price across Great Britain,
           and may be a mistake, unless the station is in the Highlands and Islands of Scotland or on the Isles of Scilly,
@@ -157,14 +157,13 @@ function About() {
         how much fuel the extra miles there and back would use, from your car’s miles per gallon (the defaults are typical
         figures: 36 for petrol and 43 for diesel; change them to your car’s). The extra miles are by road from the middle of the
         postcode district, even when you type a full postcode, using Ordnance Survey’s map of every road; they don’t allow for one-way streets or turns, so a sat
-        nav may give a little more. Where there’s no road figure, type your own. It can’t factor in your time, wear and tear on the car or
-        whether you might be driving near there at some point anyway.
+        nav may give a little more. Where there’s no road figure, type your own. The calculation can’t factor in your time, or wear and tear on the car.
       </p>
       <p>
         <strong>Price history</strong> shows a station’s price over the last 14 days, against the average of the stations
-        shown. Fuel Finder only gives each station’s current price and when it was set, so the history is Refueller’s own
-        record, taken at each collection. A price that changed twice between 10.15am and 4.15pm,
-        or between 4.15pm and 10.15am, shows only its latest change.
+        shown. The official data only gives each station’s current price and the date that price came into effect, so the history is
+        Refueller’s own record, taken at each collection. A price that changed twice between 10.15am and 4.15pm,
+        or between 4.15pm and 10.15am, shows only its later change.
       </p>
       <p>
         <strong>Find cheaper fuel near the route</strong> works out the quickest route between the places you type, on your
