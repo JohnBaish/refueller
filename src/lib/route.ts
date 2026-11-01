@@ -83,8 +83,9 @@ export function snap(net: Network, p: Place): { node: number; metres: number } |
 }
 
 // From one point to every other: the quickest route by the rough speeds, giving the metres along it (Infinity where none).
-export function tree(net: Network, start: number): { dist: Float64Array; time: Float64Array } {
+export function tree(net: Network, start: number): { dist: Float64Array; time: Float64Array; prev: Int32Array } {
   const n = net.head.length;
+  const prev = new Int32Array(n).fill(-1);
   const time = new Float64Array(n).fill(Infinity);
   const dist = new Float64Array(n).fill(Infinity);
   time[start] = 0;
@@ -121,6 +122,7 @@ export function tree(net: Network, start: number): { dist: Float64Array; time: F
       if (nt < time[v]) {
         time[v] = nt;
         dist[v] = dist[u] + net.metres[k];
+        prev[v] = u;
         heapT.push(nt);
         heapV.push(v);
         for (let i = heapT.length - 1; i > 0; ) {
@@ -132,14 +134,34 @@ export function tree(net: Network, start: number): { dist: Float64Array; time: F
       }
     }
   }
-  return { dist, time };
+  return { dist, time, prev };
 }
 
-export type Journey = { ok: true; miles: number; along: Float64Array; extra: Float64Array; minutes: Float64Array } | { ok: false; problem: 'far-from-road' | 'no-road' | 'via-far' };
+export type Journey = { ok: true; miles: number; along: Float64Array; extra: Float64Array; minutes: Float64Array; offRoute: Float64Array } | { ok: false; problem: 'far-from-road' | 'no-road' | 'via-far' };
 
 // A "via" place is a place the route passes near, not a stop (John, 1 November): the quickest route that passes a main-road point within
 // about 3 miles of it, so Reading to Exeter via Andover keeps to the A303 rather than going into the town and out again.
 export const VIA_NEAR_METRES = 5000;
+
+// A station must also be close to the route Refueller draws (John, 1 November): within about 2 miles of it in a straight line. Without
+// this, a station on a near-equal other route counts too (Caversham to Downham Market via Hatfield listed High Wycombe, on the M40,
+// as well as Slough, on the M4, though only one of them can be on the way).
+export const ROUTE_CORRIDOR_METRES = 3200;
+
+// The shortest straight-line distance (metres) from a point to a line of road points.
+function distanceToPath(net: Network, path: number[], x: number, y: number): number {
+  let best = Infinity;
+  for (let k = 0; k + 1 < path.length; k++) {
+    const ax = net.east[path[k]], ay = net.north[path[k]];
+    const dx = net.east[path[k + 1]] - ax, dy = net.north[path[k + 1]] - ay;
+    const len = dx * dx + dy * dy;
+    const t = len ? Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / len)) : 0;
+    const d = Math.hypot(x - ax - t * dx, y - ay - t * dy);
+    if (d < best) best = d;
+  }
+  if (path.length === 1) best = Math.hypot(x - net.east[path[0]], y - net.north[path[0]]);
+  return best;
+}
 
 // The journey from the first place to the last (through a "via" in between, if given), and for every station point its miles along the
 // journey and its extra miles and minutes (NaN where it can't be reached by road).
@@ -185,6 +207,14 @@ export function journey(net: Network, places: Place[], stations: Place[]): Journ
   const along = new Float64Array(stations.length).fill(NaN);
   const extra = new Float64Array(stations.length).fill(NaN);
   const minutes = new Float64Array(stations.length).fill(NaN);
+  const offRoute = new Float64Array(stations.length).fill(NaN);
+  // The route itself, leg by leg, as road points (walked back from each leg's end).
+  const path: number[] = [];
+  for (let i = 0; i + 1 < e.length; i++) {
+    const leg: number[] = [];
+    for (let v = e[i + 1].node; v >= 0; v = v === e[i].node ? -1 : trees[i].prev[v]) leg.push(v);
+    path.push(...leg.reverse());
+  }
   stations.forEach((p, s) => {
     const at = snap(net, p);
     if (!at) return;
@@ -198,13 +228,14 @@ export function journey(net: Network, places: Place[], stations: Place[]): Journ
       extra[s] = Math.max(0, to + from - leg.direct) / METRES_PER_MILE;
       along[s] = (leg.offset + to) / METRES_PER_MILE;
     });
+    if (minutes[s] <= ROUTE_EXTRA_MINUTES) offRoute[s] = distanceToPath(net, path, p.easting, p.northing);
   });
-  return { ok: true, miles: offset / METRES_PER_MILE, along, extra, minutes };
+  return { ok: true, miles: offset / METRES_PER_MILE, along, extra, minutes, offRoute };
 }
 
 export const toPlace = (lat: number, lon: number): Place => toBritishGrid(lat, lon);
 
-export type RouteRow = { station: Station; prices: { e10?: Price; diesel?: Price }; along: number; extra: number; minutes: number; fromEnd?: number };
+export type RouteRow = { station: Station; prices: { e10?: Price; diesel?: Price }; along: number; extra: number; minutes: number; offRoute: number; fromEnd?: number };
 
 // For comparison (John, 31 October): the cheapest of the eight stations nearest each end, as the main list would show them, at a usual
 // price; the cheapest anyone can buy, so not a members-only Costco. Null when none of the eight sells the fuel.
@@ -217,7 +248,7 @@ export function endChoice(eight: RouteRow[], fuel: 'e10' | 'diesel'): RouteRow |
 // The eight cheapest within three extra miles at a usual price, then in the order you'd reach them; and how many were within the
 // three miles. Ties in price go to the smaller detour.
 export function routeEight(candidates: RouteRow[], fuel: 'e10' | 'diesel', leaveOut: Set<string> = new Set()) {
-  const within = candidates.filter((c) => !leaveOut.has(c.station.id) && c.extra <= ROUTE_EXTRA_MILES && c.minutes <= ROUTE_EXTRA_MINUTES && c.prices[fuel] && !c.prices[fuel]!.x);
+  const within = candidates.filter((c) => !leaveOut.has(c.station.id) && c.extra <= ROUTE_EXTRA_MILES && c.minutes <= ROUTE_EXTRA_MINUTES && c.offRoute <= ROUTE_CORRIDOR_METRES && c.prices[fuel] && !c.prices[fuel]!.x);
   const eight = within
     .slice()
     .sort((a, b) => a.prices[fuel]!.p - b.prices[fuel]!.p || a.extra - b.extra)

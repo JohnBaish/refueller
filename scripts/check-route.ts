@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { joinChains, speedMph } from './build-route-roads.ts';
-import { endChoice, journey, makeNetwork, readRouteHash, routeCheapest, routeEight, routeHash, routeMiles, todayText, toPlace, type RouteFile, type RouteRow } from '../src/lib/route.ts';
+import { endChoice, journey, makeNetwork, readRouteHash, routeCheapest, routeEight, routeHash, routeMiles, todayText, toPlace, type RouteFile, type RouteRow, ROUTE_CORRIDOR_METRES } from '../src/lib/route.ts';
 import type { Station } from '../src/lib/search.ts';
 
 let failures = 0;
@@ -100,6 +100,20 @@ await check('via means "passes near", not a stop: Reading to Exeter via Andover 
   assert.ok(!sea.ok && sea.problem === 'via-far');
 });
 
+await check('close to the drawn route: Caversham to Downham Market via Hatfield keeps Slough (M4) and drops High Wycombe (M40) (John, 1 November)', () => {
+  const places = JSON.parse(readFileSync(new URL('../data/places.json', import.meta.url), 'utf8')).places as [string, string, string, number, number][];
+  const p = (name: string, area: string) => {
+    const x = places.find((q) => q[0] === name && q[2] === area)!;
+    return toPlace(x[3], x[4]);
+  };
+  const slough = toPlace(51.5065, -0.62824); // Asda Slough Superstore
+  const wycombe = toPlace(51.61155, -0.77718); // Asda High Wycombe Superstore
+  const j = journey(net, [p('Caversham', 'Reading'), p('Hatfield', 'Hertfordshire'), at('PE38')], [slough, wycombe]);
+  assert.ok(j.ok);
+  assert.ok(j.offRoute[0] <= ROUTE_CORRIDOR_METRES, `Slough ${j.offRoute[0].toFixed(0)} m from the route`);
+  assert.ok(j.minutes[1] <= 6 && j.offRoute[1] > ROUTE_CORRIDOR_METRES, `High Wycombe ${j.minutes[1].toFixed(1)} minutes, ${j.offRoute[1].toFixed(0)} m from the route`);
+});
+
 await check('no road: the Isles of Scilly are reached only by sea or air', () => {
   const j = journey(net, [at('TR1'), at('TR21')], []);
   assert.equal(j.ok, false);
@@ -107,7 +121,7 @@ await check('no road: the Isles of Scilly are reached only by sea or air', () =>
 
 const st = (id: string, over: Partial<Station> = {}): Station => ({ id, name: id.toUpperCase(), brand: 'X', address: ['A ROAD'], postcode: 'RG1 1AA', lat: 51.45, lon: -0.97, hours: null, bankHoliday: null, ...over });
 const u = '2026-10-31T10:00:00Z';
-const row = (id: string, p: number | null, along: number, extra: number, over: Partial<Station> = {}, x = false, minutes = 2): RouteRow => ({ station: st(id, over), prices: p === null ? {} : { e10: { p, u, ...(x ? { x: 1 as const } : {}) } }, along, extra, minutes });
+const row = (id: string, p: number | null, along: number, extra: number, over: Partial<Station> = {}, x = false, minutes = 2, offRoute = 0): RouteRow => ({ station: st(id, over), prices: p === null ? {} : { e10: { p, u, ...(x ? { x: 1 as const } : {}) } }, along, extra, minutes, offRoute });
 
 await check('the eight: the cheapest within three extra miles, at a usual price, then in the order you reach them', () => {
   const rows = [
@@ -123,6 +137,12 @@ await check('the eight: the cheapest within three extra miles, at a usual price,
   assert.equal(r.within, 10);
   assert.equal(r.rows.length, 8);
   assert.deepEqual(r.rows.map((x) => x.station.id), ['a', 'z0', 'z1', 'z2', 'z3', 'z4', 'z5', 'd']);
+});
+
+await check('the eight: a station more than about two miles from the drawn route is left out, even when cheap', () => {
+  // A station off the route is left out of the eight even when cheap and a short detour.
+  const r = routeEight([row('near', 170, 1, 0.5, {}, false, 2, 500), row('far', 160, 2, 0.5, {}, false, 2, 5000)], 'e10');
+  assert.deepEqual(r.rows.map((x) => x.station.id), ['near']);
 });
 
 await check('each end: the cheapest of the eight nearest anyone can buy, nearest first on a tie; left out of the eight on the way', () => {

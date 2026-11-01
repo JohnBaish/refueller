@@ -20,6 +20,7 @@ import {
   toPlace,
   ROUTE_EXTRA_MILES,
   ROUTE_EXTRA_MINUTES,
+  ROUTE_CORRIDOR_METRES,
   endChoice,
   type Network,
   type End,
@@ -287,7 +288,7 @@ async function find(t: Required<Pick<RouteTarget, 'from' | 'to'>> & RouteTarget)
             ? `There’s no main road within about three miles of ${via?.short ?? 'the via place'}, so Refueller can’t route the journey past it.`
             : 'One of those places is too far from a main road for Refueller to work out a journey.',
     };
-  const near = index.points.map((p, i) => ({ p, i })).filter(({ i }) => j.extra[i] <= ROUTE_EXTRA_MILES && j.minutes[i] <= ROUTE_EXTRA_MINUTES);
+  const near = index.points.map((p, i) => ({ p, i })).filter(({ i }) => j.extra[i] <= ROUTE_EXTRA_MILES && j.minutes[i] <= ROUTE_EXTRA_MINUTES && j.offRoute[i] <= ROUTE_CORRIDOR_METRES);
   // The eight stations nearest each end, as the main list finds them (in a straight line), for the comparison at either end.
   const nearestTo = (w: Where) =>
     index.points
@@ -299,7 +300,7 @@ async function find(t: Required<Pick<RouteTarget, 'from' | 'to'>> & RouteTarget)
   const files = new Map(await Promise.all(areas.map(async (a) => [a, await loadArea(index.version, index.areas[a])] as const)));
   const rowOf = ({ p, i, d }: { p: PageIndex['points'][number]; i: number; d?: number }): RouteRow => {
     const { station, prices } = fromDetail(files.get(p[2])![p[3]], p[0], p[1]);
-    return { station, prices, along: j.along[i], extra: j.extra[i], minutes: j.minutes[i], ...(d === undefined ? {} : { fromEnd: d }) };
+    return { station, prices, along: j.along[i], extra: j.extra[i], minutes: j.minutes[i], offRoute: j.offRoute[i], ...(d === undefined ? {} : { fromEnd: d }) };
   };
   const candidates = near.map(rowOf);
   return { ok: true, index, miles: j.miles, candidates, startEight: atStart.map(rowOf), endEight: atEnd.map(rowOf), from, to, via };
@@ -312,10 +313,10 @@ function Notes({ found, shown, within, now }: { found: Extract<Found, { ok: true
       {missing.map((w) => `We couldn’t find ${w.notFound} (it may be new, or mistyped), so the middle of ${w.label.split(' ')[0]} is used. `)}
       The route is about {Math.round(found.miles)} miles by road{found.via ? `, passing near ${found.via.short}` : ''}.{' '}
       {within === 0
-        ? `No station adds less than ${ROUTE_EXTRA_MILES} miles and ${ROUTE_EXTRA_MINUTES} minutes to it, there and back.`
+        ? `No station close to the route adds less than ${ROUTE_EXTRA_MILES} miles and ${ROUTE_EXTRA_MINUTES} minutes to it, there and back.`
         : shown === within
-          ? `${cap(WORDS[within] ?? String(within))} station${within === 1 ? ' adds' : 's add'} no more than ${ROUTE_EXTRA_MILES} miles and about ${ROUTE_EXTRA_MINUTES} minutes to it, there and back; here ${within === 1 ? 'it is' : 'they are'}, in the order you’d reach them.`
-          : `Of the ${within} stations that add no more than ${ROUTE_EXTRA_MILES} miles and about ${ROUTE_EXTRA_MINUTES} minutes to it, there and back, these are the cheapest, in the order you’d reach them.`}{' '}
+          ? `${cap(WORDS[within] ?? String(within))} station${within === 1 ? '' : 's'} close to the route ${within === 1 ? 'adds' : 'add'} no more than ${ROUTE_EXTRA_MILES} miles and about ${ROUTE_EXTRA_MINUTES} minutes to it, there and back; here ${within === 1 ? 'it is' : 'they are'}, in the order you’d reach them.`
+          : `Of the ${within} stations close to the route that add no more than ${ROUTE_EXTRA_MILES} miles and about ${ROUTE_EXTRA_MINUTES} minutes to it, there and back, these are the cheapest, in the order you’d reach them.`}{' '}
       For comparison, the cheapest of the eight stations nearest each end is shown first and last. Distances are by main roads, so
       they’re a guide. Opening hours are today’s. Prices collected at {collectedText(found.index.collected, now)}, as
       reported by each station; they may have changed since.{' '}

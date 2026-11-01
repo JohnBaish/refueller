@@ -1401,3 +1401,16 @@ and route checks: via Andover 139 miles against 155 direct, via Royal Wootton Ba
 addresses), lint, type-checks, build. In Chromium at 1200px and 390px with touch, light and dark: suggestions by keys and by tap, Reading
 to Exeter via Andover (140 miles), a Newport, Via with SP10, an unknown place, postcodes with a place via; nothing typed in any request,
 no errors, no sideways scroll. Pictures `design/previews/places-*.png`. Not merged.
+
+### 2026-11-01 — journey planner: stations must be close to the drawn route (branch `wording-2026-11-01`)
+
+**John** (Caversham to Downham Market via Hatfield listed High Wycombe as well as Slough): yes to a rule that a station must also be
+near the route Refueller draws. **Cause:** a near-equal route by the M40 adds only about 0.1 miles and 3 minutes, so stations on it
+passed the "3 miles and about 6 minutes" test. **What (`src/lib/route.ts`):** `tree()` now records how it reached each point, so
+`journey()` can draw the route itself; a station counts only within `ROUTE_CORRIDOR_METRES` (3,200 m, about two miles) of it in a
+straight line (`offRoute`), used in `routeEight` and the page. The notes now say "stations close to the route"; About says the eight
+are "within about two miles of that route", and that a station on a different road taking about as long isn't listed (draft, for
+John). **Results:** via Hatfield, High Wycombe out and Slough kept (50 stations close to the route); RG1 to BS1 and RG1 to PE38 give
+the same eight as before. **Checked:** `npm run check` (new: the Hatfield case, and a cheap station far from the route left out),
+lint, type-check, build; the three journeys at 1200px and 390px with touch, light and dark: no errors, no sideways scroll. Pictures
+`design/previews/journey-corridor-*.png`. Not merged.
