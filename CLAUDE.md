@@ -1536,3 +1536,9 @@ eventually show 30 days. It is currently building up since recording began on Oc
 prices over the last 30 days as collected by Refueller. Unusual prices are not included." (`src/components/Averages.tsx`; switches by
 itself about November 29th). Checked: type-check, lint, build; PE38 at 1200px and 390px with touch, both sentences (the 30-day one with
 an older collection added to the file in the browser only), no errors, no sideways scroll. Not merged.
+
+### 2026-11-01 — heading "The wider picture"; "Average prices" merged to `main`
+
+**John:** the section's heading is "The wider picture" (was "Average prices"), then merge. `feature-averages` merged into `main` after
+bringing in its data commits (`data/history.json` and `data/averages.json` rebuilt from `main`'s git history, as the workflow does);
+checks, lint, type-check and build clean first. From the next collection, the "Price history" workflow keeps both files.

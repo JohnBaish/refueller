@@ -143,7 +143,7 @@ export function AveragesSection({ index, rows, histories, area }: { index: PageI
   const filling = end - start < (AVERAGE_DAYS - 1) * 86_400_000;
   return (
     <section className="avg-sec" data-noprint>
-      <h3>Average prices</h3>
+      <h3>The wider picture</h3>
       <p>
         {/* John's wording (1 November): one sentence while the record builds up, another once it covers the whole 30 days. */}
         {filling
