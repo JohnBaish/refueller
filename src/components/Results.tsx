@@ -537,7 +537,15 @@ export function Results({ target }: { target: Target }) {
         index={found.index}
         rows={rows}
         histories={found.histories}
-        area={target.kind === 'postcode' ? postcodeArea(target.outcode) : target.kind === 'place' ? postcodeArea(found.district ?? '') : target.area}
+        where={
+          target.kind === 'postcode'
+            ? target.inward && !found.notFound
+              ? `${target.outcode} ${target.inward}`
+              : target.outcode
+            : target.kind === 'place'
+              ? (found.district ?? '')
+              : (rows.find((r) => r.station.id === found.centreId)?.station.postcode ?? '')
+        }
       />
     </>
   );

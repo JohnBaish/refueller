@@ -275,3 +275,25 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
 @media (max-width: 360px) { .sort-strip { font-size: 13.5px; column-gap: 0; } .sort-strip .sort-lab { margin-right: 0; } .sort-strip button { padding: 0 5px; } }
 /* The journey list sorted as one list (John, November 1st 2026, option B): the end stations tagged. */
 .end-tag { display: inline-block; margin: 2px 0 3px; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-note); border: 1px solid currentColor; border-radius: 999px; padding: 1px 8px; }
+
+/* "The wider picture": the averages at every level (src/lib/levels.ts; John, November 1st, option B), in place of the charts' key.
+   On a computer, the prices in two columns; on a phone, under the name. The fact beneath, in the notes' grey. */
+.lv-box { background: var(--color-surface); border-radius: var(--radius-lg, 14px); padding: 4px 18px; margin: 4px 0 14px; }
+.lv-row { display: grid; grid-template-columns: 1fr 92px 92px; column-gap: 12px; align-items: baseline; padding: 10px 0; border-top: 1px solid var(--color-divider); }
+.lv-row:first-child { border-top: 0; }
+.lv-head { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-neutral-700); padding: 10px 0 2px; }
+.lv-head .lv-p { font-size: 12px; font-weight: 400; }
+.lv-name { font-weight: 700; font-size: 15px; }
+.lv-name i { display: inline-block; width: 20px; height: 0; vertical-align: middle; margin-right: 8px; }
+.lv-name i.a-key-eight { border-top: 2.5px solid var(--g-me); }
+.lv-name i.a-key-gb { border-top: 2px dashed var(--g-avg); }
+.lv-p { text-align: center; font-weight: 700; font-size: 16px; }
+.lv-fact { grid-column: 1 / -1; font-size: 13.5px; color: var(--color-neutral-700); margin-top: 2px; }
+.lv-small { display: none; }
+@media (max-width: 720px) {
+  .lv-box { padding: 2px 14px; }
+  .lv-row { grid-template-columns: 1fr; row-gap: 2px; }
+  .lv-head, .lv-row > .lv-p { display: none; }
+  .lv-small { display: block; font-size: 15px; }
+  .lv-small b { font-weight: 700; }
+}

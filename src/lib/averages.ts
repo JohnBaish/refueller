@@ -4,6 +4,8 @@
 // small changes). Prices marked unusual aren't included, as everywhere else (an island's higher price isn't unusual: see
 // higherPricesUsual). Pure functions, shared by the build and the page.
 import { higherPricesUsual, type Price } from './search.ts';
+import { levelKeys, MIN_STATIONS, type Averages, type Locality } from './levels.ts';
+export type { Averages };
 
 export const AVERAGE_DAYS = 30;
 const DAY = 86_400_000;
@@ -15,35 +17,37 @@ export const FUELS: Fuel[] = ['e10', 'diesel'];
 export const counts = (p: Price | undefined, postcode: string, middle: number | undefined): p is Price =>
   !!p && (!p.x || (higherPricesUsual(postcode) && middle !== undefined && p.p > middle));
 
-// "RG4 7HN" -> "RG": the postcode area.
-export const areaOf = (postcode: string) => /^[A-Z]{1,2}/.exec(postcode.trim().toUpperCase())?.[0] ?? '';
-
 const mean = (v: number[]) => (v.length ? Math.round((v.reduce((a, b) => a + b, 0) / v.length) * 100) / 100 : null);
 
-// One collection's averages: Great Britain ("GB") and each postcode area, [unleaded, diesel] (null where none sells it).
-export type Averages = Record<string, [number | null, number | null]>;
+// One collection's averages: Great Britain ("GB") and every level a station counts towards (its council area, county, region and
+// country: src/lib/levels.ts), [unleaded, diesel]; null where fewer than five stations sell the fuel at a usual price.
 export function averagesFor(
   prices: Record<string, { e10?: Price; diesel?: Price }>,
   postcodes: Record<string, string>,
   middle: { e10?: number; diesel?: number } | undefined,
+  placeOf: (postcode: string) => Locality | null,
 ): Averages {
   const groups: Record<string, [number[], number[]]> = { GB: [[], []] };
   for (const [id, p] of Object.entries(prices)) {
     const pc = postcodes[id];
     if (!pc) continue;
-    const area = areaOf(pc);
-    const g = (groups[area] ??= [[], []]);
+    const at = placeOf(pc);
+    const gs = ['GB', ...(at ? levelKeys(at) : [])].map((k) => (groups[k] ??= [[], []]));
     FUELS.forEach((f, i) => {
       if (!counts(p[f], pc, middle?.[f])) return;
-      groups.GB[i].push(p[f]!.p);
-      g[i].push(p[f]!.p);
+      for (const g of gs) g[i].push(p[f]!.p);
     });
   }
-  return Object.fromEntries(Object.entries(groups).map(([k, [a, b]]) => [k, [mean(a), mean(b)]]));
+  const meanOf = (v: number[]) => (v.length >= MIN_STATIONS ? mean(v) : null);
+  return Object.fromEntries(Object.entries(groups).map(([k, [a, b]]) => [k, [meanOf(a), meanOf(b)]]));
 }
 
-// The file the page reads: each collection's time and averages, oldest first, only the last 30 days.
+// data/averages.json: every collection's time and averages since recording began, oldest first (kept, John, November 1st, for
+// facts reaching further back later).
 export type AveragesFile = { collections: [string, Averages][] };
+// What the page loads (scripts/lib/pageData.ts): Great Britain's averages over the last 30 days, for the charts; every level at the
+// first collection and the latest, for the list and its facts; and the council areas, to know which levels are a level's neighbours.
+export type AveragesPage = { gb: [string, Averages[string]][]; first: [string, Averages]; latest: [string, Averages]; locals: Locality[] };
 export function keepRecent(rows: [string, Averages][]): [string, Averages][] {
   const sorted = [...rows].sort((a, b) => Date.parse(a[0]) - Date.parse(b[0]));
   if (!sorted.length) return [];
@@ -52,11 +56,11 @@ export function keepRecent(rows: [string, Averages][]): [string, Averages][] {
 }
 
 export type Point = { t: number; p: number };
-// One series for the chart, from the file: an area's (or Great Britain's) average for one fuel at each collection.
-export const seriesOf = (file: AveragesFile, key: string, fuel: Fuel): Point[] =>
-  file.collections.flatMap(([t, a]) => {
-    const v = a[key]?.[FUELS.indexOf(fuel)];
-    return v === null || v === undefined ? [] : [{ t: Date.parse(t), p: v }];
+// Great Britain's series for the chart: its average for one fuel at each collection.
+export const gbSeries = (page: AveragesPage, fuel: Fuel): Point[] =>
+  page.gb.flatMap(([t, v]) => {
+    const p = v[FUELS.indexOf(fuel)];
+    return p === null ? [] : [{ t: Date.parse(t), p }];
   });
 
 // The eight stations' average at each collection time: each station's price in force then (its known prices with the time each was

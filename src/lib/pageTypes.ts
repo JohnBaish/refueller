@@ -34,8 +34,9 @@ export type PageIndex = {
   route: { file: string; credit: string } | null;
   // Place names for the journey planner (data/places.json); null without.
   places: { file: string } | null;
-  // "Average prices" (data/averages.json, src/lib/averages.ts), loaded with the results; null without the file.
-  averages: { file: string } | null;
+  // "The wider picture" (data/averages.json, src/lib/averages.ts), loaded with the results, and the folder of per-area council
+  // lookups (data/council-areas.json, src/lib/levels.ts); null without the files.
+  averages: { file: string; councils: string } | null;
   // Cities and towns for describing a journey's route (src/lib/routeWords.ts), from data/places.json; null without it.
   towns: { file: string } | null;
 };

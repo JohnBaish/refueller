@@ -1822,3 +1822,54 @@ and the footer's "how you sorted the list". The `sort-mockups` and `feature-sort
 At John's request, Claude ran the "Delete merged branches" workflow itself (started through GitHub's API): a trial run first
 (run 41328459377: two merged branches, nothing unmerged), then the real run (run 41328490691), which deleted `feature-sort` and
 `sort-mockups`. Only `main` is left.
+
+### 2026-11-01 — averages at every level: mock-ups A and B (branch `levels-mockups`, design only)
+
+**John** asked for a card of average prices just before the journey planner, at every level for RG4 7SS (these eight, RG4,
+Reading, Berkshire, South East, England, Great Britain), each with a fact. **John decided:** RG4 goes (five stations, four of them
+in the eight); a mix of facts, the most interesting; keep the averages longer than 30 days; no government weekly figures (UK not
+GB, measured differently). He asked to see both versions. **Mock-ups** drawn into the built page in the browser only
+(`design/mock/levels-mock.cjs`; no app code), from the 4.15pm collection on November 1st: **A**, John's card, "Averages around you"
+(draft heading), after "The wider picture"; **B**, the same list inside "The wider picture", in place of its key, with the RG line
+taken out of the charts. Pictures `design/previews/levels/`. **How the figures were made** (scratchpad only, not kept): each
+station's postcode looked up in OS Open Names (October 2026 download, checksum matched) for its council, region and country, the
+ceremonial county from Hindcaster's Lieutenancies Act table, unusual prices left out; the 104 stations whose postcodes Open Names
+doesn't have are left out of the levels below Great Britain (a fallback by position is needed if built). Facts (drafts): eight,
+unleaded down 0.8p since October 30th; Reading 1.3p less than Berkshire; Berkshire the second dearest of England's counties for
+unleaded after the Isle of Wight; South East the dearest of the nine regions for both fuels; England's county averages 169.5p
+(West Yorkshire) to 179.0p (Isle of Wight); Wales the cheapest nation for both fuels, Scotland the dearest. RG postcode area's
+figures match `data/averages.json` exactly. No errors, no sideways scroll at 1200px or 390px with touch, light and dark.
+
+**John's answers (same day):** option B (the list inside "The wider picture", in place of the key; the RG line out of the
+charts); the way facts are chosen and their wording agreed (a ranking at either end first, then a clear gap from the level above,
+then the change since recording began); heading: on reflection John kept "The wider picture" ("Averages near here" dropped).
+
+### 2026-11-01 — "The wider picture": averages at every level, built (branch `feature-levels`, not merged)
+
+**John:** build B. **Where a postcode is:** `scripts/build-council-areas.ts` (`npm run council-areas <Open Names folder>`) makes
+`data/council-areas.json` (1 MB) from OS Open Names (October 2026, checksum matched OS's): 350 council areas (the district or borough
+where there is one, as Maidstone in Kent, a London borough or Leeds; otherwise the unitary authority, as Reading), each with its
+ceremonial county and region in England (Hindcaster's Lieutenancies Act table; "West Midlands ceremonial county" and "West Midlands
+region" as Hindcaster names them) and its country; and, per postcode area, each district's and sector's usual council area plus the
+58,311 postcodes that aren't in their sector's usual one, so a new or mistyped postcode still finds one. Stockton-on-Tees (split by
+the Tees) has no county. **The averages:** `averagesFor()` (src/lib/averages.ts) now gives Great Britain and every level ("C:", "K:",
+"R:", "N:"; postcode areas dropped), null where fewer than five stations sell the fuel; `scripts/build-history.ts` keeps every
+collection since October 30th (older ones kept from the file once git no longer has them): `data/averages.json` 93 KB for seven
+collections (about 13 KB a collection). **The page:** `src/lib/levels.ts` (lookup; which rows show: a level covering the same
+council areas as the one above, or with the same name, shown once, so Rutland and Greater London appear once; the facts by John's
+rule: an end of the group, then a gap of 1p or more from the row below, then a change of 0.5p or more, then the gap; England's row
+the range across its counties, Scotland's and Wales's across their council areas; Great Britain's the three nations).
+`scripts/lib/pageData.ts` writes `averages-<collected>.json` (Great Britain's 30 days for the charts, every level at the first and
+latest collections, the council areas: 10 KB compressed) and `councils-<made>/<area>.json` (a few KB each), loaded with the results,
+so the website only sees the postcode area. `src/components/Averages.tsx`: the list in place of the key (the eight and Great
+Britain carry their line), charts with two lines. **Drafts for John:** an "About these figures" paragraph on "The wider picture";
+the footer's credit now begins "Postcode and place positions, and council areas:"; "Unleaded is down 0.6p since October 31st." when
+the eight's record starts after ours. **Checked:** `npm run check` (new `scripts/check-levels.ts`: the lookup, real council areas,
+the RG4 7SS rows and facts as the mock-up, Rutland, Greater London, Wales, fewer than five stations, the rule's order; moving the
+gap before the ranking, and dropping the five-station minimum, each made checks fail, then restored), lint, type-check, build. In
+Chromium at 1200px and 390px with touch, light and dark: RG4 7SS, RG4, Caversham, CF10 1EP, EH1 1YZ, NW4 4BT, LE15 6AA, TR21 0JY,
+B1 1BB; the chart's tip; only area files asked for, nothing typed sent; no errors, no sideways scroll. Pictures
+`design/previews/levels/built-*.png`. **Mistake, owned up to:** while checking that a deliberate break was caught, `git checkout` of
+`src/lib/averages.ts` threw away that file's earlier edits too; noticed at once and re-applied, then all checks run again.
+**Noticed:** Great Britain shows 172.6p unleaded here (the site's own mean, 172.56p) where the mock-up said 172.5p (my first sum,
+172.54p, used today's station list for older collections).

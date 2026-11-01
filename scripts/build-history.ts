@@ -3,14 +3,18 @@
 // with the time it was set, from the versions of data/prices.json in git (every collection is a commit to main). Fuel Finder keeps
 // no earlier prices, so this is the only history there is (design/probe-result-history-2026-10-31.md). Rebuilt from git each
 // time, so it can't drift: run by the "Price history" workflow after each collection, which fetches only the last 33 days of git.
-// It also writes data/averages.json: the average price in Great Britain and in each postcode area at every collection in the last 30
-// days, from the versions of data/prices.json and data/stations.json.
+// It also writes data/averages.json: the average price in Great Britain and at every level (council area, county, region, country;
+// data/council-areas.json, src/lib/levels.ts) at every collection since recording began, from the versions of data/prices.json and
+// data/stations.json. Collections older than the git it can see are kept from the file as it was (John, November 1st: keep them).
 //   node scripts/build-history.ts
 import { execFileSync } from 'node:child_process';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { HISTORY_DAYS, trim, withPrice, type Hist } from '../src/lib/history.ts';
-import { AVERAGE_DAYS, averagesFor, keepRecent, type Averages } from '../src/lib/averages.ts';
+import { averagesFor, type Averages, type AveragesFile } from '../src/lib/averages.ts';
+import { AVERAGE_DAYS } from '../src/lib/averages.ts';
+import { localIndex, type CouncilAreas } from '../src/lib/levels.ts';
+import { postcodeArea } from '../src/lib/search.ts';
 import type { Price } from '../src/lib/search.ts';
 
 type Version = { collected: string; middle?: { e10?: number; diesel?: number }; prices: Record<string, { e10?: Price; diesel?: Price }> };
@@ -48,17 +52,25 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   if (before) shas.push(before);
   const versions: Version[] = shas.map((sha) => JSON.parse(git('show', `${sha}:data/prices.json`)));
   versions.push(JSON.parse(readFileSync(join(root, 'data/prices.json'), 'utf8')));
-  // Each collection's averages, with the station list of the same commit (for postcodes).
+  // Each collection's averages, with the station list of the same commit (for postcodes), and where each postcode is.
+  const council: CouncilAreas = JSON.parse(readFileSync(join(root, 'data/council-areas.json'), 'utf8'));
+  const placeOf = (pc: string) => {
+    const i = localIndex(council.areas[postcodeArea(pc)], pc);
+    return i === null ? null : council.locals[i];
+  };
   const postcodesOf = (text: string) => Object.fromEntries((JSON.parse(text).stations as { id: string; postcode: string }[]).map((s) => [s.id.slice(0, 12), s.postcode]));
-  const rows: [string, Averages][] = shas.map((sha, i) => [versions[i].collected, averagesFor(versions[i].prices, postcodesOf(git('show', `${sha}:data/stations.json`)), versions[i].middle)]);
+  const rows: [string, Averages][] = shas.map((sha, i) => [versions[i].collected, averagesFor(versions[i].prices, postcodesOf(git('show', `${sha}:data/stations.json`)), versions[i].middle, placeOf)]);
   const now = versions[versions.length - 1];
-  rows.push([now.collected, averagesFor(now.prices, postcodesOf(readFileSync(join(root, 'data/stations.json'), 'utf8')), now.middle)]);
-  const kept = keepRecent([...new Map(rows.map((r) => [r[0], r])).values()]);
+  rows.push([now.collected, averagesFor(now.prices, postcodesOf(readFileSync(join(root, 'data/stations.json'), 'utf8')), now.middle, placeOf)]);
+  const made = new Map(rows.map((r) => [r[0], r]));
+  const oldest = Math.min(...[...made.keys()].map((t) => Date.parse(t)));
+  const older = (existsSync(join(root, 'data/averages.json')) ? (JSON.parse(readFileSync(join(root, 'data/averages.json'), 'utf8')) as AveragesFile).collections : []).filter(([t]) => Date.parse(t) < oldest);
+  const kept = [...older, ...made.values()].sort((a, b) => Date.parse(a[0]) - Date.parse(b[0]));
   writeFileSync(
     join(root, 'data/averages.json'),
-    `{"note":"The mean unleaded and diesel price at each collection in the last ${AVERAGE_DAYS} days, for Great Britain (GB) and each postcode area: [unleaded, diesel], unusual prices not included (scripts/build-history.ts).",\n"collections":[\n${kept.map((r) => JSON.stringify(r)).join(',\n')}]}\n`,
+    `{"note":"The mean unleaded and diesel price at each collection since recording began, for Great Britain (GB) and each council area (C:), ceremonial county (K:), region (R:) and country (N:): [unleaded, diesel], unusual prices not included, null where fewer than five stations sell the fuel (scripts/build-history.ts).",\n"collections":[\n${kept.map((r) => JSON.stringify(r)).join(',\n')}]}\n`,
   );
-  console.log(`averages: ${kept.length} collections`);
+  console.log(`averages: ${kept.length} collections (${older.length} kept from before)`);
   const h = makeHistory(versions);
   const lines = Object.entries(h.stations).map(([id, v]) => `${JSON.stringify(id)}:${JSON.stringify(v)}`);
   writeFileSync(

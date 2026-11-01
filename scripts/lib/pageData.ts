@@ -19,12 +19,13 @@ import { join } from 'node:path';
 import { higherPricesUsual, positionAgrees, postcodeArea, type BankHolidays, type Outcodes, type Price, type Station } from '../../src/lib/search.ts';
 import type { DetailRow, PageIndex, PriceCell, RoadFile } from '../../src/lib/pageTypes.ts';
 import { trim, withPrice, type Hist } from '../../src/lib/history.ts';
-import { AVERAGE_DAYS } from '../../src/lib/averages.ts';
+import { AVERAGE_DAYS, keepRecent, type AveragesFile, type AveragesPage } from '../../src/lib/averages.ts';
+import type { CouncilAreas } from '../../src/lib/levels.ts';
 import { toBritishGrid } from './grid.ts';
 
 export type { DetailRow, PageIndex, PriceCell };
 
-export const SOURCES = ['data/postcodes/README.md', 'data/stations.json', 'data/prices.json', 'data/outcodes.json', 'data/bank-holidays.json', 'data/road-miles.json', 'data/history.json', 'data/route-roads.json', 'data/places.json', 'data/averages.json'];
+export const SOURCES = ['data/postcodes/README.md', 'data/stations.json', 'data/prices.json', 'data/outcodes.json', 'data/bank-holidays.json', 'data/road-miles.json', 'data/history.json', 'data/route-roads.json', 'data/places.json', 'data/averages.json', 'data/council-areas.json'];
 
 const round4 = (n: number) => Math.round(n * 1e4) / 1e4;
 const cell = (p: Price | undefined): PriceCell => (p ? [p.p, p.u, p.x ? 1 : 0] : 0);
@@ -170,12 +171,25 @@ export function writePageData(root: string) {
       });
     writeFileSync(join(out, index.towns.file), JSON.stringify(towns));
   }
-  // "Average prices" (scripts/build-history.ts), named by the collection it ends with.
-  if (existsSync(join(root, 'data/averages.json'))) {
-    const av = read('data/averages.json');
-    const last = av.collections[av.collections.length - 1]?.[0] ?? 'none';
-    index.averages = { file: `averages-${String(last).replace(/[^0-9TZ]/g, '').slice(0, 15)}.json` };
-    writeFileSync(join(out, index.averages.file), JSON.stringify({ collections: av.collections }));
+  // "The wider picture" (scripts/build-history.ts), named by the collection it ends with: Great Britain over the last 30 days for the
+  // charts, and every level at the first and latest collections for the list (src/lib/levels.ts). Plus, one file per postcode area,
+  // which council area each postcode there is in (data/council-areas.json), loaded with the results, so the website only ever sees
+  // the area, as with the postcodes.
+  if (existsSync(join(root, 'data/averages.json')) && existsSync(join(root, 'data/council-areas.json'))) {
+    const av: AveragesFile = read('data/averages.json');
+    const ca: CouncilAreas = read('data/council-areas.json');
+    const last = av.collections[av.collections.length - 1];
+    if (last) {
+      const stamp = String(last[0]).replace(/[^0-9TZ]/g, '').slice(0, 15);
+      const recent = keepRecent(av.collections);
+      const page: AveragesPage = { gb: recent.map(([t, a]) => [t, a.GB ?? [null, null]]), first: av.collections[0], latest: last, locals: ca.locals };
+      // The lookups change only when data/council-areas.json is rebuilt, so their folder is named by the day it was made.
+      const made = /Made (\d{4}-\d{2}-\d{2})/.exec(readFileSync(join(root, 'data/council-areas.json'), 'utf8'))?.[1] ?? 'unknown';
+      index.averages = { file: `averages-${stamp}.json`, councils: `councils-${made}` };
+      writeFileSync(join(out, index.averages.file), JSON.stringify(page));
+      mkdirSync(join(out, index.averages.councils));
+      for (const [area, lk] of Object.entries(ca.areas)) writeFileSync(join(out, index.averages.councils, `${area}.json`), JSON.stringify(lk));
+    }
   }
   writeFileSync(join(out, 'index.json'), JSON.stringify(index));
   return index;

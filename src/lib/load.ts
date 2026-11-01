@@ -3,7 +3,8 @@
 import type { DetailRow, PageIndex, RoadFile } from './pageTypes.ts';
 import type { RouteFile } from './route.ts';
 import type { PlaceFile } from './places.ts';
-import type { AveragesFile } from './averages.ts';
+import type { AveragesPage } from './averages.ts';
+import type { AreaLookup } from './levels.ts';
 
 let index: Promise<PageIndex> | null = null;
 const areas = new Map<string, Promise<DetailRow[]>>();
@@ -98,12 +99,23 @@ export function loadTowns(file: string): Promise<[string, number, number, number
   });
 }
 
-// "Average prices", loaded with the results.
-let averagesFile: { file: string; p: Promise<AveragesFile> } | null = null;
-export function loadAverages(file: string): Promise<AveragesFile> {
-  if (averagesFile?.file !== file) averagesFile = { file, p: json<AveragesFile>(`/data/${encodeURIComponent(file)}`) };
+// "The wider picture", loaded with the results.
+let averagesFile: { file: string; p: Promise<AveragesPage> } | null = null;
+export function loadAverages(file: string): Promise<AveragesPage> {
+  if (averagesFile?.file !== file) averagesFile = { file, p: json<AveragesPage>(`/data/${encodeURIComponent(file)}`) };
   return averagesFile.p.catch((e) => {
     averagesFile = null;
+    throw e;
+  });
+}
+
+// Which council area each postcode in one postcode area is in (src/lib/levels.ts), loaded with the results.
+const councilFiles = new Map<string, Promise<AreaLookup>>();
+export function loadCouncils(folder: string, area: string): Promise<AreaLookup> {
+  const key = `${folder}/${area}`;
+  if (!councilFiles.has(key)) councilFiles.set(key, json<AreaLookup>(`/data/${encodeURIComponent(folder)}/${encodeURIComponent(area)}.json`));
+  return councilFiles.get(key)!.catch((e) => {
+    councilFiles.delete(key);
     throw e;
   });
 }

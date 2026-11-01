@@ -196,6 +196,13 @@ function About() {
         or between 4.15pm and 10.15am, shows only its later change.
       </p>
       <p>
+        {/* Draft for John (November 1st): the averages at every level. */}
+        <strong>The wider picture</strong> gives the average price at the stations shown, then in the council area, county, region
+        and country they’re in, and in Great Britain, each with a fact picked from the figures. Averages leave out unusual prices,
+        and a council area, county or region is only shown when at least five of its stations sell the fuel. The council area is
+        worked out from the postcode, using Ordnance Survey’s records of which council area each postcode is in.
+      </p>
+      <p>
         <strong>Find cheaper fuel near the route</strong> works out the quickest route between the places you type, on your
         device, from Ordnance Survey’s map of motorways, A roads and B roads, using rough speeds for each kind of road. It lists
         the eight cheapest stations within about two miles of that route that add no more than three miles and about six minutes to
@@ -314,7 +321,7 @@ export default function App() {
                 .
               </p>
               <p>
-                Postcode and place positions: Contains OS data © Crown Copyright and database rights 2026. Contains Royal Mail data © Royal
+                Postcode and place positions, and council areas: Contains OS data © Crown Copyright and database rights 2026. Contains Royal Mail data © Royal
                 Mail copyright and database right 2026. Contains National Statistics data © Crown copyright and database right 2026.
               </p>
               <p>Road distances: {ROAD_CREDIT}.</p>

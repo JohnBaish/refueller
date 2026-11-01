@@ -2,7 +2,8 @@
 // mean for Great Britain and each postcode area, keeping 30 days, the eight stations' series, and the real file's figures.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { areaOf, averagesFor, counts, eightSeries, keepRecent, pence1, seriesOf, AVERAGE_DAYS, type AveragesFile } from '../src/lib/averages.ts';
+import { averagesFor, counts, eightSeries, keepRecent, pence1, AVERAGE_DAYS, type AveragesFile } from '../src/lib/averages.ts';
+import type { Locality } from '../src/lib/levels.ts';
 import { steps, trim } from '../src/lib/history.ts';
 
 let failures = 0;
@@ -17,12 +18,6 @@ async function check(name: string, fn: () => void | Promise<void>) {
 }
 const u = '2026-10-30T09:00:00Z';
 
-await check('postcode areas: RG4 7HN is RG, B7 5SA is B, w1a 1aa is W', () => {
-  assert.equal(areaOf('RG4 7HN'), 'RG');
-  assert.equal(areaOf('B7 5SA'), 'B');
-  assert.equal(areaOf('w1a 1aa'), 'W');
-});
-
 await check('which prices count: unusual ones don’t, except a higher price on the islands (as on the page)', () => {
   assert.ok(counts({ p: 170, u }, 'RG4 7HN', 172));
   assert.ok(!counts({ p: 299.9, u, x: 1 }, 'RG4 7HN', 172));
@@ -31,20 +26,25 @@ await check('which prices count: unusual ones don’t, except a higher price on 
   assert.ok(!counts(undefined, 'RG4 7HN', 172));
 });
 
-await check('the mean for Great Britain and each area, to two decimals; null where none sells the fuel', () => {
-  const a = averagesFor(
-    {
-      a: { e10: { p: 170, u }, diesel: { p: 200, u } },
-      b: { e10: { p: 171, u } },
-      c: { e10: { p: 299.9, u, x: 1 }, diesel: { p: 199, u } },
-      d: { e10: { p: 168.5, u } },
-    },
-    { a: 'RG4 7HN', b: 'RG1 8FR', c: 'RG30 1AW', d: 'B7 5SA' },
-    { e10: 171, diesel: 199 },
-  );
-  assert.deepEqual(a.RG, [170.5, 199.5], 'the unusual 299.9p left out');
-  assert.deepEqual(a.B, [168.5, null]);
-  assert.deepEqual(a.GB, [169.83, 199.5]);
+await check('the mean for Great Britain and every level, to two decimals; null where fewer than five stations sell the fuel', () => {
+  const reading: Locality = ['Reading', 'Berkshire', 'South East England', 'England'];
+  const leeds: Locality = ['Leeds', 'West Yorkshire', 'Yorkshire and the Humber', 'England'];
+  const prices: Record<string, { e10?: { p: number; u: string; x?: 1 }; diesel?: { p: number; u: string; x?: 1 } }> = {};
+  const postcodes: Record<string, string> = {};
+  for (let i = 0; i < 6; i++) {
+    prices[`r${i}`] = { e10: { p: 170 + i, u }, ...(i < 4 ? { diesel: { p: 200, u } } : {}) };
+    postcodes[`r${i}`] = 'RG4 7HN';
+  }
+  prices.u = { e10: { p: 299.9, u, x: 1 } };
+  postcodes.u = 'RG1 8FR';
+  prices.l = { e10: { p: 160, u } };
+  postcodes.l = 'LS1 1AA';
+  const a = averagesFor(prices, postcodes, { e10: 171, diesel: 199 }, (pc) => (pc.startsWith('LS') ? leeds : reading));
+  assert.deepEqual(a['C:Reading'], [172.5, null], 'six unleaded (the unusual 299.9p left out), only four diesel');
+  assert.deepEqual(a['K:Berkshire'], [172.5, null]);
+  assert.deepEqual(a['N:England'], [170.71, null], 'Leeds counts in England: (170 + … + 175 + 160) / 7');
+  assert.deepEqual(a['C:Leeds'], [null, null], 'one station is fewer than five');
+  assert.deepEqual(a.GB, [170.71, null]);
 });
 
 await check(`only the last ${AVERAGE_DAYS} days kept, oldest first`, () => {
@@ -80,16 +80,16 @@ await check('pence to one decimal', () => {
   assert.equal(pence1(176.26), '176.3p');
 });
 
-await check('the real file: Great Britain and RG at the first collections (October 30th), as worked out for the mock-ups', () => {
+await check('the real file: every level at every collection since October 30th; Reading and Great Britain at the latest', () => {
   const file: AveragesFile = JSON.parse(readFileSync(new URL('../data/averages.json', import.meta.url), 'utf8'));
-  const gb = seriesOf(file, 'GB', 'e10');
-  assert.ok(gb.length >= 1);
-  const first = file.collections.find(([at]) => at === '2026-10-30T10:15:04.214Z' || at.startsWith('2026-10-30T10:15'));
-  if (first) {
-    // RG has no island stations, so these match the mock-ups' means exactly.
-    assert.deepEqual(first[1].RG, [176.74, 201.32]);
+  assert.ok(file.collections[0][0].startsWith('2026-10-30T09:08'), 'kept from the first collection');
+  for (const [, a] of file.collections) assert.ok(Object.keys(a).length > 300, 'every level present');
+  const nov1 = file.collections.find(([at]) => at.startsWith('2026-11-01T16:15'));
+  if (nov1) {
+    // As worked out for the mock-ups from OS Open Names (Reading's 19 stations).
+    assert.deepEqual(nov1[1]['C:Reading'], [174.26, 200.1]);
+    assert.deepEqual(nov1[1]['R:South East England'].map((v) => Math.round(v! * 10) / 10), [173.8, 200.2]);
   }
-  for (const [, a] of file.collections) assert.ok(Object.keys(a).length > 100, 'every area present');
 });
 
 if (failures) {

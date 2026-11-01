@@ -1,20 +1,22 @@
 import { useEffect, useState, type PointerEvent } from 'react';
 import { stationSteps, type Histories } from './History.tsx';
-import { eightSeries, pence1, seriesOf, AVERAGE_DAYS, type AveragesFile, type Point } from '../lib/averages.ts';
+import { eightSeries, gbSeries, pence1, AVERAGE_DAYS, FUELS, type AveragesPage, type Point } from '../lib/averages.ts';
+import { levelRows, localIndex, pence, type AreaLookup, type Pair } from '../lib/levels.ts';
 import { axisDate, dateWords } from '../lib/history.ts';
-import { loadAverages } from '../lib/load.ts';
+import { loadAverages, loadCouncils } from '../lib/load.ts';
 import type { PageIndex } from '../lib/pageTypes.ts';
 import { useIsNarrow } from '../lib/responsive.ts';
-import type { Row } from '../lib/search.ts';
+import { postcodeArea, type Row } from '../lib/search.ts';
 
-// "Average prices" (John, 1 November 2026; option B of the mock-ups; no dots on any line, John): under the list, a chart for unleaded and one for diesel, each
-// on its own scale, with the average at these eight stations, in the postcode area and across Great Britain at each collection over
-// the last 30 days. The mean of the usual prices (src/lib/averages.ts). Colours: the eight in the graph's terracotta (as "this
-// station" in the price history), the area in blue (checked with the dataviz validator against terracotta, light and dark), Great
-// Britain in grey and dashed (as the average there), so no line is told apart by colour alone.
+// "The wider picture" (John, 1 November 2026; no dots on any line, John): under the list, the average price at these eight
+// stations and in their council area, county, region, country and Great Britain, each with a fact (src/lib/levels.ts; John,
+// November 1st, option B of design/previews/levels/), in place of the key; then a chart for unleaded and one for diesel, each on its
+// own scale, with the eight and Great Britain at each collection over the last 30 days (the postcode area's line taken out with
+// option B). The mean of the usual prices (src/lib/averages.ts). Colours: the eight in the graph's terracotta (as "this station" in
+// the price history), Great Britain in grey and dashed (as the average there), so neither is told apart by colour alone.
 
 type Fuel = 'e10' | 'diesel';
-type Line = { key: 'eight' | 'area' | 'gb'; label: string; pts: Point[] };
+type Line = { key: 'eight' | 'gb'; label: string; pts: Point[] };
 const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight'];
 
 function Chart({ lines, fuelName, narrow, start, end }: { lines: Line[]; fuelName: string; narrow: boolean; start: number; end: number }) {
@@ -112,57 +114,86 @@ function Chart({ lines, fuelName, narrow, start, end }: { lines: Line[]; fuelNam
   );
 }
 
-export function AveragesSection({ index, rows, histories, area }: { index: PageIndex; rows: Row[]; histories: Histories; area: string }) {
+export function AveragesSection({ index, rows, histories, where }: { index: PageIndex; rows: Row[]; histories: Histories; where: string }) {
   const narrow = useIsNarrow(720);
-  const [file, setFile] = useState<AveragesFile | null>(null);
+  const [page, setPage] = useState<AveragesPage | null>(null);
+  const [lookup, setLookup] = useState<AreaLookup | null>(null);
+  const area = postcodeArea(where);
   useEffect(() => {
     let live = true;
-    if (index.averages) loadAverages(index.averages.file).then((f) => live && setFile(f), () => live && setFile(null));
+    if (index.averages) {
+      loadAverages(index.averages.file).then((f) => live && setPage(f), () => live && setPage(null));
+      // Which council area the place is in; without it, the list goes straight from the eight to Great Britain.
+      loadCouncils(index.averages.councils, area).then((l) => live && setLookup(l), () => live && setLookup(null));
+    }
     return () => {
       live = false;
     };
-  }, [index.averages?.file]);
-  if (!index.averages || !file || !file.collections.length) return null;
-  const times = file.collections.map(([t]) => Date.parse(t));
+  }, [index.averages, area]);
+  if (!index.averages || !page || !page.gb.length) return null;
+  const times = page.gb.map(([t]) => Date.parse(t));
   const [start, end] = [times[0], times[times.length - 1]];
-  const areaLabel = `${area} postcodes`;
+  // The eight shown that sell each fuel at a usual price, and their average at each collection.
+  const selling = (fuel: Fuel) => rows.filter((r) => r.prices[fuel] && !r.prices[fuel]!.x);
+  const eightPts = (fuel: Fuel) => eightSeries(selling(fuel).map((r) => stationSteps(r, histories, fuel)), times);
+  const eightLabel = `These ${WORDS[rows.length]} stations`;
   const linesFor = (fuel: Fuel): Line[] => {
-    // The eight shown that sell the fuel at a usual price.
-    const selling = rows.filter((r) => r.prices[fuel] && !r.prices[fuel]!.x);
-    const eight = eightSeries(
-      selling.map((r) => stationSteps(r, histories, fuel)),
-      times,
-    );
-    const eightLabel = selling.length === rows.length ? `These ${WORDS[rows.length]} stations` : `The ${WORDS[selling.length]} here that sell it`;
+    const n = selling(fuel).length;
     return [
-      { key: 'eight', label: eightLabel, pts: eight },
-      { key: 'area', label: areaLabel, pts: seriesOf(file, area, fuel) },
-      { key: 'gb', label: 'Great Britain', pts: seriesOf(file, 'GB', fuel) },
+      { key: 'eight', label: n === rows.length ? eightLabel : `The ${WORDS[n]} here that sell it`, pts: eightPts(fuel) },
+      { key: 'gb', label: 'Great Britain', pts: gbSeries(page, fuel) },
     ];
   };
+  const meanNow = (fuel: Fuel) => {
+    const ps = selling(fuel).map((r) => r.prices[fuel]!.p);
+    return ps.length ? Math.round((ps.reduce((a, b) => a + b, 0) / ps.length) * 100) / 100 : null;
+  };
+  // The eight's change since the first collection at which every one's price is known, for both fuels.
+  const series = FUELS.map(eightPts);
+  const t0 = Math.max(...series.filter((s) => s.length).map((s) => s[0].t));
+  const at0 = series.map((s) => s.find((p) => p.t === t0)?.p ?? null) as Pair;
+  const li = lookup ? localIndex(lookup, where) : null;
+  const list = levelRows({
+    eight: { name: eightLabel, now: [meanNow('e10'), meanNow('diesel')], then: Number.isFinite(t0) ? at0 : null, since: Number.isFinite(t0) ? dateWords(t0, false) : '' },
+    local: li === null ? null : (page.locals[li] ?? null),
+    locals: page.locals,
+    latest: page.latest[1],
+    first: page.first[1],
+    since: dateWords(Date.parse(page.first[0]), false),
+  });
   const filling = end - start < (AVERAGE_DAYS - 1) * 86_400_000;
+  const price = (p: number | null) => (p === null ? '–' : pence(p));
   return (
     <section className="avg-sec" data-noprint>
       <h3>The wider picture</h3>
       <p>
         {/* John's wording (1 November): one sentence while the record builds up, another once it covers the whole 30 days. */}
         {filling
-          ? `Average prices (excluding unusual ones) as collected by Refueller. This history will eventually show ${AVERAGE_DAYS} days. It is currently building up since recording began on ${dateWords(start, false)}.`
+          ? `Average prices (excluding unusual ones) as collected by Refueller. This history will eventually show ${AVERAGE_DAYS} days. It is currently building up since recording began on ${dateWords(Date.parse(page.first[0]), false)}.`
           : `Average prices over the last ${AVERAGE_DAYS} days as collected by Refueller. Unusual prices are not included.`}
       </p>
-      <div className="hist-legend">
-        <span>
-          <i className="a-key-eight" />
-          These {WORDS[rows.length]} stations
-        </span>
-        <span>
-          <i className="a-key-area" />
-          {areaLabel}
-        </span>
-        <span>
-          <i className="a-key-gb" />
-          Great Britain
-        </span>
+      {/* The averages at every level (John, November 1st: option B), in place of the charts' key: the two rows drawn in the charts
+          carry their line. */}
+      <div className="lv-box">
+        <div className="lv-row lv-head" aria-hidden="true">
+          <span>Average</span>
+          <span className="lv-p">Unleaded</span>
+          <span className="lv-p">Diesel</span>
+        </div>
+        {list.map((r) => (
+          <div className="lv-row" key={r.key}>
+            <span className="lv-name">
+              {(r.key === 'eight' || r.key === 'GB') && <i className={r.key === 'eight' ? 'a-key-eight' : 'a-key-gb'} aria-hidden="true" />}
+              {r.name}
+            </span>
+            <span className="lv-p">{price(r.now[0])}</span>
+            <span className="lv-p">{price(r.now[1])}</span>
+            <span className="lv-small">
+              Unleaded <b>{price(r.now[0])}</b> · Diesel <b>{price(r.now[1])}</b>
+            </span>
+            {r.fact && <span className="lv-fact">{r.fact}</span>}
+          </div>
+        ))}
       </div>
       <div className="avg-charts">
         <div className="hist avg-ch">
