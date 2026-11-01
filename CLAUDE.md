@@ -1468,3 +1468,13 @@ hours are today's, as Refueller can't know when you'll get there." deleted (`src
 into `main` after bringing in its data commits; checks, lint, type-check and build clean first. Live from Vercel's next build: John's
 wording changes, place names (journey planner and main search) with suggestions, "via" as "passes near", the route corridor, and a
 cheaper members-only Costco shown at the journey's ends.
+
+### 2026-11-01 — journey planner open at the bottom of the main page: to try (branch `journey-on-front`)
+
+**John:** see what it looks like with the journey planner promoted to the bottom of the front page, just above About. **What
+(`src/App.tsx`, `global.css`):** the link "Planning a journey? Find cheaper fuel near the route." is replaced by an open section
+(`JourneySection`, `.journey-front`): the heading "Find cheaper fuel near the route", the journey page's lead, and the same form (From,
+Via, To, Find, the hint); above the footer on the postcode screen, between the list and About on the results; hidden in print. Find
+opens the journey page as before. **Checked:** type-check, lint, build; in Chromium at 1200px and 390px with touch, light and dark: the
+postcode screen and RG4, the section above About, RG1 to BS1 typed there opens `#route/RG1/BS1`, no errors, no sideways scroll.
+Pictures `design/previews/journey-front-*.png`. Not merged.

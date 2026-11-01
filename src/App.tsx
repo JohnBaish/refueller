@@ -239,11 +239,16 @@ const fromRemembered = (): Target | null => {
 };
 const hashOf = (t: AppTarget) => (t.kind === 'route' ? routeHash(t) : t.kind === 'postcode' ? (t.inward ? fullHash(t.outcode, t.inward) : t.outcode) : t.kind === 'place' ? `@${t.place}${t.at ? `~${t.at}` : ''}` : `station/${t.area}/${t.id}`);
 
-// The way in to the journey planner: at the bottom, as it is secondary (John, 31 October).
-const JourneyLink = () => (
-  <p className="journey-link" data-noprint>
-    Planning a journey? <a href="#route">Find cheaper fuel near the route.</a>
-  </p>
+// The journey planner as an open section at the bottom of the main page, just above About (John, 1 November: to try).
+const JourneySection = () => (
+  <section className="journey-front" data-noprint>
+    <h3>Find cheaper fuel near the route</h3>
+    <p className="lead">
+      Type where you’re starting and where you’re going. Refueller finds the cheapest stations that add no more than three miles and about six minutes
+      to your journey.
+    </p>
+    <JourneyForm target={{ kind: 'route' }} />
+  </section>
 );
 
 export default function App() {
@@ -299,7 +304,7 @@ export default function App() {
         <SafetyNet key={target ? hashOf(target) : ''}>
           {route ? <JourneyResults target={route} /> : target && target.kind !== 'route' && <Results target={target} />}
         </SafetyNet>
-        {!route && <JourneyLink />}
+        {!route && <JourneySection />}
         {!start && <About />}
         <footer className="footer-notice" data-noprint>
           {/* The source lines only where prices are shown; the postcode screen keeps just the project and privacy lines
