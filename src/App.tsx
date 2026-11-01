@@ -114,18 +114,19 @@ function About() {
     <section className="about">
       <h3>About these figures</h3>
       <p>
-        Prices and opening times come from the Government’s Fuel Finder service, which petrol stations are required to keep
-        up to date. Refueller collects them twice a day, at about 10.15am and 4.15pm. Under each price is how long it has
-        stayed the same. Stations report a price when it changes, so an older price may well still be right.
+        Prices and opening times come from the Government’s Fuel Finder service, to which petrol stations have to
+        report. Refueller collects them twice a day, at about 10.15am and 4.15pm. Underneath each price we show the period of
+        time it’s been in effect. Petrol stations only make a report when it changes, so a long period normally indicates stable
+        prices rather than an error.
       </p>
       <p>
-        Only unleaded (E10) and standard diesel are shown. A price below 100p or above 300p a litre is taken as a mistake and
+        Only unleaded (E10) and standard diesel are shown. A price below 100p or above 300p a litre is assumed to be a mistake and
         left out.
       </p>
-      <p>How to read the list:</p>
+      <p>The list:</p>
       <ul>
         <li>
-          <strong>Cheapest</strong> marks the lowest unleaded and the lowest diesel price among the stations shown. When that is at Costco, it says “Cheapest (Members only)”, and the lowest price anyone can buy is marked Cheapest too.
+          “Cheapest” marks the lowest unleaded and the lowest diesel price among the stations shown. When that is at Costco, it says “Cheapest (Members only)”, and the lowest price anyone can buy is marked “Cheapest” too.
         </li>
         <li>
           <strong>Members only</strong> marks Costco, which sells fuel only to its members.
@@ -136,16 +137,16 @@ function About() {
           A blue “Unusual price” note means the price is more than 30p away from the middle price across Great Britain,
           and may be a mistake, unless the station is in the Highlands and Islands of Scotland or on the Isles of Scilly,
           where higher prices are usual: there, a higher price isn’t marked. An unusual price is never marked as the
-          cheapest.
+          cheapest, in case it’s wrong.
         </li>
-        <li>A grey “Closed until …” means the station is closed now; its row is shown fainter.</li>
+        <li>A grey “Closed until …” means the station is closed now; its row is shown more faintly.</li>
         <li>
           “Opening hours look wrong” means the hours given by the station are unlikely to be right (often 6pm given for
           6am).
         </li>
       </ul>
       <p>
-        Distances are in a straight line from your postcode, or from the middle of its district if you type only the first half,
+        Distances are in a straight line from your postcode, or from the middle of its district if you only type the first half,
         so they’re approximate. Stations that Fuel
         Finder lists as temporarily closed are left out, and so are a few whose position on the map is far from their own
         postcode. Opening times are each station’s usual hours, including bank holidays, and may differ on the day.
@@ -154,14 +155,16 @@ function About() {
         <strong>Worth driving here?</strong> compares a station with the nearest open station in the list selling the same
         fuel. It works out how much fuel your money buys at the nearer station, how much less it would cost at this one, and
         how much fuel the extra miles there and back would use, from your car’s miles per gallon (36 for petrol and 43 for
-        diesel to start with, typical figures; change them to your car’s). The extra miles are by road from the middle of the
+        diesel as the defaults, typical figures; change them to your car’s). The extra miles are by road from the middle of the
         postcode district, even when you type a full postcode, using Ordnance Survey’s map of every road; they don’t allow for one-way streets or turns, so a sat
-        nav may give a little more. Where there’s no road figure, type your own. It doesn’t count your time or wear on the car.
+        nav may give a little more. Where there’s no road figure, type your own. It can’t factor in your time, wear and tear on the car or
+        whether you might be driving near there at some point anyway.
       </p>
       <p>
         <strong>Price history</strong> shows a station’s price over the last 14 days, against the average of the stations
-        shown. Fuel Finder gives only each station’s current price and when it was set, so the history is Refueller’s own
-        record, taken at each collection. A price that changed twice between collections shows only its latest change.
+        shown. Fuel Finder only gives each station’s current price and when it was set, so the history is Refueller’s own
+        record, taken at each collection. A price that changed twice between 10.15am and 4.15pm,
+        or between 4.15pm and 10.15am, shows only its latest change.
       </p>
       <p>
         <strong>Find cheaper fuel near the route</strong> works out the quickest route between the places you type, on your

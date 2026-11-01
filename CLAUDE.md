@@ -1346,3 +1346,16 @@ RG1 to BS1 and CF10 to BS1 at 1200px and 390px with touch, light and dark: the t
 
 John said merge; "Extra miles" stays on the end stations (helpful, John). `feature-journey` merged into `main` after bringing in its data
 commits; checks, lint, type-check and build clean first. Live from Vercel's next build. All the drafted journey wording stands.
+
+### 2026-11-01 — John's wording changes (branch `wording-2026-11-01`)
+
+**John** (after starting his review): the calculator panel's last sentence is now "The cost of your time, and any wear and tear on the car,
+would be additional." (`src/components/Calc.tsx`). "About these figures" (`src/App.tsx`): "…Fuel Finder service, to which petrol stations
+have to report."; "Underneath each price we show the period of time it's been in effect. Petrol stations only make a report when it
+changes, so a long period normally indicates stable prices rather than an error."; "is assumed to be a mistake"; "The list:"; "Cheapest"
+in quotes, not bold (and "marked “Cheapest” too" to match, Claude's); "An unusual price is never marked as the cheapest, in case it's
+wrong." (Claude's reading of "the end of the cheapest line": that sentence ends the list's line about the cheapest); "shown more
+faintly"; "if you only type the first half"; "as the defaults"; "It can't factor in your time, wear and tear on the car or whether you
+might be driving near there at some point anyway."; "Fuel Finder only gives"; "A price that changed twice between 10.15am and 4.15pm, or
+between 4.15pm and 10.15am, shows only its latest change." **Checked:** `npm run check`, lint, type-check, build; RG4 at 1200px and
+390px with touch: every new sentence present, the panel's sentence, "Cheapest" no longer bold, no errors, no sideways scroll. Not merged.

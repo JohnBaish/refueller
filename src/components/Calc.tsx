@@ -143,7 +143,7 @@ export function CalcPanel({ row, rows, origin, centreId, roads, onClose }: { row
               </p>
               <p className="calc-small">
                 {result.breakEven !== null && `It’s worth the trip if this station is at least ${result.breakEven.toFixed(1)}p a litre cheaper. `}
-                {origin.note} This doesn’t count your time or wear on the car.
+                {origin.note} The cost of your time, and any wear and tear on the car, would be additional.
               </p>
             </>
           ) : (
