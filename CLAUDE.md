@@ -1742,3 +1742,7 @@ From clockwheel `a6cb099`: §10 now asks sessions to delete a branch as soon as 
 work worth returning to (noted in the project's notes), tag dead unmerged work before deleting, check merged status with
 full history (cloud copies are often shallow), and list branches for John to delete, as cloud sessions can't (John).
 No app code changed.
+
+### 2026-11-01 — "Delete merged branches" workflow (straight to `main`)
+
+A "Delete merged branches" workflow (`.github/workflows/tidy-branches.yml`, Run workflow only, nothing scheduled): deletes only branches fully merged into `main`, never `main`, and only if a branch hasn't moved since it was checked; "Only list" (ticked by default) changes nothing; named unmerged branches can be added, each kept as an `archive/<name>` tag first. Added because cloud sessions can't delete branches (John: automate it, with no danger to the websites; the sites build from `main`, and deletions made by the job start no other workflows). Tested against a pretend GitHub here: the trial changed nothing; the real run deleted the merged branch and the named one (kept as a tag), and refused `main`. House style re-copied from clockwheel (§10 mentions it).

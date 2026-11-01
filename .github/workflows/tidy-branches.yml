@@ -1,0 +1,94 @@
+# Delete merged branches (house style §10, "Tidy branches as you go").
+# Started by hand only ("Run workflow"); nothing is scheduled.
+# It deletes only branches whose every commit is already on the default
+# branch (main), so nothing is lost, and never the default branch itself.
+# A branch is deleted only if it hasn't moved since it was checked.
+# Optionally, named unmerged branches can be deleted too: each is first
+# kept as a tag, archive/<name>, so its commits survive.
+# Branch deletions made by this job don't start other workflows, and the
+# websites build from main, so they're unaffected.
+name: Delete merged branches
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Only list what would be deleted (untick to delete)"
+        type: boolean
+        default: true
+      also_delete:
+        description: "Unmerged branches to delete too, exact names separated by spaces (each kept first as a tag, archive/<name>)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  tidy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Delete merged branches
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+          ALSO_DELETE: ${{ inputs.also_delete }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          git fetch --prune --tags origin '+refs/heads/*:refs/remotes/origin/*'
+          summary="$GITHUB_STEP_SUMMARY"
+          if [ "$DRY_RUN" = "true" ]; then mode="Trial run: nothing deleted"; did="would be deleted"; else mode="Deleting"; did="deleted"; fi
+          echo "## $mode" >> "$summary"
+          echo "" >> "$summary"
+
+          protected() {
+            case "$1" in "$DEFAULT_BRANCH"|main|master|HEAD) return 0 ;; esac
+            return 1
+          }
+
+          delete_branch() {  # name, sha at check time
+            if [ "$DRY_RUN" = "true" ]; then return 0; fi
+            git push --force-with-lease="refs/heads/$1:$2" origin ":refs/heads/$1"
+          }
+
+          merged=0; kept=0
+          for name in $(git for-each-ref --format='%(refname:strip=3)' refs/remotes/origin); do
+            protected "$name" && continue
+            sha=$(git rev-parse "refs/remotes/origin/$name")
+            if git merge-base --is-ancestor "$sha" "refs/remotes/origin/$DEFAULT_BRANCH"; then
+              delete_branch "$name" "$sha"
+              echo "- merged, $did: \`$name\`" >> "$summary"
+              merged=$((merged + 1))
+            else
+              case " $ALSO_DELETE " in *" $name "*) continue ;; esac
+              echo "- not merged, kept: \`$name\`" >> "$summary"
+              kept=$((kept + 1))
+            fi
+          done
+
+          extra=0
+          for name in $ALSO_DELETE; do
+            if ! git check-ref-format --branch "$name" >/dev/null 2>&1 || protected "$name"; then
+              echo "- refused (not a branch that can be deleted): \`$name\`" >> "$summary"; continue
+            fi
+            if ! git rev-parse -q --verify "refs/remotes/origin/$name" >/dev/null; then
+              echo "- no such branch (already gone?): \`$name\`" >> "$summary"; continue
+            fi
+            sha=$(git rev-parse "refs/remotes/origin/$name")
+            if [ "$DRY_RUN" != "true" ]; then
+              git tag "archive/$name" "$sha"
+              git push origin "refs/tags/archive/$name"
+            fi
+            delete_branch "$name" "$sha"
+            echo "- unmerged, kept as tag \`archive/$name\`, $did: \`$name\`" >> "$summary"
+            extra=$((extra + 1))
+          done
+
+          echo "" >> "$summary"
+          echo "Merged branches: $merged. Unmerged kept: $kept. Named unmerged branches: $extra." >> "$summary"
+          echo "$mode. Merged $merged, unmerged kept $kept, named $extra."

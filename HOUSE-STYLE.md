@@ -465,7 +465,14 @@ and add its tags. Nothing else needs fixing or remaking first.
   branches look unmerged. **Cloud sessions can't delete branches or push
   tags** (GitHub refuses with 403, seen 2026-11-01), so at the end of a
   stage list the branches to delete for John, with their repo, rather than
-  leaving them to pile up.
+  leaving them to pile up. GitHub's own jobs can delete them, so every
+  repo has a **"Delete merged branches"** workflow
+  (`.github/workflows/tidy-branches.yml`; Run workflow only, nothing
+  scheduled). It deletes only branches fully merged into `main`, never
+  `main`; a run with "Only list" ticked (the default) changes nothing;
+  named unmerged branches can be added, and each is kept as an
+  `archive/<name>` tag first. A session can start it with the GitHub tools
+  after a merge. A new tool copies the file.
 
 **Preview servers (Claude's checks):** start `vite preview` directly with
 `node node_modules/vite/bin/vite.js preview --port <n> --strictPort` (not
