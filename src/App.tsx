@@ -328,7 +328,11 @@ export default function App() {
             dark mode, the fuel you chose, and the calculator’s amount and miles per gallon), so the page opens the same way next time.
           </p>
           <p data-noprint>
-            More free tools at <a href="https://www.baish.net/">www.baish.net</a>. Contact: workshop@baish.net.
+            More free tools at{' '}
+            <a href="https://www.baish.net/" target="_blank" rel="noopener noreferrer">
+              www.baish.net
+            </a>
+            . Contact: workshop@baish.net.
           </p>
         </footer>
       </main>

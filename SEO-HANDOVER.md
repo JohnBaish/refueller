@@ -32,11 +32,11 @@ tool linked back to the hub. Done in three steps.
 
 ### Step 1: invisible changes (in the page code, not on screen)
 
-| What | Clockmaker | Backtimer | Flowcharter | Hindcaster | Hub |
-|---|---|---|---|---|---|
-| `<title>` | Clockmaker – free radio hot clock & format clock maker | Backtimer – free backtiming calculator for radio and TV | Flowcharter – free flowchart maker from a simple list | Hindcaster – yesterday's weather in England | baish.net – free browser tools by John Baish |
-| `<meta name="description">` | Free hot clock maker for radio. Build a format clock for each hour, see it as a circle or a list, plan your week and print it. Works in your browser. | Free backtiming calculator for radio and TV. Enter your out-time and items, and see exactly when each one needs to start to hit the news on time. | Free flowchart maker. Type your steps as a list, or answer simple questions step by step, and Flowcharter draws the chart. Print it or copy it as an image. | What was the weather yesterday? Free figures for anywhere in England by postcode or county: highs, overnight lows, wind and rainfall, compared with a year ago. | Free browser tools by John Baish: Clockmaker for radio clocks, Backtimer for backtiming, Flowcharter for flowcharts and Hindcaster for yesterday's weather. |
-| `<link rel="canonical">` | https://clockmaker.baish.net/ | https://backtimer.baish.net/ | https://flowcharter.baish.net/ | https://hindcaster.baish.net/ | https://www.baish.net/ |
+| What | Clockmaker | Backtimer | Flowcharter | Hindcaster | Lightreader | Refueller | Hub |
+|---|---|---|---|---|---|---|---|
+| `<title>` | Clockmaker – free radio hot clock & format clock maker | Backtimer – free backtiming calculator for radio and TV | Flowcharter – free flowchart maker from a simple list | Hindcaster – yesterday's weather in England | Lightreader – sunrise, sunset and twilight times in England | Refueller – fuel prices near you | baish.net – free browser tools by John Baish |
+| `<meta name="description">` | Free hot clock maker for radio. Build a format clock for each hour, see it as a circle or a list, plan your week and print it. Works in your browser. | Free backtiming calculator for radio and TV. Enter your out-time and items, and see exactly when each one needs to start to hit the news on time. | Free flowchart maker. Type your steps as a list, or answer simple questions step by step, and Flowcharter draws the chart. Print it or copy it as an image. | What was the weather yesterday? Free figures for anywhere in England by postcode or county: highs, overnight lows, wind and rainfall, compared with a year ago. | Free sunrise, sunset and twilight times for any postcode in England: today, through the year, and compared with dates or places you choose. | Free petrol and diesel prices near any postcode or place in Great Britain, and the cheapest along your journey. From the Government's Fuel Finder service. | Free browser tools by John Baish: radio clocks, backtiming, flowcharts, yesterday's weather, sunrise and sunset times, and fuel prices. |
+| `<link rel="canonical">` | https://clockmaker.baish.net/ | https://backtimer.baish.net/ | https://flowcharter.baish.net/ | https://hindcaster.baish.net/ | https://lightreader.baish.net/ | https://refueller.baish.net/ | https://www.baish.net/ |
 
 Why each part:
 - **Title and search description** are what Google shows in its results.
@@ -177,11 +177,14 @@ Do the code parts on a branch; John merges.
 
 11. Add a card for the tool to `landing.html` (alphabetical among the
     tools, before John's Blog). *Flowcharter: already done. Hindcaster:
-    done 2026-10-20.*
+    done 2026-10-20. Lightreader: done 2026-10-28. Refueller: done 2026-11-01.*
 12. **John's standing reminder: when a tool is added or changed, update the
     hub's `<title>` and search description to match.** Since 2026-10-20 the
     title is general ("free browser tools"), so usually only the description
-    needs the new tool added. *Flowcharter and Hindcaster: named.*
+    needs the new tool added. *Flowcharter and Hindcaster: named.
+    Lightreader (2026-10-28): naming every tool made it 191 characters, so
+    John chose a list of what they do instead, without the names.
+    Refueller (2026-11-01): "…, sunrise and sunset times, and fuel prices." (135).*
 
 **Check before merging** (Playwright, 1200px and 390px with touch):
 

@@ -12,7 +12,7 @@ Read these first, in this order:
    the numbered open questions).
 2. `PLAN.md`: the staged build. Work one stage at a time, on its branch.
 3. `HOUSE-STYLE.md`: the shared look and ways of working. Copied from
-   `JohnBaish/clockwheel`; last re-copied 2026-10-31 (at clockwheel commit `9edeea5`).
+   `JohnBaish/clockwheel`; last re-copied 2026-10-31 (at clockwheel commit `9edeea5`; `SEO-HANDOVER.md` again 2026-11-01 at `5c5c145`).
    Clockwheel holds the master copy. If it has changed since, re-copy it and
    note that here. The same goes for `SEO-HANDOVER.md` and
    `.claude/skills/fresh-look/` (the `/fresh-look` review).
@@ -1715,3 +1715,16 @@ here?"; no errors, no sideways scroll. Not merged: waiting for John (the 4.1 wor
 
 **John:** the 4.1 wording is agreed; merge. `fresh-look-3` fast-forwarded into `main`; checks, lint, type-check and build clean first.
 Every item from the fresh look is now settled: built (2.1–2.4, 3.1, 3.2, 4.1, 4.2, 4.4, 5.1–5.4) or left as it is (4.3, 6.1–6.11).
+
+### 2026-11-01 — the hub card; the www.baish.net link opens a new tab (branch `hub-link`, merged to `main`)
+
+**John:** Vercel Web Analytics on and his full review done; sitemap added in Search Console; draft and merge the baish.net card; the tab
+title stays "Refueller – fuel prices near you" (not the house "Name – free … for …" pattern); in the tracker, Refueller is now live
+and static. **What:** the footer's "www.baish.net" link opens in a new tab with `rel="noopener noreferrer"` (SEO-HANDOVER item 10,
+missed before). In clockwheel (`5c5c145`): a Refueller card on www.baish.net ("Petrol and diesel prices near you, and the cheapest on
+your journey."), the hub's description now ends "…, sunrise and sunset times, and fuel prices.", and Refueller's column in
+SEO-HANDOVER's table; `SEO-HANDOVER.md` re-copied here from it. **Checked:** build, lint; the link on the postcode screen and RG4 at
+1200px and 390px with touch: new tab, the sentence reads "More free tools at www.baish.net. Contact: workshop@baish.net."; no errors,
+no sideways scroll. **For John (live checks this session can't make):** open `https://refueller.baish.net/robots.txt` and
+`/sitemap.xml` (plain text, not the page), and in Search Console, URL Inspection → `https://refueller.baish.net/` → Test live URL →
+Request indexing.
