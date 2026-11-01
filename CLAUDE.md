@@ -1359,3 +1359,7 @@ faintly"; "if you only type the first half"; "as the defaults"; "It can't factor
 might be driving near there at some point anyway."; "Fuel Finder only gives"; "A price that changed twice between 10.15am and 4.15pm, or
 between 4.15pm and 10.15am, shows only its latest change." **Checked:** `npm run check`, lint, type-check, build; RG4 at 1200px and
 390px with touch: every new sentence present, the panel's sentence, "Cheapest" no longer bold, no errors, no sideways scroll. Not merged.
+
+**Same day, John:** "in case it's wrong" belongs on the blue "Same price for …" line ("…for more than 45 days, in case it's wrong."),
+not the unusual-price sentence (put back to "…never marked as the cheapest."); "marked “Cheapest” too" stands; the calculator paragraph
+now says "(the defaults are typical figures: 36 for petrol and 43 for diesel; change them to your car's)". Checks, type-check, build.

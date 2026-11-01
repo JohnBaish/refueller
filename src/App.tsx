@@ -131,13 +131,13 @@ function About() {
         <li>
           <strong>Members only</strong> marks Costco, which sells fuel only to its members.
         </li>
-        <li>“Same price for …” is shown in blue when the price has been the same for more than 45 days.</li>
+        <li>“Same price for …” is shown in blue when the price has been the same for more than 45 days, in case it’s wrong.</li>
         <li>The small chart under each price shows where it sits among the stations shown, from lowest to highest.</li>
         <li>
           A blue “Unusual price” note means the price is more than 30p away from the middle price across Great Britain,
           and may be a mistake, unless the station is in the Highlands and Islands of Scotland or on the Isles of Scilly,
           where higher prices are usual: there, a higher price isn’t marked. An unusual price is never marked as the
-          cheapest, in case it’s wrong.
+          cheapest.
         </li>
         <li>A grey “Closed until …” means the station is closed now; its row is shown more faintly.</li>
         <li>
@@ -154,8 +154,8 @@ function About() {
       <p>
         <strong>Worth driving here?</strong> compares a station with the nearest open station in the list selling the same
         fuel. It works out how much fuel your money buys at the nearer station, how much less it would cost at this one, and
-        how much fuel the extra miles there and back would use, from your car’s miles per gallon (36 for petrol and 43 for
-        diesel as the defaults, typical figures; change them to your car’s). The extra miles are by road from the middle of the
+        how much fuel the extra miles there and back would use, from your car’s miles per gallon (the defaults are typical
+        figures: 36 for petrol and 43 for diesel; change them to your car’s). The extra miles are by road from the middle of the
         postcode district, even when you type a full postcode, using Ordnance Survey’s map of every road; they don’t allow for one-way streets or turns, so a sat
         nav may give a little more. Where there’s no road figure, type your own. It can’t factor in your time, wear and tear on the car or
         whether you might be driving near there at some point anyway.
