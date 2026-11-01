@@ -114,8 +114,7 @@ function About() {
     <section className="about">
       <h3>About these figures</h3>
       <p>
-        Prices and opening times come from the Government’s Fuel Finder service, to which petrol stations have to
-        report. Refueller collects them twice a day, at about 10.15am and 4.15pm. Underneath each price we show the period of
+        Prices and opening times come from the Government’s Fuel Finder service. Refueller collects them twice a day, at about 10.15am and 4.15pm. Underneath each price we show the period of
         time it’s been in effect. Petrol stations only make a report when it changes, so a long period normally indicates stable
         prices rather than an error.
       </p>

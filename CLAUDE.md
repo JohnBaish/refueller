@@ -1363,3 +1363,5 @@ between 4.15pm and 10.15am, shows only its latest change." **Checked:** `npm run
 **Same day, John:** "in case it's wrong" belongs on the blue "Same price for …" line ("…for more than 45 days, in case it's wrong."),
 not the unusual-price sentence (put back to "…never marked as the cheapest."); "marked “Cheapest” too" stands; the calculator paragraph
 now says "(the defaults are typical figures: 36 for petrol and 43 for diesel; change them to your car's)". Checks, type-check, build.
+
+**Later, John:** the opening sentence of About ends at "…Fuel Finder service." (the clause about stations reporting removed).
