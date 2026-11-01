@@ -1891,3 +1891,10 @@ history" workflow now keeps every collection's averages at every level.
 **Branches tidied (same day):** ran "Delete merged branches" (trial, then the real run): `feature-levels` deleted (merged);
 `levels-mockups` deleted too, named as unmerged because its work went into `main` in the one combined commit, and kept first as the
 tag `archive/levels-mockups`. Only `main` is left.
+
+### 2026-11-01 — "The wider picture": the charts first, then the list (straight to `main`)
+
+**John:** swap them so the graph comes first, and merge. `src/components/Averages.tsx` draws the two charts, then the list (still
+the charts' key: the eight and Great Britain carry their line); `.lv-box` now has its gap above. Checked: `npm run check`, lint,
+build; the nine places at 1200px and 390px with touch, light and dark (`design/mock/levels-check.cjs`): no errors, no sideways
+scroll, nothing typed sent. Pictures `design/previews/levels/built-*.png` refreshed.

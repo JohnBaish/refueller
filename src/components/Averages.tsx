@@ -172,8 +172,18 @@ export function AveragesSection({ index, rows, histories, where }: { index: Page
           ? `Average prices (excluding unusual ones) as collected by Refueller. This history will eventually show ${AVERAGE_DAYS} days. It is currently building up since recording began on ${dateWords(Date.parse(page.first[0]), false)}.`
           : `Average prices over the last ${AVERAGE_DAYS} days as collected by Refueller. Unusual prices are not included.`}
       </p>
-      {/* The averages at every level (John, November 1st: option B), in place of the charts' key: the two rows drawn in the charts
-          carry their line. */}
+      <div className="avg-charts">
+        <div className="hist avg-ch">
+          <h4>Unleaded</h4>
+          <Chart lines={linesFor('e10')} fuelName="Unleaded" narrow={narrow} start={start} end={end} />
+        </div>
+        <div className="hist avg-ch">
+          <h4>Diesel</h4>
+          <Chart lines={linesFor('diesel')} fuelName="Diesel" narrow={narrow} start={start} end={end} />
+        </div>
+      </div>
+      {/* The averages at every level (John, November 1st: option B), under the charts (John: graph first), as their key: the two
+          rows drawn in the charts carry their line. */}
       <div className="lv-box">
         <div className="lv-row lv-head" aria-hidden="true">
           <span>Average</span>
@@ -194,16 +204,6 @@ export function AveragesSection({ index, rows, histories, where }: { index: Page
             {r.fact && <span className="lv-fact">{r.fact}</span>}
           </div>
         ))}
-      </div>
-      <div className="avg-charts">
-        <div className="hist avg-ch">
-          <h4>Unleaded</h4>
-          <Chart lines={linesFor('e10')} fuelName="Unleaded" narrow={narrow} start={start} end={end} />
-        </div>
-        <div className="hist avg-ch">
-          <h4>Diesel</h4>
-          <Chart lines={linesFor('diesel')} fuelName="Diesel" narrow={narrow} start={start} end={end} />
-        </div>
       </div>
     </section>
   );

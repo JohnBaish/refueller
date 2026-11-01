@@ -1,5 +1,5 @@
 const { chromium } = require('playwright');
-// Checks "The wider picture" with the averages at every level (built page, `npx vite preview --port 4192`), November 1st 2026.
+// Checks "The wider picture" with the averages at every level (built page, `npx vite preview --port 4193`), November 1st 2026.
 const OUT = '/home/user/refueller/design/previews/levels/';
 const PLACES = [['RG4-7SS', 'rg4'], ['RG4', 'rg4-district'], ['@Caversham', 'caversham'], ['CF10-1EP', 'cardiff'], ['EH1-1YZ', 'edinburgh'], ['NW4-4BT', 'barnet'], ['LE15-6AA', 'rutland'], ['TR21-0JY', 'scilly'], ['B1-1BB', 'birmingham']];
 (async () => {
@@ -13,8 +13,8 @@ const PLACES = [['RG4-7SS', 'rg4'], ['RG4', 'rg4-district'], ['@Caversham', 'cav
     p.on('request', (r) => asked.push(r.url()));
     for (const [hash, name] of PLACES) {
       if (theme === 'dark' && !['RG4-7SS', 'CF10-1EP'].includes(hash)) continue;
-      await p.goto(`http://localhost:4192/#${hash}`);
-      await p.goto(`http://localhost:4192/#${hash}`);
+      await p.goto(`http://localhost:4193/#${hash}`);
+      await p.goto(`http://localhost:4193/#${hash}`);
       await p.reload();
       await p.waitForSelector('.lv-box', { timeout: 20000 });
       await p.waitForTimeout(300);
@@ -30,12 +30,12 @@ const PLACES = [['RG4-7SS', 'rg4'], ['RG4', 'rg4-district'], ['@Caversham', 'cav
       }
     }
     // Tooltip on the chart still works.
-    await p.goto('http://localhost:4192/#RG4-7SS'); await p.reload(); await p.waitForSelector('.avg-sec .g-hit');
+    await p.goto('http://localhost:4193/#RG4-7SS'); await p.reload(); await p.waitForSelector('.avg-sec .g-hit');
     const hit = await p.$('.avg-sec .g-hit'); const hb = await hit.boundingBox();
     if (touch) await p.touchscreen.tap(hb.x + hb.width * 0.9, hb.y + 20); else await p.mouse.move(hb.x + hb.width * 0.9, hb.y + 20);
     const tip = await p.$$eval('.avg-sec .g-tip text', (t) => t.map((x) => x.textContent));
     if (w > 720 && theme === 'light') console.log('\ntip:', tip.join(' | '));
-    const sent = asked.filter((u) => /councils-|averages-/.test(u)).map((u) => u.replace('http://localhost:4192', ''));
+    const sent = asked.filter((u) => /councils-|averages-/.test(u)).map((u) => u.replace('http://localhost:4193', ''));
     if (w > 720 && theme === 'light') console.log('\nfiles asked for:', [...new Set(sent)].join(' '));
     if (asked.some((u) => /7SS|Caversham|1EP/i.test(u))) errors.push('a request carried what was typed');
     await ctx.close();
