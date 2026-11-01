@@ -12,7 +12,7 @@ Read these first, in this order:
    the numbered open questions).
 2. `PLAN.md`: the staged build. Work one stage at a time, on its branch.
 3. `HOUSE-STYLE.md`: the shared look and ways of working. Copied from
-   `JohnBaish/clockwheel`; last re-copied 2026-11-01 (at clockwheel commit `a6cb099`; `SEO-HANDOVER.md` at `5c5c145`).
+   `JohnBaish/clockwheel`; last re-copied 2026-11-01 (at clockwheel commit `5086657`; `SEO-HANDOVER.md` at `5c5c145`).
    Clockwheel holds the master copy. If it has changed since, re-copy it and
    note that here. The same goes for `SEO-HANDOVER.md` and
    `.claude/skills/fresh-look/` (the `/fresh-look` review).
@@ -1823,6 +1823,12 @@ At John's request, Claude ran the "Delete merged branches" workflow itself (star
 (run 41328459377: two merged branches, nothing unmerged), then the real run (run 41328490691), which deleted `feature-sort` and
 `sort-mockups`. Only `main` is left.
 
+### 2026-11-01 — house style re-copied: sessions delete merged branches themselves (notes only, straight to `main`)
+
+From clockwheel `5086657`: §10 now asks a session to run the "Delete merged branches" workflow itself after a merge (trial run
+first, then the real run, then check the branches are gone and log it), rather than listing branches for John (John). No app code
+changed.
+
 ### 2026-11-01 — averages at every level: mock-ups A and B (branch `levels-mockups`, design only)
 
 **John** asked for a card of average prices just before the journey planner, at every level for RG4 7SS (these eight, RG4,
@@ -1873,3 +1879,11 @@ B1 1BB; the chart's tip; only area files asked for, nothing typed sent; no error
 `src/lib/averages.ts` threw away that file's earlier edits too; noticed at once and re-applied, then all checks run again.
 **Noticed:** Great Britain shows 172.6p unleaded here (the site's own mean, 172.56p) where the mock-up said 172.5p (my first sum,
 172.54p, used today's station list for older collections).
+
+### 2026-11-01 — "The wider picture" averages merged to `main`
+
+**John:** "Looks great"; his wording for the "About these figures" paragraph ("…then in their council area, county, region and
+country, and in Great Britain, … using Ordnance Survey records."); the other drafts stand (the credit line "Postcode and place
+positions, and council areas:", and "since October 31st." when the eight's record starts later). `feature-levels` merged into
+`main` after bringing in its commits; checks, lint, type-check and build clean first. Live from Vercel's next build. The "Price
+history" workflow now keeps every collection's averages at every level.

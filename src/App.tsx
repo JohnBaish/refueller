@@ -196,11 +196,11 @@ function About() {
         or between 4.15pm and 10.15am, shows only its later change.
       </p>
       <p>
-        {/* Draft for John (November 1st): the averages at every level. */}
-        <strong>The wider picture</strong> gives the average price at the stations shown, then in the council area, county, region
-        and country they’re in, and in Great Britain, each with a fact picked from the figures. Averages leave out unusual prices,
-        and a council area, county or region is only shown when at least five of its stations sell the fuel. The council area is
-        worked out from the postcode, using Ordnance Survey’s records of which council area each postcode is in.
+        {/* John's wording (November 1st): the averages at every level. */}
+        <strong>The wider picture</strong> gives the average price at the stations shown, then in their council area, county,
+        region and country, and in Great Britain, each with a fact picked from the figures. Averages leave out unusual prices, and a
+        council area, county or region is only shown when at least five of its stations sell the fuel. The council area is worked
+        out from the postcode, using Ordnance Survey records.
       </p>
       <p>
         <strong>Find cheaper fuel near the route</strong> works out the quickest route between the places you type, on your
