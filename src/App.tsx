@@ -52,6 +52,25 @@ function remember(choice: string) {
 }
 
 
+// The journey page's way back (John, November 4th 2026): to the last postcode or place chosen on this device, or to the
+// postcode screen when there isn't one.
+function BackLink() {
+  const back = remembered();
+  const target = back ? choiceTarget(back) : null;
+  const label = !target
+    ? 'Back to fuel prices near you'
+    : target.kind === 'postcode'
+      ? `Back to ${target.outcode}${target.inward ? ` ${target.inward}` : ''}`
+      : target.kind === 'place'
+        ? `Back to ${target.place}`
+        : 'Back to fuel prices near you';
+  return (
+    <a className="back-link" href={target ? `#${back}` : '#'} data-noprint>
+      ← {label}
+    </a>
+  );
+}
+
 const placeHash = (p: NamedPlace) => {
   const at = placeAt(p);
   return `@${placeLabel(p)}${at ? `~${at}` : ''}`;
@@ -282,6 +301,7 @@ export default function App() {
       <main className="col">
         {route ? (
           <div className="page-head">
+            <BackLink />
             <div className="card-kicker">Fuel prices</div>
             <h2>Find cheaper fuel near the route</h2>
             <p className="lead">

@@ -10,6 +10,9 @@ a { color: var(--color-accent-700); }
 .col { max-width: 1100px; margin: 0 auto; padding: 0 var(--space-6) var(--space-6); }
 .page-head { padding: var(--space-6) 0 var(--space-4); }
 .page-head h2 { margin: 2px 0 0; font-size: 32px; line-height: 1.15; }
+/* The journey page's way back to the last postcode or place (John, November 4th 2026). */
+.back-link { display: inline-flex; align-items: center; min-height: 44px; margin: -12px 0 6px; color: var(--color-accent-700); font-size: 15px; font-weight: 600; text-decoration: none; }
+.back-link:hover { text-decoration: underline; }
 .lead { color: var(--color-neutral-700); margin: 6px 0 0; max-width: 640px; }
 .muted { color: var(--color-neutral-700); }
 

@@ -1914,3 +1914,14 @@ sideways scroll.
 (`design/mock/key-check.cjs`): one line on the computer, beside both headings on phones (at 320px it drops under the heading), no
 errors, no sideways scroll. Pictures `design/previews/key/built-*.png`.
 **Merged to `main`** at John's word; the branch deleted with "Delete merged branches" (trial, then the real run).
+
+### 2026-11-04 — a way back from the journey planner (branch `journey-back`, not merged)
+
+**John:** after a route comparison there was no way back to the main screen (only the browser's Back; "Refueller" at the top
+clears the remembered choice and opens the empty postcode screen). **What:** `BackLink` in `src/App.tsx`, at the top of the
+journey page: "← Back to RG4 7HN" (the last postcode or place chosen on this device, `refueller.choice`), or "← Back to fuel
+prices near you" (the postcode screen) when nothing is remembered; `.back-link` in `global.css` (44px tall, accent colour,
+hidden in print). Wording drafted by Claude, for John. **Verified:** `npx tsc -b`, lint, `npm run check`, build; in Chromium
+at 1200px and 390px with touch, light and dark: the link opens `#RG4-7HN`'s list, the browser's Back returns to the journey,
+and a first-time visitor goes to the postcode screen; no errors, no sideways scroll. Pictures
+`design/previews/journey-back-*.png`. **Couldn't be checked:** a real phone.
