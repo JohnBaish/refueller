@@ -1928,7 +1928,7 @@ and a first-time visitor goes to the postcode screen; no errors, no sideways scr
 
 **Merged to `main`** at John's word (November 4th 2026): the wording as drafted, the link at the top only. Branch tidied: "Delete merged branches" trial run, then the real run; `git ls-remote --heads origin` shows only `main`.
 
-### 2026-11-04 — "Worth driving here?" laid out as a sum (branch `calc-wording`, not merged)
+### 2026-11-04 — "Worth driving here?" laid out as a sum (branch `calc-wording`, merged)
 
 **John** (Jet Broomhill against MFG Stone Cross, diesel, PE38 9SF): changing the mpg didn't change "you'd save about £1.02".
 That was right (the saving is the price difference on the fuel bought; the mpg only changes the fuel the extra miles use), but
@@ -1943,3 +1943,4 @@ mpg); built and opened PE38 9SF's Jet Broomhill panel in Chromium at 1200px and 
 79p, £1.02 and 23p as John's screenshot; at 30 mpg only the second line (43p) and the answer (59p) change; no errors, no
 sideways scroll. Pictures `design/previews/calc-wording-*.png`.
 
+**Then John:** "Worth it: you’d be about 79p better off." (and "Not worth it: you’d be about 31p worse off." to match). Merged to `main` at his word.

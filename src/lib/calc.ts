@@ -87,11 +87,11 @@ export function verdict(spendPounds: number, mpg: number, extraMiles: number, ne
     lines = [];
   } else if (net > 0) {
     kind = 'worth';
-    headline = `Worth it: about ${money(net)} better off.`;
+    headline = `Worth it: you’d be about ${money(net)} better off.`;
     lines = [buys, uses];
   } else if (net < 0) {
     kind = 'not';
-    headline = `Not worth it: about ${money(-net)} worse off.`;
+    headline = `Not worth it: you’d be about ${money(-net)} worse off.`;
     lines = [buys, uses];
   } else {
     kind = 'even';
