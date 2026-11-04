@@ -1943,4 +1943,4 @@ mpg); built and opened PE38 9SF's Jet Broomhill panel in Chromium at 1200px and 
 79p, £1.02 and 23p as John's screenshot; at 30 mpg only the second line (43p) and the answer (59p) change; no errors, no
 sideways scroll. Pictures `design/previews/calc-wording-*.png`.
 
-**Then John:** "Worth it: you’d be about 79p better off." (and "Not worth it: you’d be about 31p worse off." to match). Merged to `main` at his word.
+**Then John:** "Worth it: you’d be about 79p better off." (and "Not worth it: you’d be about 31p worse off." to match). Merged to `main` at his word. Branch tidied: "Delete merged branches" trial run, then the real run; only `main` is left.
