@@ -1,4 +1,4 @@
-{"collected":"2026-11-03T16:15:04.406Z","stations":[
+{"collected":"2026-11-04T10:15:04.416Z","stations":[
 {"id":"00008759c79a","name":"HARROGATE - PETROL FILLING STATION","brand":"TESCO","address":["TESCO STORES","SKIPTON ROAD","HARROGATE"],"postcode":"HG1 3DW","lat":54.0064,"lon":-1.5514,"hours":["24h","24h","24h","24h","24h","24h","24h"],"bankHoliday":{"type":"standard","hours":"24h"}},
 {"id":"0001347cef1b","name":"Checkpoint Service station","brand":"Murco","address":["Harford","Llanwrda","Carmarthenshire"],"postcode":"SA19 8DT","lat":52.07063,"lon":-3.98926,"hours":["06:00-22:00","06:00-22:00","06:00-22:00","06:00-22:00","06:00-22:00","06:00-22:00","06:00-22:00"],"bankHoliday":{"type":"bank holiday","hours":"09:00-20:00"},"supermarket":true},
 {"id":"000814b62c57","name":"Broadway Garage","brand":"Gulf","address":["BROADWAY GARAGE","WESTON ROAD, TOTLAND BAY, PO39 0EY","TOTLAND BAY"],"postcode":"PO39 0EY","lat":50.67989,"lon":-1.54036,"hours":["08:00-16:00","08:00-16:00","08:00-16:00","08:00-16:00","08:00-16:00","closed","closed"],"bankHoliday":{"type":"bank holiday","hours":"08:00-16:00"}},
