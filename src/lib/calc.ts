@@ -57,29 +57,50 @@ export function readNumber(typed: string, allowZero = false): number | null {
   return n > 0 || (allowZero && n === 0) ? n : null;
 }
 
-// The verdict and the break-even line (C6 wording, agreed; adapted to £ spent rather than litres).
-export function verdict(spendPounds: number, mpg: number, extraMiles: number, nearestPence: number, herePence: number) {
+// "about 0.5 litres", "about 1 litre", "less than 0.1 litres": the extra fuel the same money buys at the cheaper station.
+export function litresMore(l: number): string {
+  const t = (Math.round(l * 10) / 10).toFixed(1);
+  if (t === '0.0') return 'less than 0.1 litres';
+  return t === '1.0' ? 'about 1 litre' : `about ${t} litres`;
+}
+
+// The mpg as typed back: "56 mpg", "42.5 mpg".
+const mpgText = (n: number) => `${Number.isInteger(n) ? n : (Math.round(n * 10) / 10).toString()} mpg`;
+
+// The verdict and the break-even line (C6 wording, agreed; adapted to £ spent rather than litres). Laid out as a sum (John,
+// November 4th 2026, option B): the answer, then what the visitor's money buys here, then the fuel the extra miles use, so it's
+// clear that the mpg changes only the second line and the answer. The saving is the extra fuel the money buys here, valued at
+// this station's price, which is the same sum as the litres the money buys at the nearest station times the price difference.
+export function verdict(spendPounds: number, mpg: number, extraMiles: number, nearestPence: number, herePence: number, fuel: Fuel = 'e10') {
   const s = sums(spendPounds, mpg, extraMiles, nearestPence, herePence);
   // Worked from the rounded figures shown, so "£1.03 … 60p … 43p better off" adds up as the visitor reads it.
   const net = Math.round(s.saving) - Math.round(s.fuelCost);
+  const more = (spendPounds * 100) / herePence - s.litres;
+  const buys = `Your ${pounds(spendPounds)} buys ${litresMore(more)} more ${fuelWord(fuel)} here, worth about ${money(s.saving)}.`;
+  const uses = `${cap(extraText(extraMiles))} ${milesBox(extraMiles) === '1' ? 'uses' : 'use'} about ${money(s.fuelCost)} of fuel at ${mpgText(mpg)}.`;
   let kind: 'worth' | 'not' | 'even';
-  let text: string;
+  let headline: string;
+  let lines: string[];
   if (extraMiles === 0) {
     kind = 'worth';
-    text = `you’d save about ${money(s.saving)} on ${pounds(spendPounds)} of fuel, with no extra miles.`;
+    headline = `Worth it: ${buys[0].toLowerCase()}${buys.slice(1)}`;
+    lines = [];
   } else if (net > 0) {
     kind = 'worth';
-    text = `you’d save about ${money(s.saving)} on ${pounds(spendPounds)} of fuel. ${cap(extraText(extraMiles))} would use about ${money(s.fuelCost)} of fuel, so you’d be about ${money(net)} better off.`;
+    headline = `Worth it: about ${money(net)} better off.`;
+    lines = [buys, uses];
   } else if (net < 0) {
     kind = 'not';
-    text = `${extraText(extraMiles)} would use about ${money(s.fuelCost)} of fuel, more than the ${money(s.saving)} you’d save.`;
+    headline = `Not worth it: about ${money(-net)} worse off.`;
+    lines = [buys, uses];
   } else {
     kind = 'even';
-    text = `${extraText(extraMiles)} would use about ${money(s.fuelCost)} of fuel, about the same as you’d save.`;
+    headline = 'About even.';
+    lines = [buys, uses];
   }
   // "At least", so rounded up to the next tenth of a penny (2.05 becomes 2.1).
   const breakEven = Math.ceil(Math.round(s.breakEven * 1000) / 100) / 10;
-  return { kind, text, breakEven: extraMiles === 0 ? null : breakEven, sums: s };
+  return { kind, headline, lines, breakEven: extraMiles === 0 ? null : breakEven, sums: s };
 }
 
 const cap = (s: string) => s[0].toUpperCase() + s.slice(1);

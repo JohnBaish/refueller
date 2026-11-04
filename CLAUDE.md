@@ -1927,3 +1927,19 @@ and a first-time visitor goes to the postcode screen; no errors, no sideways scr
 `design/previews/journey-back-*.png`. **Couldn't be checked:** a real phone.
 
 **Merged to `main`** at John's word (November 4th 2026): the wording as drafted, the link at the top only. Branch tidied: "Delete merged branches" trial run, then the real run; `git ls-remote --heads origin` shows only `main`.
+
+### 2026-11-04 — "Worth driving here?" laid out as a sum (branch `calc-wording`, not merged)
+
+**John** (Jet Broomhill against MFG Stone Cross, diesel, PE38 9SF): changing the mpg didn't change "you'd save about £1.02".
+That was right (the saving is the price difference on the fuel bought; the mpg only changes the fuel the extra miles use), but
+"save £1.02 on £50 of fuel" read oddly, as £50 is still £50. **John chose option B, without the litres in brackets:**
+"Worth it: about 79p better off." in bold, then "Your £50 buys about 0.5 litres more diesel here, worth about £1.02." and "The
+extra 1.4 miles use about 23p of fuel at 56 mpg."; "Not worth it: about 31p worse off." and "About even." with the same two
+lines; with no extra miles, "Worth it: your £50 buys … worth about 57p." alone. The extra litres, valued at this station's
+price, equal the old saving exactly, so no figure changes. "less than 0.1 litres", "about 1 litre"; "The extra mile uses".
+`verdict()` in `src/lib/calc.ts` now returns `headline` and `lines` (and takes the fuel); `Calc.tsx`; `.calc-line`.
+**Verified:** `npx tsc -b`, lint, `npm run check` (calculator checks rewritten to the new words, with John's case at 56 and 30
+mpg); built and opened PE38 9SF's Jet Broomhill panel in Chromium at 1200px and 390px with touch, light and dark: the same
+79p, £1.02 and 23p as John's screenshot; at 30 mpg only the second line (43p) and the answer (59p) change; no errors, no
+sideways scroll. Pictures `design/previews/calc-wording-*.png`.
+

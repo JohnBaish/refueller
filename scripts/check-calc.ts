@@ -27,26 +27,41 @@ await check("sums: the handover's example (40 litres at 135p, 45 mpg, 6 extra mi
   close(s.breakEven, 2.05, 0.005);
   const v = verdict(54, 45, 6, 135, 132);
   assert.equal(v.kind, 'worth');
-  assert.equal(v.text, 'you’d save about £1.20 on £54 of fuel. The extra 6 miles would use about 82p of fuel, so you’d be about 38p better off.');
+  assert.equal(v.headline, 'Worth it: about 38p better off.');
+  assert.deepEqual(v.lines, ['Your £54 buys about 0.9 litres more unleaded here, worth about £1.20.', 'The extra 6 miles use about 82p of fuel at 45 mpg.']);
   assert.equal(v.breakEven, 2.1, '"at least": 2.05 rounds up');
 });
 
 await check('verdicts: the mock-ups (Reading Extra against Emmer Green, 172.9p and 174.9p)', () => {
   const worth = verdict(90, 50, 4, 174.9, 172.9);
-  assert.equal(worth.text, 'you’d save about £1.03 on £90 of fuel. The extra 4 miles would use about 64p of fuel, so you’d be about 39p better off.');
+  assert.equal(worth.headline, 'Worth it: about 39p better off.');
+  assert.deepEqual(worth.lines, ['Your £90 buys about 0.6 litres more unleaded here, worth about £1.03.', 'The extra 4 miles use about 64p of fuel at 50 mpg.']);
   const not = verdict(50, 36, 4, 174.9, 172.9);
   assert.equal(not.kind, 'not');
-  assert.equal(not.text, 'the extra 4 miles would use about 88p of fuel, more than the 57p you’d save.');
+  assert.equal(not.headline, 'Not worth it: about 31p worse off.');
+  assert.deepEqual(not.lines, ['Your £50 buys about 0.3 litres more unleaded here, worth about 57p.', 'The extra 4 miles use about 88p of fuel at 36 mpg.']);
   assert.equal(not.breakEven, 3.1);
-  assert.equal(verdict(50, 36, 3.8, 174.9, 172.9).text.startsWith('the extra 3.8 miles'), true);
-  assert.ok(verdict(50, 36, 1, 174.9, 172.9).text.includes('The extra mile would use'));
+  assert.equal(verdict(50, 36, 3.8, 174.9, 172.9).lines[1].startsWith('The extra 3.8 miles use'), true);
+  assert.ok(verdict(50, 36, 1, 174.9, 172.9).lines[1].startsWith('The extra mile uses'));
+  // John's case (November 4th 2026): diesel, 56 mpg, 1.4 extra miles; changing the mpg changes only the fuel used and the answer.
+  const john = verdict(50, 56, 1.4, 201.9, 197.8, 'diesel');
+  assert.equal(john.headline, 'Worth it: about 79p better off.');
+  assert.deepEqual(john.lines, ['Your £50 buys about 0.5 litres more diesel here, worth about £1.02.', 'The extra 1.4 miles use about 23p of fuel at 56 mpg.']);
+  const john30 = verdict(50, 30, 1.4, 201.9, 197.8, 'diesel');
+  assert.equal(john30.lines[0], john.lines[0], 'the mpg leaves the fuel bought alone');
+  assert.equal(john30.headline, 'Worth it: about 59p better off.');
+  assert.equal(verdict(50, 42.5, 1.4, 201.9, 197.8, 'diesel').lines[1].endsWith('at 42.5 mpg.'), true);
+  assert.equal(verdict(50, 36, 2, 174.9, 174.8).lines[0].startsWith('Your £50 buys less than 0.1 litres more'), true);
   const none = verdict(50, 36, 0, 174.9, 172.9);
   assert.equal(none.kind, 'worth');
   assert.equal(none.breakEven, null);
+  assert.equal(none.headline, 'Worth it: your £50 buys about 0.3 litres more unleaded here, worth about 57p.');
+  assert.deepEqual(none.lines, []);
   // About even when the difference rounds to nothing.
   const even = sums(50, 36, 1, 174.9, 172.9);
   const miles = (even.saving / even.fuelCost) * 1;
   assert.equal(verdict(50, 36, miles, 174.9, 172.9).kind, 'even');
+  assert.equal(verdict(50, 36, miles, 174.9, 172.9).headline, 'About even.');
 });
 
 await check('words and typing: money, miles in the box, numbers typed', () => {

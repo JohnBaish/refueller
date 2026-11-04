@@ -67,7 +67,7 @@ export function CalcPanel({ row, rows, origin, centreId, roads, onClose }: { row
   const spend = readNumber(choices.spend);
   const mpg = readNumber(mpgText);
   const extraMiles = miles ? readNumber(miles.text, true) : null;
-  const result = !message && here && near && spend !== null && mpg !== null && extraMiles !== null ? verdict(spend, mpg, extraMiles, near.prices[fuel]!.p, here.p) : null;
+  const result = !message && here && near && spend !== null && mpg !== null && extraMiles !== null ? verdict(spend, mpg, extraMiles, near.prices[fuel]!.p, here.p, fuel) : null;
 
   return (
     <div className="calc" role="region" aria-label="Worth driving here?">
@@ -139,8 +139,13 @@ export function CalcPanel({ row, rows, origin, centreId, roads, onClose }: { row
           {result ? (
             <>
               <p className="calc-verdict">
-                <strong>{result.kind === 'worth' ? 'Worth it' : result.kind === 'not' ? 'Not worth it' : 'About even'}:</strong> {result.text}
+                <strong>{result.headline}</strong>
               </p>
+              {result.lines.map((l) => (
+                <p key={l} className="calc-line">
+                  {l}
+                </p>
+              ))}
               <p className="calc-small">
                 {result.breakEven !== null && `It’s worth the trip if this station is at least ${result.breakEven.toFixed(1)}p a litre cheaper. `}
                 {origin.note} The cost of your time, and any wear and tear on the car, would be additional.
