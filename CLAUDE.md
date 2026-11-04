@@ -1915,7 +1915,7 @@ sideways scroll.
 errors, no sideways scroll. Pictures `design/previews/key/built-*.png`.
 **Merged to `main`** at John's word; the branch deleted with "Delete merged branches" (trial, then the real run).
 
-### 2026-11-04 — a way back from the journey planner (branch `journey-back`, not merged)
+### 2026-11-04 — a way back from the journey planner (branch `journey-back`, merged)
 
 **John:** after a route comparison there was no way back to the main screen (only the browser's Back; "Refueller" at the top
 clears the remembered choice and opens the empty postcode screen). **What:** `BackLink` in `src/App.tsx`, at the top of the
@@ -1925,3 +1925,5 @@ hidden in print). Wording drafted by Claude, for John. **Verified:** `npx tsc -b
 at 1200px and 390px with touch, light and dark: the link opens `#RG4-7HN`'s list, the browser's Back returns to the journey,
 and a first-time visitor goes to the postcode screen; no errors, no sideways scroll. Pictures
 `design/previews/journey-back-*.png`. **Couldn't be checked:** a real phone.
+
+**Merged to `main`** at John's word (November 4th 2026): the wording as drafted, the link at the top only.
