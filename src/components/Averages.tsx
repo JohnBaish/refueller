@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { useEffect, useState, type PointerEvent } from 'react';
 import { stationSteps, type Histories } from './History.tsx';
 import { eightSeries, gbSeries, pence1, AVERAGE_DAYS, FUELS, type AveragesPage, type Point } from '../lib/averages.ts';
@@ -61,7 +62,7 @@ function Chart({ lines, fuelName, narrow, start, end }: { lines: Line[]; fuelNam
   const tipW = 168;
   const tipX = at === null ? 0 : Math.min(Math.max(x(at) - tipW / 2, 0), w - tipW);
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} width="100%" className="avg-svg" role="img" aria-label={`${fuelName}: average prices`}>
+    <svg viewBox={`0 0 ${w} ${h}`} width="100%" className="avg-svg" style={{ '--ar': w / h } as CSSProperties} role="img" aria-label={`${fuelName}: average prices`}>
       {grid.map((p) => (
         <g key={p}>
           <line className="g-grid" x1={L} x2={w - R} y1={y(p)} y2={y(p)} />

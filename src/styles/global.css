@@ -160,6 +160,12 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
   .theme-switch-label { display: none; }
 }
 /* Any touch screen, whatever its width (an iPad gets the computer layout): 16px boxes, so iPhone and iPad don't zoom. */
+/* A phone held sideways: a chart is never taller than the screen. Its box narrows, keeping its shape (--ar, its
+   width over height, is set on the chart), so the labels shown on a tap still land in the right place. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .avg-svg, .hist-svg { max-width: calc((100svh - 40px) * var(--ar, 2)); margin-inline: auto; }
+}
+
 @media (pointer: coarse) {
   /* Any touch screen, including a phone held sideways (wider than 720px) and iPads:
      the boxes' own sizes above (.search .input, .calc-box .input) would otherwise win

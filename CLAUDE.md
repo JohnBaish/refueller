@@ -1953,3 +1953,12 @@ iPhone zooms in when one is tapped. The touch-screen rule (`.input` 16px) was th
 with a more specific style and won. **Fix:** the touch-screen rule names them too (`global.css`). **Verified:** build, checks, lint; in
 Chromium with touch at 844×390, 667×375 and 390×844, every box 16px; at 1200px with a mouse, unchanged (15px); no errors, no sideways
 scroll. Merged to `main` at John's word ("make all these fixes and merge each one in turn").
+
+### 2026-11-09 — charts never taller than a sideways phone's screen (branch `claude/bold-rubin-n8utv4`, merged)
+
+From the same sideways check: on a smaller iPhone held sideways (667×375, or 667×320 with Safari's bar), "The wider picture" charts
+(390px tall) and the price history (384px) were taller than the screen. Now, on a screen held sideways and less than 500px tall, a chart's
+width is capped so its height fits (`--ar`, its width over height, set on each chart; `global.css`). The chart's own box narrows, so the
+label shown on a tap still lands where it should (checked: pointer at 333px, label at 340px, the nearest collection). **Verified:** build,
+checks, lint, type-check; in Chromium: 667×320 charts 280px tall, 667×375 335px, and unchanged at 844×390, 390×844 and 1200px; no errors, no
+sideways scroll. Merged to `main` at John's word.

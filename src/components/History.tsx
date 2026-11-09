@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import { fuelWord, loadChoices, saveChoices, type Fuel } from '../lib/calc.ts';
 import { average, axisDate, dateWords, historySentence, steps, trim, windowFor, type Hist, type Step } from '../lib/history.ts';
@@ -60,6 +61,7 @@ function Chart({ mine, avg, start, end, geo, label }: { mine: Step[]; avg: { fro
       role="img"
       aria-label={label}
       className="hist-svg"
+      style={{ '--ar': w / h } as CSSProperties}
       onPointerLeave={(e) => e.pointerType === 'mouse' && setTip(null)}
       onClick={(e) => (e.target as Element).classList.contains('g-hit') || setTip(null)}
     >
