@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Refueller – compare areas (mock-up)</title>
+<!-- Mock-up only (November 9th 2026): the "compare areas" page, drawn with the site's own built stylesheet and the real averages
+     from data/averages.json (October 30th to November 8th 2026). Copied into dist/ by compare-shots.cjs. Not app code. -->
+<link rel="stylesheet" href="CSSFILE">
+<script>
+  const q = new URLSearchParams(location.search);
+  if (q.get('theme') === 'dark') document.documentElement.dataset.theme = 'dark';
+</script>
+<style>
+  :root { --k0: #c05a14; --k1: #2a64a8; --k2: #3d7a3a; --k3: #8a3f7f; }
+  :root[data-theme="dark"] { --k0: #cf7a3f; --k1: #5f97dc; --k2: #5c9a56; --k3: #b36aa8; }
+  .cmp-lead { font-size: 15px; margin: 6px 0 0; }
+  .cmp-box { background: var(--color-surface); border-radius: 20px; padding: 14px 18px; margin: 18px 0 0; }
+  .cmp-h { font: 700 13px Figtree, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--color-neutral-700); margin: 0 0 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .chip { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 4px 6px 4px 12px; border-radius: 999px; background: var(--color-bg); border: 1px solid var(--color-divider); font-size: 15px; font-weight: 600; }
+  .chip small { font-weight: 400; color: var(--color-neutral-700); font-size: 12.5px; }
+  .chip .x { width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: var(--color-neutral-700); font-size: 18px; }
+  .sw { display: inline-block; width: 20px; height: 0; border-top: 3px solid; flex: none; }
+  .sw.gb { border-top: 2.5px dashed var(--g-avg); }
+  .add { min-height: 40px; border-radius: 999px; border: 1px dashed var(--color-accent); color: var(--color-accent-700); font-weight: 600; font-size: 15px; padding: 4px 14px; background: transparent; }
+  .addbox { margin-top: 10px; position: relative; max-width: 420px; }
+  .addbox .input { font-size: 16px; min-height: 44px; }
+  .sugg { list-style: none; margin: 4px 0 0; padding: 4px 0; background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,.12); }
+  .sugg li { padding: 9px 14px; font-size: 15px; display: flex; justify-content: space-between; gap: 12px; }
+  .sugg li small { color: var(--color-neutral-700); font-size: 13px; }
+  .sugg li.on { background: color-mix(in srgb, var(--color-accent) 12%, transparent); }
+  .note { font-size: 13px; color: var(--color-neutral-700); margin: 8px 0 0; }
+  .slots { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 18px; }
+  .slot { display: flex; align-items: center; gap: 10px; }
+  .slot .input { font-size: 16px; min-height: 44px; flex: 1; }
+  .slot .num { font: 700 13px Figtree; color: var(--color-neutral-700); width: 14px; }
+  .kinds { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .kinds .lab { font-size: 15px; margin-right: 4px; }
+  .kind { min-height: 44px; padding: 4px 16px; border-radius: 999px; border: 1px solid var(--color-divider); background: var(--color-bg); font: 600 15px Figtree; color: var(--color-text); }
+  .kind.on { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-bg); }
+  .kindlist { margin-top: 10px; columns: 3; column-gap: 24px; font-size: 14.5px; max-width: 640px; }
+  .kindlist div { padding: 6px 0; break-inside: avoid; }
+  .kindlist div.picked { font-weight: 700; color: var(--color-accent-700); }
+  .chosen { margin: 12px 0 0; padding: 0; list-style: none; }
+  .chosen li { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-top: 1px solid var(--color-divider); font-size: 15px; font-weight: 600; }
+  .chosen li:first-child { border-top: 0; }
+  .chosen li small { font-weight: 400; color: var(--color-neutral-700); }
+  .chosen li .x { margin-left: auto; color: var(--color-accent-700); font-weight: 600; font-size: 14px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; margin: 22px 0 6px; }
+  .controls .lab { font-size: 14px; font-weight: 600; margin-right: 6px; }
+  .periods { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+  .periods button { font: inherit; font-size: 14px; color: var(--color-text); background: transparent; border: 1px solid var(--color-divider); padding: 5px 13px; border-radius: 999px; min-height: 36px; }
+  .periods button[aria-pressed="true"] { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-bg); }
+  .fuel-btn[aria-pressed="true"] { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-bg); }
+  .illus { border: 2px dashed var(--color-neutral-500, #9a8f80); border-radius: 14px; padding: 6px 12px 10px; margin-top: 18px; }
+  .illus .tag { font: 700 12px Figtree; letter-spacing: .06em; text-transform: uppercase; color: var(--color-note); }
+  .chart-wrap { margin-top: 6px; }
+  .hist .k { fill: none; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+  .hist .kgb { fill: none; stroke: var(--g-avg); stroke-width: 2; stroke-dasharray: 5 4; }
+  .hist .kdot { stroke: var(--color-bg); stroke-width: 2; }
+  .hist .g-lab b { font-weight: 700; }
+  .ktab { background: var(--color-surface); border-radius: 16px; padding: 4px 16px; margin-top: 14px; }
+  .ktab .r { display: grid; grid-template-columns: 1fr 86px 120px; gap: 10px; align-items: baseline; padding: 9px 0; border-top: 1px solid var(--color-divider); font-size: 15px; }
+  .ktab .r:first-child { border-top: 0; }
+  .ktab .hd { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--color-neutral-700); padding-bottom: 2px; }
+  .ktab .n { font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .ktab .p { text-align: center; font-weight: 700; }
+  .ktab .c { text-align: center; color: var(--color-neutral-700); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 28px; }
+  .multi { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; }
+  .multi h4, .two h4 { font: 700 15px Figtree; margin: 8px 0 0; display: flex; align-items: center; gap: 8px; }
+  .multi h4 span { font-weight: 400; color: var(--color-neutral-700); font-size: 13.5px; margin-left: auto; }
+  .back { display: flex; width: 100%; min-height: 52px; margin: 34px 0 10px; font-size: 17px; }
+  .bigbtn { display: flex; width: 100%; min-height: 52px; font-size: 17px; margin-top: 18px; }
+  @media (max-width: 720px) {
+    .slots, .two, .multi { grid-template-columns: 1fr; }
+    .kindlist { columns: 2; }
+    .ktab .r { grid-template-columns: 1fr 70px 82px; font-size: 14px; }
+    .periods button, .fuel-btn { min-height: 44px; }
+  }
+</style>
+</head>
+<body>
+<nav class="nav"><a class="nav-brand" href="#">Refueller</a></nav>
+<main class="col" id="m"></main>
+<script>
+const q2 = new URLSearchParams(location.search);
+const OPT = q2.get('opt') || 'a';
+const SET = q2.get('set') || '1';
+const FUEL = q2.get('fuel') === 'diesel' ? 1 : 0;
+const OPEN = q2.get('open') === '1';
+const PER = q2.get('periods') === '1';
+const narrow = innerWidth <= 720;
+const SETS = {
+  '1': ['C:Reading', 'K:Berkshire', 'R:South East England', 'GB'],
+  '2': ['C:Reading', 'C:City of Bristol', 'GB'],
+  '3': ['K:Berkshire', 'K:Oxfordshire', 'R:South East England'],
+};
+const KIND = { 'C:': 'town or council area', 'K:': 'county', 'R:': 'region', 'N:': 'country', GB: 'country' };
+const show = (k) => (k === 'GB' ? 'Great Britain' : k.slice(2).replace(/^City of /, ''));
+const kind = (k) => (k === 'GB' ? 'country' : KIND[k.slice(0, 2)]);
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const ord = (n) => n + (n % 10 === 1 && n !== 11 ? 'st' : n % 10 === 2 && n !== 12 ? 'nd' : n % 10 === 3 && n !== 13 ? 'rd' : 'th');
+const uk = (t) => new Date(new Date(t).toLocaleString('en-US', { timeZone: 'Europe/London' }));
+const dayWords = (t) => { const d = uk(t); return `${MONTHS[d.getMonth()]} ${ord(d.getDate())}`; };
+const axis = (t) => { const d = uk(t); return `${d.getDate()} ${MONTHS[d.getMonth()].slice(0, 3)}`; };
+const p1 = (v) => `${v.toFixed(1)}p`;
+
+fetch('compare-data.json').then((r) => r.json()).then((D) => {
+  const keys = SETS[SET];
+  // Colour follows the entity in the order chosen; Great Britain always grey and dashed, as in "The wider picture".
+  let slot = 0;
+  const col = {};
+  keys.forEach((k) => { col[k] = k === 'GB' ? 'gb' : `k${slot++}`; });
+  const sw = (k) => col[k] === 'gb' ? '<i class="sw gb"></i>' : `<i class="sw" style="border-color:var(--${col[k]})"></i>`;
+  const times = D.times.map((t) => Date.parse(t));
+  const series = (k, f) => D.series[k].map((v, i) => ({ t: times[i], p: v ? v[f] : null })).filter((x) => x.p !== null);
+  const m = document.getElementById('m');
+  let h = `<div class="page-head" style="padding-bottom:0"><div class="card-kicker">Fuel prices</div>
+    <h2>Compare areas</h2>
+    <p class="cmp-lead">Choose up to four towns, counties, regions or countries to see how their average prices have changed. Unusual prices are not included.</p></div>`;
+  // ---- the chooser ----
+  if (OPT === 'a') {
+    h += `<div class="cmp-box"><p class="cmp-h">Comparing</p><div class="chips">${keys.map((k) => `<span class="chip">${sw(k)}${show(k)} <small>${kind(k)}</small><span class="x" aria-label="Remove">✕</span></span>`).join('')}
+      ${keys.length < 4 ? `<button class="add">+ Add an area</button>` : ''}</div>`;
+    if (OPEN) h += `<div class="addbox"><input class="input" value="Ox"><ul class="sugg">
+      <li class="on">Oxfordshire <small>county</small></li><li>Oxford <small>town or council area</small></li><li>Oxted <small>in Tandridge council area</small></li></ul></div>`;
+    h += keys.length >= 4 ? `<p class="note">That’s four, the most a chart can show clearly. Remove one to add another.</p>` : `<p class="note">You can add ${['', 'three more', 'two more', 'one more'][keys.length]}.</p>`;
+    h += `</div>`;
+  } else if (OPT === 'b') {
+    h += `<div class="cmp-box"><p class="cmp-h">Comparing</p><div class="slots">${[0, 1, 2, 3].map((i) => { const k = keys[i];
+      return `<div class="slot"><span class="num">${i + 1}</span>${k ? sw(k) : '<i class="sw" style="border-color:transparent"></i>'}<input class="input" ${k ? `value="${show(k)}${k === 'GB' ? '' : ', ' + kind(k)}"` : 'placeholder="A town, county, region or country"'}></div>`; }).join('')}</div>
+      <p class="note">Leave any box empty to compare fewer.</p></div>`;
+  } else {
+    h += `<div class="cmp-box"><div class="kinds"><span class="lab">Add a</span>${['Town', 'County', 'Region', 'Country'].map((x) => `<button class="kind${OPEN && x === 'County' ? ' on' : ''}">${x}</button>`).join('')}</div>`;
+    if (OPEN) h += `<div class="kindlist">${D.names['K:'].map((n) => `<div class="${keys.includes('K:' + n) ? 'picked' : ''}">${n}</div>`).join('')}</div>`;
+    h += `<ul class="chosen">${keys.map((k) => `<li>${sw(k)}${show(k)} <small>${kind(k)}</small><span class="x">Remove</span></li>`).join('')}</ul></div>`;
+  }
+  // ---- controls ----
+  const periodBtns = PER ? ['1 month', '3 months', '6 months', '1 year'] : ['1 month'];
+  const ctrl = (withFuel) => `<div class="controls"><span><span class="lab">Show</span><span class="periods">${periodBtns.map((p, i) => `<button aria-pressed="${i === 0}">${p}</button>`).join('')}</span></span>
+    ${withFuel ? `<span><button class="fuel-btn" aria-pressed="${!FUEL}">Unleaded</button> <button class="fuel-btn" aria-pressed="${!!FUEL}">Diesel</button></span>` : ''}</div>`;
+  const ctrlW = (withFuel) => PER ? `<div class="illus"><span class="tag">Illustration only: how the buttons will look once a year has been recorded. The chart beneath is still the real ${Math.round((times.at(-1) - times[0]) / 864e5) + 1} days.</span>${ctrl(withFuel)}</div>` : ctrl(withFuel);
+  const building = `<p class="note" style="margin-top:0">Refueller began recording on ${dayWords(times[0])}, so for now the chart shows the ${Math.round((times.at(-1) - times[0]) / 864e5) + 1} days since then. Longer periods appear here as the record grows.</p>`;
+  // ---- the chart ----
+  const chart = (lines, f, w, hgt, labels) => {
+    const [L, R, T, B] = [44, labels ? 150 : 50, 12, 26];
+    const ps = lines.flatMap((l) => l.pts.map((x) => x.p));
+    const lo = Math.floor(Math.min(...ps) - 0.6), hi = Math.ceil(Math.max(...ps) + 0.6);
+    const [s, e] = [times[0], times.at(-1)];
+    const x = (t) => L + ((t - s) / (e - s)) * (w - L - R), y = (p) => T + ((hi - p) / (hi - lo)) * (hgt - T - B);
+    const step = hi - lo > 12 ? 5 : hi - lo > 6 ? 2 : 1;
+    let g = '';
+    for (let p = Math.ceil(lo / step) * step; p <= hi; p += step) g += `<line class="g-grid" x1="${L}" x2="${w - R}" y1="${y(p)}" y2="${y(p)}"/><text class="g-ax" x="${L - 6}" y="${y(p) + 4}" text-anchor="end">${p}p</text>`;
+    const every = narrow || w < 400 ? 3 : 2;
+    for (let d = 0; ; d += every) { const t = Date.parse(new Date(e).toISOString().slice(0, 10) + 'T12:00:00Z') - d * 864e5; if (t < s) break; g += `<text class="g-ax" x="${x(t)}" y="${hgt - 6}" text-anchor="middle">${axis(t)}</text>`; }
+    lines.forEach((l) => {
+      const pts = l.pts.map((z) => `${x(z.t)},${y(z.p)}`).join(' ');
+      g += l.c === 'gb' ? `<polyline class="kgb" points="${pts}"/>` : `<polyline class="k" style="stroke:var(--${l.c})" points="${pts}"/>`;
+      if (l.c !== 'gb') { const z = l.pts.at(-1); g += `<circle class="kdot" style="fill:var(--${l.c})" cx="${x(z.t)}" cy="${y(z.p)}" r="4"/>`; }
+    });
+    const ends = lines.map((l) => ({ l, v: l.pts.at(-1).p, y: y(l.pts.at(-1).p) + 4 })).sort((a, b) => a.y - b.y);
+    for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 14) ends[i].y = ends[i - 1].y + 14;
+    ends.forEach((en) => { g += `<text class="g-lab" x="${w - R + 8}" y="${en.y}">${labels ? `${en.l.name} ` : ''}<tspan font-weight="700">${p1(en.v)}</tspan></text>`; });
+    return `<div class="hist chart-wrap"><svg viewBox="0 0 ${w} ${hgt}" width="100%" class="avg-svg" style="--ar:${w / hgt}">${g}</svg></div>`;
+  };
+  const linesFor = (f, ks = keys) => ks.map((k) => ({ name: show(k), c: col[k], pts: series(k, f) }));
+  const table = (f) => `<div class="ktab"><div class="r hd"><span>Area</span><span class="p">Now</span><span class="c">Change</span></div>${keys.map((k) => {
+    const s = series(k, f), d = s.at(-1).p - s[0].p;
+    return `<div class="r"><span class="n">${sw(k)}${show(k)}</span><span class="p">${p1(s.at(-1).p)}</span><span class="c">${d < 0 ? 'down' : 'up'} ${p1(Math.abs(d))}</span></div>`; }).join('')}</div><p class="note">Change since ${dayWords(times[0])}, when recording began.</p>`;
+  const W = narrow ? 340 : 760;
+  if (OPT === 'a') {
+    h += ctrlW(true) + (PER ? '' : building);
+    h += chart(linesFor(FUEL), FUEL, W, narrow ? 230 : 300, !narrow) + table(FUEL);
+  } else if (OPT === 'b') {
+    h += ctrlW(false) + (PER ? '' : building);
+    h += `<div class="two">${['Unleaded', 'Diesel'].map((n, f) => `<div><h4>${n}</h4>${chart(linesFor(f), f, narrow ? 340 : 470, 220, false)}</div>`).join('')}</div>` + table(0).replace('<span>Area</span>', '<span>Unleaded</span>') + table(1).replace('<span>Area</span>', '<span>Diesel</span>');
+  } else {
+    h += ctrlW(true) + (PER ? '' : building);
+    const own = keys.filter((k) => k !== 'GB');
+    h += `<p class="note">Each area against Great Britain (grey dashes).</p><div class="multi">${own.map((k) => { const s = series(k, FUEL);
+      return `<div><h4>${sw(k)}${show(k)}<span>${p1(s.at(-1).p)} now</span></h4>${chart([{ name: show(k), c: col[k], pts: s }, { name: 'Great Britain', c: 'gb', pts: series('GB', FUEL) }], FUEL, narrow ? 340 : 370, 170, false)}</div>`; }).join('')}</div>`;
+  }
+  h += `<a class="btn btn-secondary back" href="#">← Back to RG4 7SS</a>`;
+  m.innerHTML = h;
+  document.body.dataset.ready = '1';
+});
+</script>
+</body>
+</html>

@@ -119,6 +119,19 @@ eight, the ends, the address `#route/RG1/BS1[/via]`), `src/components/Journey.ts
 
 ## Log
 
+### 2026-11-09 — "Compare areas": mock-ups (design only)
+
+**John** asked for a page comparing up to four areas' average prices over time (a town, county, region, country or Great Britain),
+reached by a big button under "The wider picture"'s list, with period buttons (1 month, then 3 and 6 months and a year) as Riverwatcher.
+Mock-ups from the built site's stylesheet and the real averages (October 30th to November 8th): `design/mock/compare/compare.html`
+(`?opt=a|b|c&set=1|2|3&fuel=diesel&open=1&periods=1`), `data.json`, `shots.cjs`; pictures `design/previews/compare/`; options page
+https://claude.ai/artifact/SN7DsXURx5fpKRofuzsb6q. **A** chips and one chart with a fuel switch (suggested); **B** four boxes, both fuels;
+**C** choose by kind, a small chart each against Great Britain. The way in drawn into the real page in the browser only. Colours checked
+with the dataviz validator: terracotta, blue, green, plum pass next to each other (light on #ebddc5, dark on #37332e); all pairs don't
+(terracotta and green close for some readers), so end labels and the table name each line. Found: there are no town averages, only
+council areas (349), counties (47), regions (9), nations (3) and Great Britain; nine questions for John on the page. No app code changed.
+No errors, no sideways scrolling at 1200px or 390px with touch.
+
 ### 2026-10-23 — stage 0: spec, plan and notes drafted (branch `stage-0-spec`)
 
 **What:** John started the project from a Claude.ai handover (committed to the
