@@ -38,10 +38,16 @@ confirmed, or clearly mark it as unconfirmed.
    List every way in. Clockmaker, for example, has `index.html`,
    `?host=backtimer` / `backtimer.html` and `landing.html`.
 
-## 2. Use it like a real person, at both sizes
+## 2. Use it like a real person, at three sizes
 
-Do every pass twice: at **1200×860**, and at **390×844 with
-`hasTouch`, `isMobile`, `deviceScaleFactor: 2`**. Use `tap()` on the phone.
+Do every pass at **1200×860**, at **390×844 with `hasTouch`, `isMobile`,
+`deviceScaleFactor: 2`** (a phone held upright), and at **844×390 with
+touch** (a phone held sideways). Use `tap()` on the phone. Sideways, also
+look at **667×320 with touch**, the smallest iPhone with Safari's bar
+showing. A phone held sideways is wider than 720px, so it gets the computer
+layout on a short screen, with touch: things built for one or the other
+can go wrong there (added November 9th 2026, after Storykeeper's holiday
+map; earlier reviews didn't check it).
 
 1. **First visit**, with empty storage: what a newcomer sees and what they'd
    try first.
@@ -63,6 +69,17 @@ Do every pass twice: at **1200×860**, and at **390×844 with
    errors (ignore Vercel's `/_vercel/insights` 404 locally), sideways page
    scrolling (`scrollWidth > innerWidth`), phone tap targets under 44px, and
    phone input boxes under 16px text.
+   Sideways, also measure: (a) headers and bars that stay at the top or
+   bottom (`position: fixed` or `sticky`) and how much of the screen they
+   take once scrolled; (b) charts, maps, pictures and pop-ups taller than the
+   screen; (c) typing boxes under 16px (a more specific style can beat the
+   touch-screen 16px rule; ignore tick boxes and colour pickers, which don't
+   zoom); (d) anything that catches a swipe, such as a map or tree a finger
+   moves instead of the page. Test (d) with real touch events
+   (`Input.dispatchTouchEvent` through a CDP session: a touchStart, ten
+   touchMoves, a touchEnd), and first prove the method scrolls plain text:
+   Playwright's `tap()` and CDP's `synthesizeScrollGesture` don't scroll a
+   page in this emulation.
 6. **Look at the screenshots yourself.** Numbers miss things like cramped
    layouts, buttons in an odd order, a main button hidden at the bottom, or
    headers taking half a phone screen.

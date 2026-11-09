@@ -120,6 +120,42 @@ terracotta labels below 4.5:1. How it's built (Hindcaster's
   or dark mode), so the page opens the same way next time."
 - Charts: re-check their colours in both themes ("Charts" in §5).
 
+### Reviewing dark mode colours
+
+How the tracker's dark mode was made more colourful (November 5th 2026),
+for any tool whose dark mode John wants to review. Dark mode only: light
+mode stays exactly as it is.
+
+1. **Mock up, don't build.** On the built site, add the candidate CSS in
+   the browser only (Playwright's `addStyleTag`), scoped to
+   `:root[data-theme="dark"]`. Nothing in the app changes until John
+   chooses.
+2. **Show "now" plus about four options**, each the same few pages: the
+   main page at 1200px, the same at 390px with touch, and one busy inner
+   page at 390px. One picture per option, the three side by side. The
+   tracker's four were:
+   - A, colour by status: each card tinted in its status colour, with a
+     coloured edge;
+   - B and C, a coloured ground: the page and cards a dark teal or a dark
+     plum instead of brown-grey, everything else unchanged;
+   - D, colour by group: each group's heading and a band across the top
+     of its cards in its own colour, the page left brown-grey. John chose
+     D.
+   Other ideas worth offering: coloured headings only; a coloured nav bar;
+   colour on links and controls only.
+3. **Keep colour tied to meaning** (a status, a group, a kind of thing)
+   rather than decoration, and keep the house terracotta as the accent.
+4. **Check each colour** against the surface behind it: at least 4.5:1 for
+   text (light, soft colours on the dark ground, such as `#f0a36c`,
+   `#b9d48a`, `#8fc3d6`, `#cdaee6`), and the shades told apart by more
+   than hue where it matters (a word, a position).
+5. **When building the chosen one:** name colours by what they mean
+   (classes such as `g-live-and-developing`), not by position on the page
+   (`nth-of-type` leaked group colours onto other pages in the tracker's
+   mock-up); keep printing, Copy image and link-preview images light;
+   finer text smoothing still applies; never bold Caprasimo. Check light
+   mode is unchanged, at 1200px and 390px with touch, both themes.
+
 ## 3. Type
 
 - **Headings and buttons:** Caprasimo, weight 400 — the only weight that
@@ -262,6 +298,22 @@ Every screen must work on a 390px-wide phone with no sideways scrolling.
   visible button for it (a full-width "+ Add …" under the list).
 - Keep important buttons in the top ~60% of the screen while a keypad is
   open (it covers roughly the bottom 40%).
+- **A phone held sideways** (about 844×390, as little as 667×320 on the
+  smallest iPhone with Safari's bar) is wider than 720px, so it gets the
+  computer layout on a screen less than 500px tall, and is tapped, not
+  clicked. Treat `@media (max-height: 500px)` as "short screen" (Storykeeper,
+  November 8th and 9th 2026):
+  - keep what stays at the top small (a slim header; no second bar held
+    under it);
+  - no chart, map or pop-up taller than the screen: cap its width so its
+    height fits, keeping its shape (`max-width: calc((100svh - 40px) *
+    var(--ar))`, with `--ar`, its width over height, set on the element).
+    Cap the box that tooltips are measured from, not only the drawing
+    inside it, or they land in the wrong place;
+  - anything a finger drags (a map, a tree) must be shorter than the
+    screen, so there's always page above or below it to swipe;
+  - typing boxes stay 16px: check a more specific style doesn't beat the
+    touch-screen rule (Refueller's search box did).
 - Drag-to-reorder uses `useDragReorder` on a grip handle only (never the
   browser's own drag-and-drop, which ignores touch).
 - Text boxes for codes (postcodes and the like): `autoCapitalize="characters"`,
@@ -435,8 +487,9 @@ and add its tags. Nothing else needs fixing or remaking first.
   if an answer changes (Hindcaster's `scripts/check-*.ts`, no test
   library). Prove a new check works by breaking the thing it checks and
   seeing it fail. Clockmaker and Backtimer's are `scripts/check-sums.ts`.
-- Check work in a real browser (Playwright) at 1200px and at 390px with
-  touch emulation — not just "it builds". Say plainly what couldn't be
+- Check work in a real browser (Playwright) at 1200px, at 390px with
+  touch emulation, and sideways at 844×390 with touch — not just "it
+  builds". Say plainly what couldn't be
   checked (e.g. a real iPhone keyboard).
 - Keep a dated entry in the project's `CLAUDE.md` for every change: what,
   why, what was deliberately left alone, how it was verified.
@@ -496,7 +549,8 @@ project a long, careful review on a computer and a phone, and report back
 
 - Read the notes first, so agreed decisions aren't reported as faults.
   Review the live `main`.
-- Use it like a real person at 1200px and at 390px with touch: first visit,
+- Use it like a real person at 1200px, at 390px with touch, and with a
+  phone held sideways (844×390 with touch): first visit,
   every screen, realistic and extreme content, abandoning and going back.
   Run an automatic sweep for errors, sideways scrolling and small tap targets.
   Look at every screenshot.
