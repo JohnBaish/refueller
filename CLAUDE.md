@@ -119,6 +119,19 @@ eight, the ends, the address `#route/RG1/BS1[/via]`), `src/components/Journey.ts
 
 ## Log
 
+### 2026-11-09 — "Compare areas": round 2 mock-ups (design only)
+
+**John's answers:** button "Compare areas over time" (1a); A is closest; one chart, but a way to compare unleaded and diesel on it,
+four lines at most; the column says "Change since …"; type a town and get its council area (to see how it looks); start filled from the
+postcode; period buttons only once the whole period is recorded; Back at the top too; remember the choice; colours as proposed; no
+"These eight stations" choice; and a way to share the chart's picture, here and on the main page. **Round 2** (`round2.html`,
+`round2.js`, `shots2.cjs`; pictures `design/previews/compare/r2-*`; same options page, version 2): fuel buttons Unleaded, Diesel and
+Both; Both shows two areas (others faded, "tap to show"), colour by area, diesel dotted. On one price scale the fuels sit about 28p apart
+and their movements look flat, so Both shows the change since recording began by default, with a Change or Prices switch (Reading
+unleaded down 3.9p, diesel down 0.6p, October 30th to November 8th). Typing "Woodl" lists the three Woodleys in OS Open Names with their
+council areas; "Share chart" makes a light picture with heading, dates and the credit line (phone share sheet; copy or save on a computer).
+Five questions for John. No errors, no sideways scrolling at 1200px or 390px with touch. No app code changed.
+
 ### 2026-11-09 — "Compare areas": mock-ups (design only)
 
 **John** asked for a page comparing up to four areas' average prices over time (a town, county, region, country or Great Britain),

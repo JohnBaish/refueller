@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Refueller – compare areas (mock-up)</title>
+<!-- Mock-up only (November 9th 2026): the "compare areas" page, drawn with the site's own built stylesheet and the real averages
+     from data/averages.json (October 30th to November 8th 2026). Copied into dist/ by compare-shots.cjs. Not app code. -->
+<link rel="stylesheet" href="CSSFILE">
+<script>
+  const q = new URLSearchParams(location.search);
+  if (q.get('theme') === 'dark') document.documentElement.dataset.theme = 'dark';
+</script>
+<style>
+  :root { --k0: #c05a14; --k1: #2a64a8; --k2: #3d7a3a; --k3: #8a3f7f; }
+  :root[data-theme="dark"] { --k0: #cf7a3f; --k1: #5f97dc; --k2: #5c9a56; --k3: #b36aa8; }
+  .cmp-lead { font-size: 15px; margin: 6px 0 0; }
+  .cmp-box { background: var(--color-surface); border-radius: 20px; padding: 14px 18px; margin: 18px 0 0; }
+  .cmp-h { font: 700 13px Figtree, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--color-neutral-700); margin: 0 0 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .chip { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 4px 6px 4px 12px; border-radius: 999px; background: var(--color-bg); border: 1px solid var(--color-divider); font-size: 15px; font-weight: 600; }
+  .chip small { font-weight: 400; color: var(--color-neutral-700); font-size: 12.5px; }
+  .chip .x { width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: var(--color-neutral-700); font-size: 18px; }
+  .sw { display: inline-block; width: 20px; height: 0; border-top: 3px solid; flex: none; }
+  .sw.gb { border-top: 2.5px dashed var(--g-avg); }
+  .add { min-height: 40px; border-radius: 999px; border: 1px dashed var(--color-accent); color: var(--color-accent-700); font-weight: 600; font-size: 15px; padding: 4px 14px; background: transparent; }
+  .addbox { margin-top: 10px; position: relative; max-width: 420px; }
+  .addbox .input { font-size: 16px; min-height: 44px; }
+  .sugg { list-style: none; margin: 4px 0 0; padding: 4px 0; background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,.12); }
+  .sugg li { padding: 9px 14px; font-size: 15px; display: flex; justify-content: space-between; gap: 12px; }
+  .sugg li small { color: var(--color-neutral-700); font-size: 13px; }
+  .sugg li.on { background: color-mix(in srgb, var(--color-accent) 12%, transparent); }
+  .note { font-size: 13px; color: var(--color-neutral-700); margin: 8px 0 0; }
+  .slots { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 18px; }
+  .slot { display: flex; align-items: center; gap: 10px; }
+  .slot .input { font-size: 16px; min-height: 44px; flex: 1; }
+  .slot .num { font: 700 13px Figtree; color: var(--color-neutral-700); width: 14px; }
+  .kinds { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .kinds .lab { font-size: 15px; margin-right: 4px; }
+  .kind { min-height: 44px; padding: 4px 16px; border-radius: 999px; border: 1px solid var(--color-divider); background: var(--color-bg); font: 600 15px Figtree; color: var(--color-text); }
+  .kind.on { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-bg); }
+  .kindlist { margin-top: 10px; columns: 3; column-gap: 24px; font-size: 14.5px; max-width: 640px; }
+  .kindlist div { padding: 6px 0; break-inside: avoid; }
+  .kindlist div.picked { font-weight: 700; color: var(--color-accent-700); }
+  .chosen { margin: 12px 0 0; padding: 0; list-style: none; }
+  .chosen li { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-top: 1px solid var(--color-divider); font-size: 15px; font-weight: 600; }
+  .chosen li:first-child { border-top: 0; }
+  .chosen li small { font-weight: 400; color: var(--color-neutral-700); }
+  .chosen li .x { margin-left: auto; color: var(--color-accent-700); font-weight: 600; font-size: 14px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; margin: 22px 0 6px; }
+  .controls .lab { font-size: 14px; font-weight: 600; margin-right: 6px; }
+  .periods { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+  .periods button { font: inherit; font-size: 14px; color: var(--color-text); background: transparent; border: 1px solid var(--color-divider); padding: 5px 13px; border-radius: 999px; min-height: 36px; }
+  .periods button[aria-pressed="true"] { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-bg); }
+  .fuel-btn[aria-pressed="true"] { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-bg); }
+  .illus { border: 2px dashed var(--color-neutral-500, #9a8f80); border-radius: 14px; padding: 6px 12px 10px; margin-top: 18px; }
+  .illus .tag { font: 700 12px Figtree; letter-spacing: .06em; text-transform: uppercase; color: var(--color-note); }
+  .chart-wrap { margin-top: 6px; }
+  .hist .k { fill: none; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+  .hist .kgb { fill: none; stroke: var(--g-avg); stroke-width: 2; stroke-dasharray: 5 4; }
+  .hist .kdot { stroke: var(--color-bg); stroke-width: 2; }
+  .hist .g-lab b { font-weight: 700; }
+  .ktab { background: var(--color-surface); border-radius: 16px; padding: 4px 16px; margin-top: 14px; }
+  .ktab .r { display: grid; grid-template-columns: 1fr 86px 120px; gap: 10px; align-items: baseline; padding: 9px 0; border-top: 1px solid var(--color-divider); font-size: 15px; }
+  .ktab .r:first-child { border-top: 0; }
+  .ktab .hd { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--color-neutral-700); padding-bottom: 2px; }
+  .ktab .n { font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .ktab .p { text-align: center; font-weight: 700; }
+  .ktab .c { text-align: center; color: var(--color-neutral-700); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 28px; }
+  .multi { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; }
+  .multi h4, .two h4 { font: 700 15px Figtree; margin: 8px 0 0; display: flex; align-items: center; gap: 8px; }
+  .multi h4 span { font-weight: 400; color: var(--color-neutral-700); font-size: 13.5px; margin-left: auto; }
+  .back { display: flex; width: 100%; min-height: 52px; margin: 34px 0 10px; font-size: 17px; }
+  .bigbtn { display: flex; width: 100%; min-height: 52px; font-size: 17px; margin-top: 18px; }
+  @media (max-width: 720px) {
+    .slots, .two, .multi { grid-template-columns: 1fr; }
+    .kindlist { columns: 2; }
+    .ktab .r { grid-template-columns: 1fr 70px 82px; font-size: 14px; }
+    .periods button, .fuel-btn { min-height: 44px; }
+  }
+
+  .sw.dot { border-top-style: dotted; border-top-width: 3.5px; }
+  .sw.solid-ink, .sw.ink { border-color: var(--color-text); }
+  .hist .k.dotted { stroke-dasharray: 0.1 5.5; stroke-width: 3.5; }
+  .hist .g-grid.zero { stroke: var(--color-neutral-700); stroke-opacity: .6; }
+  .chip.off { opacity: .5; border-style: dashed; }
+  .fuels { display: inline-flex; gap: 6px; }
+  .controls { gap: 10px 14px; }
+  .share-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 4px 14px; border-radius: 999px; border: 1px solid var(--color-divider); background: transparent; color: var(--color-accent-700); font: 600 14px Figtree; margin-left: auto; }
+  .fuel-key { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; margin: 10px 0 0; align-items: center; }
+  .fuel-key span { display: inline-flex; gap: 8px; align-items: center; }
+  .fuel-key .sep { width: 1px; height: 16px; background: var(--color-divider); }
+  .back-link { margin-top: 0; }
+  body.img { background: #f5ead8; width: 1200px; margin: 0; }
+  .shot { padding: 40px 50px 30px; background: #f5ead8; }
+  .shot h2 { font-size: 34px; margin: 2px 0 4px; }
+  .shot-head p { font-size: 17px; margin: 0; color: var(--color-neutral-700); }
+  .shot .hist { margin-top: 14px; }
+  .shot-foot { font-size: 13px; color: var(--color-neutral-700); margin: 14px 0 0; border-top: 1px solid var(--color-divider); padding-top: 10px; }
+  @media (max-width: 720px) { .share-btn { margin-left: 0; min-height: 44px; } .fuels .fuel-btn { padding-inline: 13px; } }
+</style>
+</head>
+<body>
+<nav class="nav"><a class="nav-brand" href="#">Refueller</a></nav>
+<main class="col" id="m"></main>
+<script src="round2.js"></script>
+</body>
+</html>
