@@ -234,7 +234,7 @@ function About() {
         cheaper. Refueller keeps each station’s prices for 30 days, so the line covers no more than that. With both fuels,
         two areas are shown at a time, and the chart can show how much each price has moved since the start of the period, as diesel
         costs much more than unleaded and the two would otherwise sit far apart. Longer periods appear as the record grows. Share chart
-        makes a picture of the chart on your device; nothing is sent anywhere until you choose where it goes.
+        (Copy chart on a computer) makes a picture of the chart on your device; nothing is sent anywhere until you choose where it goes.
       </p>
       <p>
         <strong>Find cheaper fuel near the route</strong> works out the quickest route between the places you type, on your

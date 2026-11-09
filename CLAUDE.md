@@ -119,6 +119,12 @@ eight, the ends, the address `#route/RG1/BS1[/via]`), `src/components/Journey.ts
 
 ## Log
 
+### 2026-11-09 — the cheapest of the eight merged to `main`
+
+**John:** the drafted wording stands (the button, the 30-day note, the About sentences), plus "Share chart (Copy chart on a computer)"
+in About; make it live. `compare-cheapest` merged into `main` after bringing in its data commits; checks, lint, type-check and build
+passed first. Live from Vercel's next build: a new place starts the compare page afresh, and the cheapest of the eight as a fifth line.
+
 ### 2026-11-09 — compare: the cheapest of the eight as a fifth line; About drafted (branch `compare-cheapest`, not merged)
 
 **John:** the cheapest station doesn't count towards the four, to see whether five lines work; a line in "About these figures" on
