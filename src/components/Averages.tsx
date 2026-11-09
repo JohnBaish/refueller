@@ -10,7 +10,8 @@ import type { PageIndex } from '../lib/pageTypes.ts';
 import { useIsNarrow } from '../lib/responsive.ts';
 import { ShareButton } from './ShareButton.tsx';
 import { deliver, imageName, LIGHT, makeImage } from '../lib/shareImage.ts';
-import { postcodeArea, type Row } from '../lib/search.ts';
+import { membersOnly, postcodeArea, tidyName, type Row } from '../lib/search.ts';
+import { CHEAPEST_KEPT, type CheapStation, type CheapestKept } from '../lib/compare.ts';
 
 // "The wider picture" (John, 1 November 2026; no dots on any line, John): under the list, the average price at these eight
 // stations and in their council area, county, region, country and Great Britain, each with a fact (src/lib/levels.ts; John,
@@ -141,6 +142,20 @@ export function AveragesSection({ index, rows, histories, where, near }: { index
   const [page, setPage] = useState<AveragesPage | null>(null);
   const [lookup, setLookup] = useState<AreaLookup | null>(null);
   const area = postcodeArea(where);
+  // The station marked cheapest for each fuel (the one anyone can buy at), kept for this tab so "Compare areas over time" can offer
+  // it as a line (John, November 9th 2026, option A). Only for the page it came from: the address after "#".
+  useEffect(() => {
+    const cheap = (fuel: 'e10' | 'diesel'): CheapStation | null => {
+      const r = rows.find((x) => x.cheapest[fuel] && !membersOnly(x.station));
+      return r ? { name: tidyName(r.station.name), steps: stationSteps(r, histories, fuel) } : null;
+    };
+    const kept: CheapestKept = { from: decodeURIComponent(location.hash.slice(1)), near: near.replace(/ \(.*\)$/, ''), e10: cheap('e10'), diesel: cheap('diesel') };
+    try {
+      sessionStorage.setItem(CHEAPEST_KEPT, JSON.stringify(kept));
+    } catch {
+      // Not kept; the compare page just won't offer it.
+    }
+  }, [rows, histories, near]);
   useEffect(() => {
     let live = true;
     if (index.averages) {

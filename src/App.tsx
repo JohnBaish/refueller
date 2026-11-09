@@ -371,7 +371,7 @@ export default function App() {
         <SafetyNet key={target ? hashOf(target) : ''}>
           {compare ? (
             <>
-              <ComparePage back={compareFrom} />
+              <ComparePage back={compareFrom} fromKey={compareFrom ? hashOf(compareFrom) : null} />
               <BackLink big to={compareFrom} />
             </>
           ) : route ? (

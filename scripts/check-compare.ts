@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   asChange, changeWords, defaultKeys, freeSlot, groupOf, matchAreas, periodsAvailable, pointsFor, readSaved, seriesGroups, shownPair,
-  signedPence, swapIn, withSlots,
+  signedPence, swapIn, withSlots, readCheapest, stepPoints,
 } from '../src/lib/compare.ts';
 import type { AveragesFile } from '../src/lib/averages.ts';
 import type { CouncilAreas } from '../src/lib/levels.ts';
@@ -111,6 +111,24 @@ await check('a saved choice is read back carefully: unknown areas dropped, odd v
   assert.equal(readSaved(JSON.stringify({ keys: ['C:Nowhere'] }), has), null);
   assert.equal(readSaved('not json', has), null);
   assert.equal(readSaved(JSON.stringify({ keys: ['GB'], fuel: 'petrol' }), has)!.fuel, 'e10');
+});
+
+await check('a saved choice remembers the place it was made from', () => {
+  const s = readSaved(JSON.stringify({ keys: ['GB'], from: 'RG4-7SS' }), has)!;
+  assert.equal(s.from, 'RG4-7SS');
+  assert.equal(readSaved(JSON.stringify({ keys: ['GB'] }), has)!.from, null);
+});
+
+await check('the cheapest of the eight: only for the page it came from, priced at each collection once known', () => {
+  const kept = JSON.stringify({ from: 'PE38', near: 'PE38', e10: { name: 'Tesco', steps: [{ t: Date.parse('2026-11-01T10:00:00Z'), p: 170.9 }] }, diesel: null });
+  assert.equal(readCheapest(kept, 'RG4'), null);
+  assert.equal(readCheapest(kept, null), null);
+  assert.equal(readCheapest('nonsense', 'PE38'), null);
+  const c = readCheapest(kept, 'PE38')!;
+  const times = ['2026-10-31T10:15:00Z', '2026-11-01T10:15:00Z', '2026-11-02T10:15:00Z'];
+  const pts = stepPoints(times, [...c.e10!.steps, { t: Date.parse('2026-11-02T08:00:00Z'), p: 168.9 }], 30, Date.parse(times[2]));
+  assert.deepEqual(pts.map((p) => p.p), [170.9, 168.9]);
+  assert.deepEqual(stepPoints(times, c.e10!.steps, 1, Date.parse(times[2])).map((p) => p.p), [170.9, 170.9]);
 });
 
 console.log(failures ? `\n${failures} failed` : '\nall compare checks passed');

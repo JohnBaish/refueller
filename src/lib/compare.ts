@@ -172,7 +172,9 @@ export function matchAreas(keys: string[], typed: string, limit = 5): string[] {
 // ----- Remembered on this device (John, November 9th: "ideally") -----
 
 export const SAVED = 'refueller.compare';
-export type Saved = { keys: string[]; slots: Record<string, Slot>; fuel: FuelChoice; view: View; period: PeriodId; pair: string[] | null };
+/** `from`: the page (its address after "#") the choice was made from. A choice made from another place keeps only how the chart is
+ *  shown (fuel, change or prices, period); its areas start afresh from the new place (John, November 9th 2026). */
+export type Saved = { keys: string[]; slots: Record<string, Slot>; fuel: FuelChoice; view: View; period: PeriodId; pair: string[] | null; from?: string | null };
 export function readSaved(raw: string | null, has: (key: string) => boolean): Saved | null {
   if (!raw) return null;
   try {
@@ -186,8 +188,39 @@ export function readSaved(raw: string | null, has: (key: string) => boolean): Sa
       view: s.view === 'price' ? 'price' : 'change',
       period: PERIODS.some((p) => p.id === s.period) ? (s.period as PeriodId) : '1m',
       pair: Array.isArray(s.pair) ? s.pair.filter((k): k is string => typeof k === 'string') : null,
+      from: typeof s.from === 'string' ? s.from : null,
     };
   } catch {
     return null;
   }
+}
+
+// ----- The cheapest of the eight (John, November 9th 2026: option A, added only when chosen) -----
+
+/** The key the cheapest of the eight stations goes by among the areas. */
+export const CHEAPEST = 'S';
+/** Kept for the tab by the results page: the station marked cheapest for each fuel (not a members-only Costco), with its prices. */
+export const CHEAPEST_KEPT = 'refueller.cheapest';
+export type Step = { t: number; p: number };
+export type CheapStation = { name: string; steps: Step[] };
+export type CheapestKept = { from: string; near: string; e10: CheapStation | null; diesel: CheapStation | null };
+export function readCheapest(raw: string | null, from: string | null): CheapestKept | null {
+  if (!raw || !from) return null;
+  try {
+    const c = JSON.parse(raw) as CheapestKept;
+    return c && c.from === from && typeof c.near === 'string' ? c : null;
+  } catch {
+    return null;
+  }
+}
+/** A station's price at each collection in the period, from the moment its price is known. */
+export function stepPoints(times: string[], steps: Step[], days: number, lastMs: number): Point[] {
+  const from = lastMs - days * DAY;
+  return times.flatMap((iso) => {
+    const t = Date.parse(iso);
+    if (t < from || t > lastMs) return [];
+    let p: number | null = null;
+    for (const s of steps) if (s.t <= t) p = s.p;
+    return p === null ? [] : [{ t, p }];
+  });
 }

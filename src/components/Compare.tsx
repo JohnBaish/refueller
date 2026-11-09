@@ -4,7 +4,8 @@ import { getPlaces } from './PlaceBox.tsx';
 import type { Target } from './Results.tsx';
 import {
   areaName, asChange, changeWords, defaultKeys, freeSlot, groupOf, KIND_WORD, kindOf, matchAreas, MAX_AREAS, periodsAvailable,
-  pointsFor, readSaved, SAVED, scaleFor, shownPair, signedPence, swapIn, withSlots,
+  pointsFor, readCheapest, readSaved, SAVED, scaleFor, shownPair, signedPence, stepPoints, swapIn, withSlots, CHEAPEST, CHEAPEST_KEPT,
+  type CheapestKept,
   type FuelChoice, type PeriodId, type Point, type Saved, type SeriesGroup, type Slot, type View,
 } from '../lib/compare.ts';
 import { axisDate, dateWords } from '../lib/history.ts';
@@ -163,7 +164,15 @@ function savedRaw(): string | null {
   }
 }
 
-export function ComparePage({ back }: { back: Target | null }) {
+function keptCheapest(fromKey: string | null): CheapestKept | null {
+  try {
+    return readCheapest(sessionStorage.getItem(CHEAPEST_KEPT), fromKey);
+  } catch {
+    return null;
+  }
+}
+
+export function ComparePage({ back, fromKey }: { back: Target | null; fromKey: string | null }) {
   const narrow = useIsNarrow(720);
   const [base, setBase] = useState<{ index: PageIndex; page: AveragesPage } | null>(null);
   const [failed, setFailed] = useState(false);
@@ -175,6 +184,10 @@ export function ComparePage({ back }: { back: Target | null }) {
   const [active, setActive] = useState(-1);
   const [note, setNote] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  // The cheapest of the eight on the page this was opened from, if that page was seen in this tab.
+  const [cheap] = useState(() => keptCheapest(fromKey));
+  const nameOf = (k: string) => (k === CHEAPEST ? 'Cheapest of the eight' : areaName(k));
+  const kindOfKey = (k: string) => (k === CHEAPEST && cheap ? `near ${cheap.near}` : KIND_WORD[kindOf(k)]);
 
   // The index, the averages page (for the list of areas and the council areas), then the starting choice.
   useEffect(() => {
@@ -184,12 +197,16 @@ export function ComparePage({ back }: { back: Target | null }) {
       if (!index.averages) throw new Error('No averages');
       const page = await loadAverages(index.averages.file);
       const has = (k: string) => !!page.latest[1][k] && page.latest[1][k].some((v) => v !== null);
-      let s = readSaved(savedRaw(), has);
-      if (!s) {
+      const saved = readSaved(savedRaw(), (k) => has(k) || (k === CHEAPEST && !!cheap));
+      let s: Saved;
+      if (saved && (!fromKey || saved.from === fromKey)) s = saved;
+      else {
+        // Opened from another place (or for the first time): its own areas, keeping how the chart was shown (John, November 9th).
         const local = await localityFrom(index, page, back).catch(() => null);
         const keys = defaultKeys(local, has);
-        s = { keys, slots: withSlots(keys, {}), fuel: 'e10', view: 'change', period: '1m', pair: null };
+        s = { keys, slots: withSlots(keys, {}), fuel: saved?.fuel ?? 'e10', view: saved?.view ?? 'change', period: saved?.period ?? '1m', pair: null };
       }
+      s = { ...s, from: fromKey ?? s.from ?? null };
       if (!live) return;
       setBase({ index, page });
       setState(s);
@@ -257,7 +274,8 @@ export function ComparePage({ back }: { back: Target | null }) {
     if (state.keys.includes(key)) {
       setNote(why ? `${why}, which is already in the chart.` : `${areaName(key)} is already in the chart.`);
     } else if (state.keys.length >= MAX_AREAS) {
-      setNote('That’s four, the most a chart can show clearly. Remove one to add another.');
+      // The standing line below already says so, unless "Both" has taken its place.
+      setNote(both && state.keys.length > 2 ? 'That’s four, the most a chart can show clearly. Remove one to add another.' : '');
     } else {
       const keys = [...state.keys, key];
       const slots = key === 'GB' ? state.slots : { ...state.slots, [key]: freeSlot(state.slots, state.keys) };
@@ -303,10 +321,19 @@ export function ComparePage({ back }: { back: Target | null }) {
   const lines = ready
     ? shown.flatMap((key) => {
         const g = groups[groupOf(key, base.page.locals)];
+        if (key === CHEAPEST) {
+          return fuels.map((f) => {
+            const st = f === 0 ? cheap?.e10 : cheap?.diesel;
+            const raw = st && g ? stepPoints(g.times, st.steps, period.days, lastMs) : [];
+            const label = both ? `${nameOf(key)} ${FUEL_WORD[f]}` : nameOf(key);
+            return { key, f, raw, label, row: st ? `${label}: ${st.name}` : label };
+          });
+        }
         const series = g?.areas[key];
         return fuels.map((f) => {
           const raw = series ? pointsFor(g.times, series, f, period.days, lastMs) : [];
-          return { key, f, raw, label: both ? `${areaName(key)} ${FUEL_WORD[f]}` : areaName(key) };
+          const label = both ? `${areaName(key)} ${FUEL_WORD[f]}` : areaName(key);
+          return { key, f, raw, label, row: label };
         });
       })
     : [];
@@ -323,10 +350,10 @@ export function ComparePage({ back }: { back: Target | null }) {
   const share = async () => {
     const imgLines: ImgLine[] = lines.map((l) => ({ label: l.label, colour: colourLight(l.key, state.slots), style: both && l.f === 1 ? 'dotted' : 'solid', pts: view === 'change' ? asChange(l.raw) : l.raw }));
     const key: KeyItem[] | undefined = both
-      ? [...shown.map((k): KeyItem => ({ label: areaName(k), colour: colourLight(k, state.slots), style: 'solid' })), { label: 'Unleaded', colour: '#201e1d', style: 'solid' }, { label: 'Diesel', colour: '#201e1d', style: 'dotted' }]
+      ? [...shown.map((k): KeyItem => ({ label: nameOf(k), colour: colourLight(k, state.slots), style: 'solid' })), { label: 'Unleaded', colour: '#201e1d', style: 'solid' }, { label: 'Diesel', colour: '#201e1d', style: 'dotted' }]
       : undefined;
     const fuelWords = both ? 'Unleaded and diesel' : FUEL_WORD[fuels[0]][0].toUpperCase() + FUEL_WORD[fuels[0]].slice(1);
-    const sub = `${listWords(shown.map(areaName))}, ${dateWords(from, false)} to ${dateWords(lastMs, false)}${view === 'change' ? `, change since ${dateWords(from, false)}` : ''}`;
+    const sub = `${listWords(shown.map(nameOf))}, ${dateWords(from, false)} to ${dateWords(lastMs, false)}${view === 'change' ? `, change since ${dateWords(from, false)}` : ''}`;
     const canvas = makeImage({ heading: `${fuelWords}: average prices`, sub, key, panels: [{ lines: imgLines, change: view === 'change' }], named: true });
     return deliver(canvas, imageName(lastMs), 'Average fuel prices');
   };
@@ -341,17 +368,17 @@ export function ComparePage({ back }: { back: Target | null }) {
             return (
               <span className={`cmp-chip${off ? ' off' : ''}`} key={k}>
                 {off ? (
-                  <button type="button" className="cmp-chip-main" onClick={() => update({ pair: swapIn(shown, k) })} aria-label={`Show ${areaName(k)}`}>
+                  <button type="button" className="cmp-chip-main" onClick={() => update({ pair: swapIn(shown, k) })} aria-label={`Show ${nameOf(k)}`}>
                     <Swatch colour={colourVar(k, state.slots)} />
-                    {areaName(k)} <small>tap to show</small>
+                    {nameOf(k)} <small>tap to show</small>
                   </button>
                 ) : (
                   <span className="cmp-chip-main">
                     <Swatch colour={colourVar(k, state.slots)} />
-                    {areaName(k)} <small>{KIND_WORD[kindOf(k)]}</small>
+                    {nameOf(k)} <small>{kindOfKey(k)}</small>
                   </span>
                 )}
-                <button type="button" className="cmp-x" onClick={() => remove(k)} aria-label={`Remove ${areaName(k)}`}>
+                <button type="button" className="cmp-x" onClick={() => remove(k)} aria-label={`Remove ${nameOf(k)}`}>
                   ✕
                 </button>
               </span>
@@ -368,6 +395,11 @@ export function ComparePage({ back }: { back: Target | null }) {
               }}
             >
               + Add an area
+            </button>
+          )}
+          {cheap && (cheap.e10 || cheap.diesel) && !state.keys.includes(CHEAPEST) && !adding && (
+            <button type="button" className="cmp-add" onClick={() => addKey(CHEAPEST)}>
+              + Add the cheapest of the eight near {cheap.near}
             </button>
           )}
         </div>
@@ -479,13 +511,16 @@ export function ComparePage({ back }: { back: Target | null }) {
                   : ''}
             </p>
           )}
+          {state.keys.includes(CHEAPEST) && period.days > 30 && (
+            <p className="cmp-note">Refueller keeps each station’s own prices for 30 days, so the cheapest station’s line covers no more than that.</p>
+          )}
           {both && view === 'change' && <p className="cmp-note">How much each price has moved since {dateWords(from, false)}. The table gives the prices themselves.</p>}
           {both && (
             <div className="cmp-key">
               {shown.map((k) => (
                 <span key={k}>
                   <Swatch colour={colourVar(k, state.slots)} />
-                  {areaName(k)}
+                  {nameOf(k)}
                 </span>
               ))}
               <span className="cmp-key-sep" aria-hidden="true" />
@@ -516,10 +551,10 @@ export function ComparePage({ back }: { back: Target | null }) {
                   <div className="cmp-row" key={`${l.key}|${l.f}`}>
                     <span className="cmp-n">
                       <Swatch colour={colourVar(l.key, state.slots)} dotted={both && l.f === 1} />
-                      {l.label}
+                      {l.row}
                     </span>
                     <span className="cmp-p">{l.raw.length ? `${l.raw[l.raw.length - 1].p.toFixed(1)}p` : '–'}</span>
-                    <span className="cmp-c">{l.raw.length ? changeWords(l.raw) : 'no average'}</span>
+                    <span className="cmp-c">{l.raw.length ? changeWords(l.raw) : l.key === CHEAPEST ? 'not sold by the eight' : 'no average'}</span>
                   </div>
                 ))}
               </div>

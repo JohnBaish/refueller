@@ -119,6 +119,21 @@ eight, the ends, the address `#route/RG1/BS1[/via]`), `src/components/Journey.ts
 
 ## Log
 
+### 2026-11-09 — compare: a new place starts afresh; the cheapest of the eight (branch `compare-cheapest`, not merged)
+
+**John:** (1) after comparing from RG4, opening the compare page from PE38 still showed RG4's areas; a new place should start from its own
+areas, keeping fuel, Change or Prices and the period; (2) option A, a line for the station marked cheapest of the eight now, with its
+own prices; (3) added only when chosen; (4) station prices still kept for 30 days only. **What:** the saved choice records the page it was
+made from (`from` in `Saved`); `App.tsx` passes `fromKey` (its address after "#"). "The wider picture" keeps, for the tab
+(`refueller.cheapest`), the station marked "Cheapest" for each fuel (never a members-only Costco) with its prices; the compare page offers
+"+ Add the cheapest of the eight near RG4 7SS" (draft) only for that page. It counts as one of the four (key `S`), priced at each collection
+from when its price is known (`stepPoints`); the table names the station ("Cheapest of the eight: BP-Kriscoreading"); beyond 1 month a note
+says station prices are kept for 30 days (draft). With four areas already, the offer still shows and pressing it gives the usual "Remove one"
+line. **Verified:** `npm run check` (new compare checks; one of my expectations was wrong and corrected), type-check, lint, build;
+`design/mock/compare/place-check.cjs` at 1200px and 390px with touch, light and dark: RG4's four, the offer, Berkshire removed and the
+cheapest added, diesel; PE38 opens on its own four areas, still on diesel, with its own offer; RG4 again restores its choice with the
+cheapest; Both; no errors, no sideways scrolling. Pictures `design/previews/compare-cheapest/`.
+
 ### 2026-11-09 — "Compare areas over time" merged to `main`
 
 John said make it all live. `feature-compare` merged into `main` (fast-forward, after bringing in `main`'s data commits; checks, lint,
