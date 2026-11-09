@@ -7,6 +7,7 @@ import { axisDate, dateWords } from '../lib/history.ts';
 import { loadAverages, loadCouncils } from '../lib/load.ts';
 import type { PageIndex } from '../lib/pageTypes.ts';
 import { useIsNarrow } from '../lib/responsive.ts';
+import { deliver, imageName, LIGHT, makeImage } from '../lib/shareImage.ts';
 import { postcodeArea, type Row } from '../lib/search.ts';
 
 // "The wider picture" (John, 1 November 2026; no dots on any line, John): under the list, the average price at these eight
@@ -131,7 +132,8 @@ function Key({ label, inline }: { label: string; inline?: boolean }) {
   );
 }
 
-export function AveragesSection({ index, rows, histories, where }: { index: PageIndex; rows: Row[]; histories: Histories; where: string }) {
+export function AveragesSection({ index, rows, histories, where, near }: { index: PageIndex; rows: Row[]; histories: Histories; where: string; near: string }) {
+  const [shareStatus, setShareStatus] = useState('');
   const narrow = useIsNarrow(720);
   const [page, setPage] = useState<AveragesPage | null>(null);
   const [lookup, setLookup] = useState<AreaLookup | null>(null);
@@ -180,6 +182,26 @@ export function AveragesSection({ index, rows, histories, where }: { index: Page
   });
   const filling = end - start < (AVERAGE_DAYS - 1) * 86_400_000;
   const price = (p: number | null) => (p === null ? '–' : pence(p));
+  // "Share charts" (John, November 9th 2026): one picture with both charts, made on the device.
+  const shareCharts = async () => {
+    const panels = (['e10', 'diesel'] as Fuel[]).map((f, i) => ({
+      title: i ? 'Diesel' : 'Unleaded',
+      change: false,
+      lines: linesFor(f).map((l) => ({ label: l.label, colour: l.key === 'eight' ? LIGHT.eight : LIGHT.gb, style: l.key === 'eight' ? ('solid' as const) : ('dashed' as const), pts: l.pts })),
+    }));
+    const canvas = makeImage({
+      heading: 'Average prices',
+      sub: `${dateWords(start, false)} to ${dateWords(end, false)}`,
+      key: [
+        { label: `${eightLabel} near ${near}`, colour: LIGHT.eight, style: 'solid' },
+        { label: 'Great Britain', colour: LIGHT.gb, style: 'dashed' },
+      ],
+      panels,
+      named: false,
+    });
+    const r = await deliver(canvas, imageName(end), 'Average fuel prices');
+    setShareStatus(r === 'copied' ? 'Copied: paste it into a message or document.' : r === 'saved' ? 'Saved as a picture.' : '');
+  };
   return (
     <section className="avg-sec" data-noprint>
       <h3>The wider picture</h3>
@@ -206,6 +228,17 @@ export function AveragesSection({ index, rows, histories, where }: { index: Page
           <Chart lines={linesFor('diesel')} fuelName="Diesel" narrow={narrow} start={start} end={end} />
         </div>
       </div>
+      <div className="avg-share">
+        <button type="button" className="cmp-share" onClick={shareCharts}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M12 15V3" />
+            <path d="m7 8 5-5 5 5" />
+            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
+          </svg>
+          Share charts
+        </button>
+        {shareStatus && <span role="status">{shareStatus}</span>}
+      </div>
       {/* The averages at every level (John, November 1st: option B), under the charts (John: graph first), as their key: the two
           rows drawn in the charts carry their line. */}
       <div className="lv-box">
@@ -229,6 +262,14 @@ export function AveragesSection({ index, rows, histories, where }: { index: Page
           </div>
         ))}
       </div>
+      {/* The way into "Compare areas over time" (John, November 9th 2026). */}
+      <a className="btn btn-secondary cmp-way" href="#compare">
+        <svg width="22" height="18" viewBox="0 0 22 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M1 15 7 8l5 4 9-10" />
+          <path d="M1 17h20" strokeWidth="1.5" />
+        </svg>
+        Compare areas over time
+      </a>
     </section>
   );
 }

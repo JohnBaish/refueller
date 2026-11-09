@@ -119,6 +119,29 @@ eight, the ends, the address `#route/RG1/BS1[/via]`), `src/components/Journey.ts
 
 ## Log
 
+### 2026-11-09 — "Compare areas over time" built (branch `feature-compare`, not merged)
+
+**John** (round 2 of the mock-ups, `claude/great-wright-0iia6o`): build it, with the Change or Prices switch; with both fuels, the first area and
+Great Britain; the town wording as shown; one "Share charts" picture for "The wider picture"; the picture headings as shown.
+**Data:** `scripts/lib/pageData.ts` writes `series-<collected>/<group>.json`: every area's whole record, grouped by region (England) or
+country, plus `national.json` (regions, countries, Great Britain), so choosing an area tells the website no more than its region, as the
+postcode-area files do (`groupOf`, `seriesGroups` in `src/lib/compare.ts`). South East England is the biggest, 26 KB for 21 collections
+(about 900 KB raw for a year; to watch). **Page:** `#compare` (`src/components/Compare.tsx`, rules in `src/lib/compare.ts`), reached by
+"Compare areas over time" under "The wider picture"'s list; starts from the council area, county, region and Great Britain of the page it
+was opened from (kept for the tab in `sessionStorage`, `refueller.from`; Scotland and Wales: council area, country, Great Britain);
+chips in their colours (slots kept per area); "+ Add an area" finds areas by name and towns with their council area; Unleaded, Diesel,
+Both (two areas, diesel dotted, Change or Prices); periods only once recorded; table "Change since …"; Back at the top and bottom;
+remembered as `refueller.compare`. **Sharing** (`src/lib/shareImage.ts`): a light picture drawn on a canvas, to the share sheet on a touch
+screen, copied on a computer, saved where neither works; "Share charts" on the main page (both charts in one picture). **Drafts for John:**
+the About paragraph; the footer's "and the areas you compared"; the notes ("Woodley is in Wokingham’s council area, so that’s the average
+shown.", "There aren’t enough stations in … for an average. Try its county, ….", "Copied: paste it into a message or document.", "Saved as a
+picture."). **Verified:** `npm run check` (new `scripts/check-compare.ts`; making Both ignore Great Britain made one fail, then restored),
+lint, type-check, build. In Chromium (`design/mock/compare/built-check.cjs`) at 1200px, 390px and 844×390 with touch, light and dark: the
+starting areas (RG4 7SS, Caversham, EH1 1YZ, none), four lines, Both, Change and Prices, swapping, removing, Woodley, kept after a
+reload, both pictures made (saved, as headless browsers can neither share nor copy), only `south-east-england.json` and `national.json`
+fetched; no errors, no sideways scrolling. Pictures `design/previews/compare-built/`. **Couldn't check:** a real phone's share sheet, and
+copying on a real computer.
+
 ### 2026-10-23 — stage 0: spec, plan and notes drafted (branch `stage-0-spec`)
 
 **What:** John started the project from a Claude.ai handover (committed to the

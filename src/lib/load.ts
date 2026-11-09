@@ -5,6 +5,7 @@ import type { RouteFile } from './route.ts';
 import type { PlaceFile } from './places.ts';
 import type { AveragesPage } from './averages.ts';
 import type { AreaLookup } from './levels.ts';
+import type { SeriesGroup } from './compare.ts';
 
 let index: Promise<PageIndex> | null = null;
 const areas = new Map<string, Promise<DetailRow[]>>();
@@ -116,6 +117,17 @@ export function loadCouncils(folder: string, area: string): Promise<AreaLookup> 
   if (!councilFiles.has(key)) councilFiles.set(key, json<AreaLookup>(`/data/${encodeURIComponent(folder)}/${encodeURIComponent(area)}.json`));
   return councilFiles.get(key)!.catch((e) => {
     councilFiles.delete(key);
+    throw e;
+  });
+}
+
+// One group's whole record (a region or country, or "national"), for "Compare areas over time", loaded when an area in it is chosen.
+const seriesFiles = new Map<string, Promise<SeriesGroup>>();
+export function loadSeriesGroup(folder: string, group: string): Promise<SeriesGroup> {
+  const k = `${folder}/${group}`;
+  if (!seriesFiles.has(k)) seriesFiles.set(k, json<SeriesGroup>(`/data/${encodeURIComponent(folder)}/${encodeURIComponent(group)}.json`));
+  return seriesFiles.get(k)!.catch((e) => {
+    seriesFiles.delete(k);
     throw e;
   });
 }

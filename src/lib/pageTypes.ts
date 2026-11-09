@@ -36,7 +36,8 @@ export type PageIndex = {
   places: { file: string } | null;
   // "The wider picture" (data/averages.json, src/lib/averages.ts), loaded with the results, and the folder of per-area council
   // lookups (data/council-areas.json, src/lib/levels.ts); null without the files.
-  averages: { file: string; councils: string } | null;
+  // And the folder of every area's whole record for "Compare areas over time" (src/lib/compare.ts), one file per area.
+  averages: { file: string; councils: string; series: string } | null;
   // Cities and towns for describing a journey's route (src/lib/routeWords.ts), from data/places.json; null without it.
   towns: { file: string } | null;
 };

@@ -19,6 +19,7 @@ import { join } from 'node:path';
 import { higherPricesUsual, positionAgrees, postcodeArea, type BankHolidays, type Outcodes, type Price, type Station } from '../../src/lib/search.ts';
 import type { DetailRow, PageIndex, PriceCell, RoadFile } from '../../src/lib/pageTypes.ts';
 import { trim, withPrice, type Hist } from '../../src/lib/history.ts';
+import { seriesGroups } from '../../src/lib/compare.ts';
 import { AVERAGE_DAYS, keepRecent, type AveragesFile, type AveragesPage } from '../../src/lib/averages.ts';
 import type { CouncilAreas } from '../../src/lib/levels.ts';
 import { toBritishGrid } from './grid.ts';
@@ -185,8 +186,12 @@ export function writePageData(root: string) {
       const page: AveragesPage = { gb: recent.map(([t, a]) => [t, a.GB ?? [null, null]]), first: av.collections[0], latest: last, locals: ca.locals };
       // The lookups change only when data/council-areas.json is rebuilt, so their folder is named by the day it was made.
       const made = /Made (\d{4}-\d{2}-\d{2})/.exec(readFileSync(join(root, 'data/council-areas.json'), 'utf8'))?.[1] ?? 'unknown';
-      index.averages = { file: `averages-${stamp}.json`, councils: `councils-${made}` };
+      index.averages = { file: `averages-${stamp}.json`, councils: `councils-${made}`, series: `series-${stamp}` };
       writeFileSync(join(out, index.averages.file), JSON.stringify(page));
+      // "Compare areas over time" (src/lib/compare.ts): every area's whole record, one file per region (England) or country, and one
+      // for the regions, countries and Great Britain, loaded only when an area in it is chosen.
+      mkdirSync(join(out, index.averages.series));
+      for (const [group, file] of seriesGroups(av.collections, ca.locals)) writeFileSync(join(out, index.averages.series, `${group}.json`), JSON.stringify(file));
       mkdirSync(join(out, index.averages.councils));
       for (const [area, lk] of Object.entries(ca.areas)) writeFileSync(join(out, index.averages.councils, `${area}.json`), JSON.stringify(lk));
     }

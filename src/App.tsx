@@ -1,4 +1,5 @@
-import { Component, useEffect, useState, type FormEvent, type ReactNode } from 'react';
+import { Component, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { ComparePage } from './components/Compare.tsx';
 import { JourneyForm, JourneyResults } from './components/Journey.tsx';
 import { getPlaces, PlaceBox } from './components/PlaceBox.tsx';
 import { REPORT_URL, Results, type Target } from './components/Results.tsx';
@@ -17,9 +18,12 @@ const CHOICE = 'refueller.choice';
 // The address after "#": a postcode district (#RG4), a place (#@Caversham, or #@Newport, Isle of Wight; John, 1 November) or a
 // station (#station/RG/d20f21e97871, "Find stations near this one").
 // Or a journey (#route/RG1/BS1, src/lib/route.ts), which isn't remembered as the last choice.
-type AppTarget = Target | RouteTarget;
+// Or "Compare areas over time" (#compare, src/components/Compare.tsx), not remembered as the last choice either.
+type CompareTarget = { kind: 'compare' };
+type AppTarget = Target | RouteTarget | CompareTarget;
 function fromHash(): AppTarget | null {
   const h = decodeURIComponent(location.hash.slice(1));
+  if (h === 'compare') return { kind: 'compare' };
   const route = readRouteHash(h);
   if (route) return route;
   const st = /^station\/([A-Za-z]{1,2})\/([0-9a-f]{12})$/.exec(h);
@@ -53,10 +57,10 @@ function remember(choice: string) {
 
 
 // The journey page's way back (John, November 4th 2026): to the last postcode or place chosen on this device, or to the
-// postcode screen when there isn't one.
-function BackLink() {
+// postcode screen when there isn't one. The compare page passes the page it was opened from (`to`), as that may not have been typed.
+function BackLink({ big, to }: { big?: boolean; to?: Target | null }) {
   const back = remembered();
-  const target = back ? choiceTarget(back) : null;
+  const target = to !== undefined ? to : back ? choiceTarget(back) : null;
   const label = !target
     ? 'Back to fuel prices near you'
     : target.kind === 'postcode'
@@ -65,7 +69,7 @@ function BackLink() {
         ? `Back to ${target.place}`
         : 'Back to fuel prices near you';
   return (
-    <a className="back-link" href={target ? `#${back}` : '#'} data-noprint>
+    <a className={big ? 'btn btn-secondary back-big' : 'back-link'} href={target ? `#${hashOf(target)}` : '#'} data-noprint>
       ← {label}
     </a>
   );
@@ -222,6 +226,14 @@ function About() {
         out from the postcode, using Ordnance Survey records.
       </p>
       <p>
+        {/* Draft (November 9th 2026), for John. */}
+        <strong>Compare areas over time</strong> shows the average price in up to four council areas, counties, regions or
+        countries, from Refueller’s own record, starting with yours. Typing a town gives the council area it’s in. With both fuels,
+        two areas are shown at a time, and the chart can show how much each price has moved since the start of the period, as diesel
+        costs much more than unleaded and the two would otherwise sit far apart. Longer periods appear as the record grows. Share chart
+        makes a picture of the chart on your device; nothing is sent anywhere until you choose where it goes.
+      </p>
+      <p>
         <strong>Find cheaper fuel near the route</strong> works out the quickest route between the places you type, on your
         device, from Ordnance Survey’s map of motorways, A roads and B roads, using rough speeds for each kind of road. It lists
         the eight cheapest stations within about two miles of that route that add no more than three miles and about six minutes to
@@ -253,11 +265,20 @@ class SafetyNet extends Component<{ children: ReactNode }, { failed: boolean }> 
   }
 }
 
+const FROM = 'refueller.from';
+const sessionFrom = (): Target | null => {
+  try {
+    const h = sessionStorage.getItem(FROM);
+    return h ? choiceTarget(h) : null;
+  } catch {
+    return null;
+  }
+};
 const fromRemembered = (): Target | null => {
   const o = remembered();
   return o ? choiceTarget(o) : null;
 };
-const hashOf = (t: AppTarget) => (t.kind === 'route' ? routeHash(t) : t.kind === 'postcode' ? (t.inward ? fullHash(t.outcode, t.inward) : t.outcode) : t.kind === 'place' ? `@${t.place}${t.at ? `~${t.at}` : ''}` : `station/${t.area}/${t.id}`);
+const hashOf = (t: AppTarget) => (t.kind === 'compare' ? 'compare' : t.kind === 'route' ? routeHash(t) : t.kind === 'postcode' ? (t.inward ? fullHash(t.outcode, t.inward) : t.outcode) : t.kind === 'place' ? `@${t.place}${t.at ? `~${t.at}` : ''}` : `station/${t.area}/${t.id}`);
 
 // The journey planner as an open section at the bottom of the main page, just above About (John, 1 November: to try).
 const JourneySection = () => (
@@ -288,6 +309,21 @@ export default function App() {
 
   const start = target === null;
   const route = target?.kind === 'route' ? target : null;
+  const compare = target?.kind === 'compare';
+  // The postcode, place or station the compare page was opened from (or, opened directly, the last one chosen on this device).
+  // Kept for the tab too (sessionStorage), so a reload of the compare page still knows it; on this device only.
+  const cameFrom = useRef<Target | null>(null);
+  if (target && target.kind !== 'compare' && target.kind !== 'route') cameFrom.current = target;
+  useEffect(() => {
+    if (target && target.kind !== 'compare' && target.kind !== 'route') {
+      try {
+        sessionStorage.setItem(FROM, hashOf(target));
+      } catch {
+        // Not kept; the page still works.
+      }
+    }
+  }, [target]);
+  const compareFrom = cameFrom.current ?? sessionFrom() ?? fromRemembered();
   return (
     <>
       <nav className="nav" data-noprint>
@@ -299,7 +335,17 @@ export default function App() {
         </div>
       </nav>
       <main className="col">
-        {route ? (
+        {compare ? (
+          <div className="page-head">
+            <BackLink to={compareFrom} />
+            <div className="card-kicker">Fuel prices</div>
+            <h2>Compare areas</h2>
+            <p className="lead">
+              Choose up to four towns, counties, regions or countries to see how their average prices have changed. Unusual prices are not
+              included.
+            </p>
+          </div>
+        ) : route ? (
           <div className="page-head">
             <BackLink />
             <div className="card-kicker">Fuel prices</div>
@@ -323,10 +369,19 @@ export default function App() {
           </div>
         )}
         <SafetyNet key={target ? hashOf(target) : ''}>
-          {route ? <JourneyResults target={route} /> : target && target.kind !== 'route' && <Results target={target} />}
+          {compare ? (
+            <>
+              <ComparePage back={compareFrom} />
+              <BackLink big to={compareFrom} />
+            </>
+          ) : route ? (
+            <JourneyResults target={route} />
+          ) : (
+            target && target.kind !== 'route' && <Results target={target} />
+          )}
         </SafetyNet>
-        {!route && <JourneySection />}
-        {!start && <About />}
+        {!route && !compare && <JourneySection />}
+        {!start && !compare && <About />}
         <footer className="footer-notice">
           {/* The source lines only where prices are shown; the postcode screen keeps just the project and privacy lines
               (John, 30 October). */}
@@ -352,7 +407,7 @@ export default function App() {
             Refueller is a free-to-use personal project by John Baish, not connected with the Fuel Finder service. We don’t
             record anything you do here, apart from anonymous visit statistics (no cookies, no personal data), showing us how
             the site is used. Your device, rather than the website, stores your last choices (postcode or place, light or
-            dark mode, how you sorted the list, the fuel you chose, and the calculator’s amount and miles per gallon), so the page opens the same way next time.
+            dark mode, how you sorted the list, the fuel you chose, the calculator’s amount and miles per gallon, and the areas you compared), so the page opens the same way next time.
           </p>
           <p data-noprint>
             More free tools at{' '}

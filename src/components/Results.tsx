@@ -534,6 +534,7 @@ export function Results({ target }: { target: Target }) {
       </p>
       {narrow ? <Cards rows={shown} now={now} centreId={found.centreId} calc={calc} sort={sort} /> : <Table rows={shown} now={now} centreId={found.centreId} calc={calc} sort={sort} />}
       <AveragesSection
+        near={found.heading.replace(/\u00a0/g, ' ')}
         index={found.index}
         rows={rows}
         histories={found.histories}
