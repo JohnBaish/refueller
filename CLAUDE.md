@@ -119,6 +119,13 @@ eight, the ends, the address `#route/RG1/BS1[/via]`), `src/components/Journey.ts
 
 ## Log
 
+### 2026-11-09 — "Compare areas over time" merged to `main`
+
+John said make it all live. `feature-compare` merged into `main` (fast-forward, after bringing in `main`'s data commits; checks, lint,
+type-check and build passed first): the compare page, its data files, "Copy chart"/"Share chart", "Copy charts" on the main page, and
+tapping away from a chart. The drafted wording stands. "Delete merged branches": trial run, then the real run; `feature-compare` deleted.
+Left on GitHub: `claude/great-wright-0iia6o`, the design-only mock-ups (rounds 1 and 2), not merged; to delete once John says it's done with.
+
 ### 2026-11-09 — "Copy chart" on a computer (branch `feature-compare`, not merged)
 
 **John:** on a computer the button says "Copy chart" and, once copied, "Copied" just under it; the longer "Copied: paste it into a message or
