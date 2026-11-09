@@ -8,6 +8,7 @@ import { axisDate, dateWords } from '../lib/history.ts';
 import { loadAverages, loadCouncils } from '../lib/load.ts';
 import type { PageIndex } from '../lib/pageTypes.ts';
 import { useIsNarrow } from '../lib/responsive.ts';
+import { ShareButton } from './ShareButton.tsx';
 import { deliver, imageName, LIGHT, makeImage } from '../lib/shareImage.ts';
 import { postcodeArea, type Row } from '../lib/search.ts';
 
@@ -136,7 +137,6 @@ function Key({ label, inline }: { label: string; inline?: boolean }) {
 }
 
 export function AveragesSection({ index, rows, histories, where, near }: { index: PageIndex; rows: Row[]; histories: Histories; where: string; near: string }) {
-  const [shareStatus, setShareStatus] = useState('');
   const narrow = useIsNarrow(720);
   const [page, setPage] = useState<AveragesPage | null>(null);
   const [lookup, setLookup] = useState<AreaLookup | null>(null);
@@ -202,8 +202,7 @@ export function AveragesSection({ index, rows, histories, where, near }: { index
       panels,
       named: false,
     });
-    const r = await deliver(canvas, imageName(end), 'Average fuel prices');
-    setShareStatus(r === 'copied' ? 'Copied: paste it into a message or document.' : r === 'saved' ? 'Saved as a picture.' : '');
+    return deliver(canvas, imageName(end), 'Average fuel prices');
   };
   return (
     <section className="avg-sec" data-noprint>
@@ -232,15 +231,7 @@ export function AveragesSection({ index, rows, histories, where, near }: { index
         </div>
       </div>
       <div className="avg-share">
-        <button type="button" className="cmp-share" onClick={shareCharts}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M12 15V3" />
-            <path d="m7 8 5-5 5 5" />
-            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
-          </svg>
-          Share charts
-        </button>
-        {shareStatus && <span role="status">{shareStatus}</span>}
+        <ShareButton what="charts" make={shareCharts} />
       </div>
       {/* The averages at every level (John, November 1st: option B), under the charts (John: graph first), as their key: the two
           rows drawn in the charts carry their line. */}

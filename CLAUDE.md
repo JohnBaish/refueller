@@ -119,6 +119,15 @@ eight, the ends, the address `#route/RG1/BS1[/via]`), `src/components/Journey.ts
 
 ## Log
 
+### 2026-11-09 — "Copy chart" on a computer (branch `feature-compare`, not merged)
+
+**John:** on a computer the button says "Copy chart" and, once copied, "Copied" just under it; the longer "Copied: paste it into a message or
+document." removed. `src/components/ShareButton.tsx`, shared by the compare page ("Copy chart") and "The wider picture" ("Copy charts"):
+"Share chart(s)" with the share icon on a touch screen, "Copy chart(s)" with a copy icon on a computer; "Copied" (or "Saved as a picture"
+where copying fails) under the button for four seconds. **Verified:** type-check, lint, `npm run check`, build; Chromium at 1200px (clipboard
+allowed: "Copied" centred under each button) and 390px with touch ("Share chart", "Share charts"); no errors, no sideways scrolling. Pictures
+`design/previews/compare-built/copy-*-computer.png`. **Not checked:** a real computer's clipboard (Safari, Firefox).
+
 ### 2026-11-09 — tapping away removes a chart's date line (branch `feature-compare`, not merged)
 
 **John:** on a phone, once a chart's date line was showing there was no way to remove it. `useTapAway()` (`src/lib/tapAway.ts`): while a

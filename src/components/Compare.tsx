@@ -14,6 +14,7 @@ import type { PageIndex } from '../lib/pageTypes.ts';
 import { findPlace, placeLabel, suggest, type NamedPlace } from '../lib/places.ts';
 import { useIsNarrow } from '../lib/responsive.ts';
 import { nearestDistrict, postcodeArea } from '../lib/search.ts';
+import { ShareButton } from './ShareButton.tsx';
 import { deliver, imageName, LIGHT, makeImage, type ImgLine, type KeyItem } from '../lib/shareImage.ts';
 import type { AveragesPage } from '../lib/averages.ts';
 
@@ -173,7 +174,6 @@ export function ComparePage({ back }: { back: Target | null }) {
   const [sugg, setSugg] = useState<Suggestion[]>([]);
   const [active, setActive] = useState(-1);
   const [note, setNote] = useState('');
-  const [status, setStatus] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   // The index, the averages page (for the list of areas and the council areas), then the starting choice.
@@ -328,8 +328,7 @@ export function ComparePage({ back }: { back: Target | null }) {
     const fuelWords = both ? 'Unleaded and diesel' : FUEL_WORD[fuels[0]][0].toUpperCase() + FUEL_WORD[fuels[0]].slice(1);
     const sub = `${listWords(shown.map(areaName))}, ${dateWords(from, false)} to ${dateWords(lastMs, false)}${view === 'change' ? `, change since ${dateWords(from, false)}` : ''}`;
     const canvas = makeImage({ heading: `${fuelWords}: average prices`, sub, key, panels: [{ lines: imgLines, change: view === 'change' }], named: true });
-    const r = await deliver(canvas, imageName(lastMs), 'Average fuel prices');
-    setStatus(r === 'copied' ? 'Copied: paste it into a message or document.' : r === 'saved' ? 'Saved as a picture.' : '');
+    return deliver(canvas, imageName(lastMs), 'Average fuel prices');
   };
 
   return (
@@ -469,20 +468,8 @@ export function ComparePage({ back }: { back: Target | null }) {
                 </button>
               ))}
             </span>
-            <button type="button" className="cmp-share" onClick={share} disabled={!ready}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M12 15V3" />
-                <path d="m7 8 5-5 5 5" />
-                <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" />
-              </svg>
-              Share chart
-            </button>
+            <ShareButton what="chart" make={share} disabled={!ready} />
           </div>
-          {status && (
-            <p className="cmp-note" role="status">
-              {status}
-            </p>
-          )}
           {anyGroup && (
             <p className="cmp-note">
               {recordDays < 30
