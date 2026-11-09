@@ -161,7 +161,10 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
 }
 /* Any touch screen, whatever its width (an iPad gets the computer layout): 16px boxes, so iPhone and iPad don't zoom. */
 @media (pointer: coarse) {
-  .input { font-size: 16px; }
+  /* Any touch screen, including a phone held sideways (wider than 720px) and iPads:
+     the boxes' own sizes above (.search .input, .calc-box .input) would otherwise win
+     and the iPhone zooms in on a box under 16px. */
+  .input, .search .input, .calc-box .input { font-size: 16px; }
 }
 
 @media print {

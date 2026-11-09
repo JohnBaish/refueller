@@ -1944,3 +1944,12 @@ mpg); built and opened PE38 9SF's Jet Broomhill panel in Chromium at 1200px and 
 sideways scroll. Pictures `design/previews/calc-wording-*.png`.
 
 **Then John:** "Worth it: you’d be about 79p better off." (and "Not worth it: you’d be about 31p worse off." to match). Merged to `main` at his word. Branch tidied: "Delete merged branches" trial run, then the real run; only `main` is left.
+
+### 2026-11-09 — typing boxes 16px on a phone held sideways (branch `claude/bold-rubin-n8utv4`, merged)
+
+**Found** in a check of every site on a sideways iPhone (John, after Storykeeper's map): on a touch screen wider than 720px (an iPhone held
+sideways, any iPad), the postcode or place box, the journey planner's three boxes and the calculator's three boxes were 15px, so an
+iPhone zooms in when one is tapped. The touch-screen rule (`.input` 16px) was there, but `.search .input` and `.calc-box .input` set 15px
+with a more specific style and won. **Fix:** the touch-screen rule names them too (`global.css`). **Verified:** build, checks, lint; in
+Chromium with touch at 844×390, 667×375 and 390×844, every box 16px; at 1200px with a mouse, unchanged (15px); no errors, no sideways
+scroll. Merged to `main` at John's word ("make all these fixes and merge each one in turn").
