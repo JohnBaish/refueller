@@ -119,6 +119,16 @@ eight, the ends, the address `#route/RG1/BS1[/via]`), `src/components/Journey.ts
 
 ## Log
 
+### 2026-11-09 — compare: the cheapest of the eight as a fifth line; About drafted (branch `compare-cheapest`, not merged)
+
+**John:** the cheapest station doesn't count towards the four, to see whether five lines work; a line in "About these figures" on
+what the line shows. **What:** `areaCount()` counts areas without it; it has no colour slot but a fifth colour of its own, gold (`--k4`:
+light `#8a6a00`, dark `#ad8a2a`; both five-colour sets pass the dataviz validator in light and dark); `readSaved` keeps four areas plus it;
+"That’s four areas, the most…" (was "That’s four,"); About's compare paragraph gains a draft on the line (today's cheapest station's own
+prices, not the cheapest at each point; 30 days). **Verified:** `npm run check` (new check), type-check, lint, build;
+`design/mock/compare/five-check.cjs` at 1200px and 390px with touch, light and dark: RG4's four areas and the cheapest, five lines, kept
+after a reload, Both with the cheapest shown; no errors, no sideways scrolling. Pictures `design/previews/compare-cheapest/five-*.png`.
+
 ### 2026-11-09 — compare: a new place starts afresh; the cheapest of the eight (branch `compare-cheapest`, not merged)
 
 **John:** (1) after comparing from RG4, opening the compare page from PE38 still showed RG4's areas; a new place should start from its own

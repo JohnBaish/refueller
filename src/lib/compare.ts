@@ -82,16 +82,18 @@ export function swapIn(pair: string[], key: string): string[] {
   return [key, keep];
 }
 
+/** How many areas are chosen: the cheapest of the eight doesn't count towards the four. */
+export const areaCount = (keys: string[]) => keys.filter((k) => k !== CHEAPEST).length;
 /** The first free colour slot. */
 export function freeSlot(slots: Record<string, Slot>, keys: string[]): Slot {
-  const used = new Set(keys.filter((k) => k !== 'GB').map((k) => slots[k]));
+  const used = new Set(keys.filter((k) => k !== 'GB' && k !== CHEAPEST).map((k) => slots[k]));
   return ([0, 1, 2, 3] as Slot[]).find((s) => !used.has(s)) ?? 0;
 }
 /** Slots for keys that have none (the default choice, or an old saved one), without changing those that have. */
 export function withSlots(keys: string[], slots: Record<string, Slot>): Record<string, Slot> {
   const out: Record<string, Slot> = {};
-  for (const k of keys) if (k !== 'GB' && slots[k] !== undefined) out[k] = slots[k];
-  for (const k of keys) if (k !== 'GB' && out[k] === undefined) out[k] = freeSlot(out, keys);
+  for (const k of keys) if (k !== 'GB' && k !== CHEAPEST && slots[k] !== undefined) out[k] = slots[k];
+  for (const k of keys) if (k !== 'GB' && k !== CHEAPEST && out[k] === undefined) out[k] = freeSlot(out, keys);
   return out;
 }
 
@@ -179,7 +181,9 @@ export function readSaved(raw: string | null, has: (key: string) => boolean): Sa
   if (!raw) return null;
   try {
     const s = JSON.parse(raw) as Partial<Saved>;
-    const keys = (Array.isArray(s.keys) ? s.keys : []).filter((k): k is string => typeof k === 'string' && has(k)).slice(0, MAX_AREAS);
+    const all = (Array.isArray(s.keys) ? s.keys : []).filter((k): k is string => typeof k === 'string' && has(k));
+    // Up to four areas, and the cheapest of the eight as a fifth (John, November 9th 2026).
+    const keys = [...all.filter((k) => k !== CHEAPEST).slice(0, MAX_AREAS), ...all.filter((k) => k === CHEAPEST).slice(0, 1)];
     if (!keys.length) return null;
     return {
       keys,

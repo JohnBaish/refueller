@@ -318,8 +318,8 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
    (terracotta, blue, green, plum), Great Britain grey; checked with the dataviz validator next to each other in light (on the card
    colour) and dark. Terracotta and green are close for some colour-blind readers, so every line is also named at its end (computer)
    and in the table beneath. */
-:root { --k0: #c05a14; --k1: #2a64a8; --k2: #3d7a3a; --k3: #8a3f7f; }
-@media screen { :root[data-theme="dark"] { --k0: #cf7a3f; --k1: #5f97dc; --k2: #5c9a56; --k3: #b36aa8; } }
+:root { --k0: #c05a14; --k1: #2a64a8; --k2: #3d7a3a; --k3: #8a3f7f; --k4: #8a6a00; }
+@media screen { :root[data-theme="dark"] { --k0: #cf7a3f; --k1: #5f97dc; --k2: #5c9a56; --k3: #b36aa8; --k4: #ad8a2a; } }
 .cmp-way { display: flex; width: 100%; min-height: 52px; margin-top: 18px; font-size: 17px; gap: 10px; }
 .avg-share { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px 12px; margin-top: 12px; font-size: 14px; color: var(--color-neutral-700); }
 .cmp-box { background: var(--color-surface); border-radius: 20px; padding: 14px 18px; }

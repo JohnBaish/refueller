@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   asChange, changeWords, defaultKeys, freeSlot, groupOf, matchAreas, periodsAvailable, pointsFor, readSaved, seriesGroups, shownPair,
-  signedPence, swapIn, withSlots, readCheapest, stepPoints,
+  signedPence, swapIn, withSlots, readCheapest, stepPoints, areaCount, CHEAPEST,
 } from '../src/lib/compare.ts';
 import type { AveragesFile } from '../src/lib/averages.ts';
 import type { CouncilAreas } from '../src/lib/levels.ts';
@@ -129,6 +129,14 @@ await check('the cheapest of the eight: only for the page it came from, priced a
   const pts = stepPoints(times, [...c.e10!.steps, { t: Date.parse('2026-11-02T08:00:00Z'), p: 168.9 }], 30, Date.parse(times[2]));
   assert.deepEqual(pts.map((p) => p.p), [170.9, 168.9]);
   assert.deepEqual(stepPoints(times, c.e10!.steps, 1, Date.parse(times[2])).map((p) => p.p), [170.9, 170.9]);
+});
+
+await check('the cheapest of the eight is a fifth line: not one of the four, no colour slot', () => {
+  const five = ['C:Reading', 'K:Berkshire', 'R:South East England', 'GB', CHEAPEST];
+  assert.equal(areaCount(five), 4);
+  assert.deepEqual(withSlots(five, {}), { 'C:Reading': 0, 'K:Berkshire': 1, 'R:South East England': 2 });
+  const s = readSaved(JSON.stringify({ keys: [CHEAPEST, ...five.slice(0, 4), 'N:Wales'] }), (k) => has(k) || k === CHEAPEST)!;
+  assert.deepEqual(s.keys, [...five.slice(0, 4), CHEAPEST]);
 });
 
 console.log(failures ? `\n${failures} failed` : '\nall compare checks passed');

@@ -4,7 +4,7 @@ import { getPlaces } from './PlaceBox.tsx';
 import type { Target } from './Results.tsx';
 import {
   areaName, asChange, changeWords, defaultKeys, freeSlot, groupOf, KIND_WORD, kindOf, matchAreas, MAX_AREAS, periodsAvailable,
-  pointsFor, readCheapest, readSaved, SAVED, scaleFor, shownPair, signedPence, stepPoints, swapIn, withSlots, CHEAPEST, CHEAPEST_KEPT,
+  pointsFor, areaCount, readCheapest, readSaved, SAVED, scaleFor, shownPair, signedPence, stepPoints, swapIn, withSlots, CHEAPEST, CHEAPEST_KEPT,
   type CheapestKept,
   type FuelChoice, type PeriodId, type Point, type Saved, type SeriesGroup, type Slot, type View,
 } from '../lib/compare.ts';
@@ -28,8 +28,9 @@ import type { AveragesPage } from '../lib/averages.ts';
 type Fuel = 0 | 1;
 const FUEL_WORD = ['unleaded', 'diesel'];
 const DAY = 86_400_000;
-const colourVar = (key: string, slots: Record<string, Slot>) => (key === 'GB' ? 'var(--g-avg)' : `var(--k${slots[key] ?? 0})`);
-const colourLight = (key: string, slots: Record<string, Slot>) => (key === 'GB' ? LIGHT.gb : LIGHT.k[slots[key] ?? 0]);
+// The cheapest of the eight has a fifth colour of its own (gold); Great Britain is always grey.
+const colourVar = (key: string, slots: Record<string, Slot>) => (key === 'GB' ? 'var(--g-avg)' : key === CHEAPEST ? 'var(--k4)' : `var(--k${slots[key] ?? 0})`);
+const colourLight = (key: string, slots: Record<string, Slot>) => (key === 'GB' ? LIGHT.gb : key === CHEAPEST ? LIGHT.k[4] : LIGHT.k[slots[key] ?? 0]);
 const owner = (name: string) => `${name}${/s$/.test(name) ? '’' : '’s'}`;
 const listWords = (xs: string[]) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);
 
@@ -273,12 +274,12 @@ export function ComparePage({ back, fromKey }: { back: Target | null; fromKey: s
   const addKey = (key: string, why = '') => {
     if (state.keys.includes(key)) {
       setNote(why ? `${why}, which is already in the chart.` : `${areaName(key)} is already in the chart.`);
-    } else if (state.keys.length >= MAX_AREAS) {
+    } else if (key !== CHEAPEST && areaCount(state.keys) >= MAX_AREAS) {
       // The standing line below already says so, unless "Both" has taken its place.
-      setNote(both && state.keys.length > 2 ? 'That’s four, the most a chart can show clearly. Remove one to add another.' : '');
+      setNote(both && state.keys.length > 2 ? 'That’s four areas, the most a chart can show clearly. Remove one to add another.' : '');
     } else {
       const keys = [...state.keys, key];
-      const slots = key === 'GB' ? state.slots : { ...state.slots, [key]: freeSlot(state.slots, state.keys) };
+      const slots = key === 'GB' || key === CHEAPEST ? state.slots : { ...state.slots, [key]: freeSlot(state.slots, state.keys) };
       update({ keys, slots });
       setNote(why ? `${why}, so that’s the average shown.` : '');
     }
@@ -384,7 +385,7 @@ export function ComparePage({ back, fromKey }: { back: Target | null; fromKey: s
               </span>
             );
           })}
-          {state.keys.length < MAX_AREAS && !adding && (
+          {areaCount(state.keys) < MAX_AREAS && !adding && (
             <button
               type="button"
               className="cmp-add"
@@ -465,10 +466,10 @@ export function ComparePage({ back, fromKey }: { back: Target | null; fromKey: s
           <p className="cmp-note">
             <b>Both fuels show two areas at a time.</b> Tap a faded one to show it instead.
           </p>
-        ) : state.keys.length >= MAX_AREAS ? (
-          <p className="cmp-note">That’s four, the most a chart can show clearly. Remove one to add another.</p>
+        ) : areaCount(state.keys) >= MAX_AREAS ? (
+          <p className="cmp-note">That’s four areas, the most a chart can show clearly. Remove one to add another.</p>
         ) : (
-          state.keys.length > 0 && <p className="cmp-note">You can add {['', 'three more', 'two more', 'one more'][state.keys.length]}.</p>
+          areaCount(state.keys) > 0 && <p className="cmp-note">You can add {['', 'three more', 'two more', 'one more'][areaCount(state.keys)]}.</p>
         )}
       </div>
 

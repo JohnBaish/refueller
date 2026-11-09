@@ -228,7 +228,10 @@ function About() {
       <p>
         {/* Draft (November 9th 2026), for John. */}
         <strong>Compare areas over time</strong> shows the average price in up to four council areas, counties, regions or
-        countries, from Refueller’s own record, starting with yours. Typing a town gives the council area it’s in. With both fuels,
+        countries, from Refueller’s own record, starting with yours. Typing a town gives the council area it’s in. You can also add, as a fifth line, the station marked “Cheapest” among the
+        eight on the page you came from. {/* Draft (November 9th 2026), for John. */}That line follows the station’s own prices, so it shows how
+        today’s cheapest station has moved, not which was cheapest at each point: earlier on, another of the eight may have been
+        cheaper. Refueller keeps each station’s prices for 30 days, so the line covers no more than that. With both fuels,
         two areas are shown at a time, and the chart can show how much each price has moved since the start of the period, as diesel
         costs much more than unleaded and the two would otherwise sit far apart. Longer periods appear as the record grows. Share chart
         makes a picture of the chart on your device; nothing is sent anywhere until you choose where it goes.

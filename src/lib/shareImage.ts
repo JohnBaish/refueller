@@ -6,7 +6,7 @@ import { scaleFor, type Point } from './compare.ts';
 
 const C = { bg: '#f5ead8', text: '#201e1d', muted: '#645c50', grid: 'rgba(32,30,29,0.13)', zero: 'rgba(32,30,29,0.45)', accent: '#c67139' };
 /** The chart colours in light mode (global.css): the four area slots, Great Britain, and the eight stations. */
-export const LIGHT = { k: ['#c05a14', '#2a64a8', '#3d7a3a', '#8a3f7f'], gb: '#5f5a52', eight: '#c05a14' };
+export const LIGHT = { k: ['#c05a14', '#2a64a8', '#3d7a3a', '#8a3f7f', '#8a6a00'], gb: '#5f5a52', eight: '#c05a14' };
 export const CREDIT = 'refueller.baish.net · Prices from the Government’s Fuel Finder service. Contains public sector information licensed under the Open Government Licence v3.0. Unusual prices not included.';
 
 export type ImgLine = { label: string; colour: string; style: 'solid' | 'dotted' | 'dashed'; pts: Point[] };
