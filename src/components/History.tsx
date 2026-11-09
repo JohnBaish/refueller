@@ -1,5 +1,6 @@
+import { useTapAway } from '../lib/tapAway.ts';
 import type { CSSProperties } from 'react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { fuelWord, loadChoices, saveChoices, type Fuel } from '../lib/calc.ts';
 import { average, axisDate, dateWords, historySentence, steps, trim, windowFor, type Hist, type Step } from '../lib/history.ts';
 import { useIsNarrow } from '../lib/responsive.ts';
@@ -22,6 +23,8 @@ type Geo = { w: number; h: number; left: number; right: number; top: number; bot
 
 function Chart({ mine, avg, start, end, geo, label }: { mine: Step[]; avg: { from: number; steps: Step[] } | null; start: number; end: number; geo: Geo; label: string }) {
   const [tip, setTip] = useState<number | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  useTapAway(tip !== null, svgRef, setTip);
   const { w, h, left: L, right: R, top: T, bottom: B } = geo;
   const ps = [...mine.map((s) => s.p), ...(avg?.steps.map((s) => s.p) ?? [])];
   const lo = Math.floor(Math.min(...ps) - 0.6);
@@ -55,7 +58,7 @@ function Chart({ mine, avg, start, end, geo, label }: { mine: Step[]; avg: { fro
   return (
     // A mouse shows a dot's label while pointing at it; on a touch screen a tap shows it and a tap elsewhere on the graph hides it
     // (touch screens also send "mouse leave" after a tap, so only a real mouse leaving hides it).
-    <svg
+    <svg ref={svgRef}
       viewBox={`0 0 ${w} ${h}`}
       width="100%"
       role="img"

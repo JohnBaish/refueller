@@ -119,6 +119,14 @@ eight, the ends, the address `#route/RG1/BS1[/via]`), `src/components/Journey.ts
 
 ## Log
 
+### 2026-11-09 — tapping away removes a chart's date line (branch `feature-compare`, not merged)
+
+**John:** on a phone, once a chart's date line was showing there was no way to remove it. `useTapAway()` (`src/lib/tapAway.ts`): while a
+chart's date line or label is showing, a tap or click anywhere outside that chart removes it. Used by "The wider picture"'s charts, the
+compare chart and the price history graph. **Verified:** type-check, lint, `npm run check`, build; `design/mock/compare/tap-check.cjs` at
+390px with touch and 1200px with a mouse: each chart's line shows after a tap and goes after tapping away; tapping one chart then the
+other leaves one line; no errors. **Not checked:** a real phone.
+
 ### 2026-11-09 — "Compare areas over time" built (branch `feature-compare`, not merged)
 
 **John** (round 2 of the mock-ups, `claude/great-wright-0iia6o`): build it, with the Change or Prices switch; with both fuels, the first area and

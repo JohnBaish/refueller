@@ -1,5 +1,6 @@
+import { useTapAway } from '../lib/tapAway.ts';
 import type { CSSProperties } from 'react';
-import { useEffect, useState, type PointerEvent } from 'react';
+import { useEffect, useRef, useState, type PointerEvent } from 'react';
 import { stationSteps, type Histories } from './History.tsx';
 import { eightSeries, gbSeries, pence1, AVERAGE_DAYS, FUELS, type AveragesPage, type Point } from '../lib/averages.ts';
 import { levelRows, localIndex, pence, type AreaLookup, type Pair } from '../lib/levels.ts';
@@ -23,6 +24,8 @@ const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eig
 
 function Chart({ lines, fuelName, narrow, start, end }: { lines: Line[]; fuelName: string; narrow: boolean; start: number; end: number }) {
   const [tip, setTip] = useState<number | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  useTapAway(tip !== null, svgRef, setTip);
   const shown = lines.filter((l) => l.pts.length);
   if (!shown.length) return <p className="avg-none">No {fuelName.toLowerCase()} prices to average yet.</p>;
   const w = narrow ? 340 : 470;
@@ -63,7 +66,7 @@ function Chart({ lines, fuelName, narrow, start, end }: { lines: Line[]; fuelNam
   const tipW = 168;
   const tipX = at === null ? 0 : Math.min(Math.max(x(at) - tipW / 2, 0), w - tipW);
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} width="100%" className="avg-svg" style={{ '--ar': w / h } as CSSProperties} role="img" aria-label={`${fuelName}: average prices`}>
+    <svg ref={svgRef} viewBox={`0 0 ${w} ${h}`} width="100%" className="avg-svg" style={{ '--ar': w / h } as CSSProperties} role="img" aria-label={`${fuelName}: average prices`}>
       {grid.map((p) => (
         <g key={p}>
           <line className="g-grid" x1={L} x2={w - R} y1={y(p)} y2={y(p)} />

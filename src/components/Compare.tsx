@@ -1,3 +1,4 @@
+import { useTapAway } from '../lib/tapAway.ts';
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent } from 'react';
 import { getPlaces } from './PlaceBox.tsx';
 import type { Target } from './Results.tsx';
@@ -38,6 +39,8 @@ function Swatch({ colour, dotted }: { colour: string; dotted?: boolean }) {
 
 function Chart({ lines, change, narrow }: { lines: ChartLine[]; change: boolean; narrow: boolean }) {
   const [tip, setTip] = useState<number | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  useTapAway(tip !== null, svgRef, setTip);
   const shown = lines.filter((l) => l.pts.length);
   if (!shown.length) return <p className="avg-none">No averages to show for these yet.</p>;
   const w = narrow ? 340 : 760;
@@ -76,7 +79,7 @@ function Chart({ lines, change, narrow }: { lines: ChartLine[]; change: boolean;
   const tipW = narrow ? 210 : 240;
   const tipX = at === null ? 0 : Math.min(Math.max(x(at) - tipW / 2, 0), w - tipW);
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} width="100%" className="avg-svg cmp-svg" style={{ '--ar': w / h } as CSSProperties} role="img" aria-label="Average prices over time">
+    <svg ref={svgRef} viewBox={`0 0 ${w} ${h}`} width="100%" className="avg-svg cmp-svg" style={{ '--ar': w / h } as CSSProperties} role="img" aria-label="Average prices over time">
       {grid.map((p) => (
         <g key={p}>
           <line className={`g-grid${change && p === 0 ? ' cmp-zero' : ''}`} x1={L} x2={w - R} y1={y(p)} y2={y(p)} />
