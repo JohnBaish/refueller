@@ -376,3 +376,18 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
   .cmp-x { width: 44px; height: 44px; }
 }
 @media print { .cmp-controls, .cmp-addbox, .cmp-add, .cmp-x, .avg-share, .share-wrap, .cmp-way { display: none !important; } }
+
+/* Dark mode colour review (John, November 14th 2026: options 5 and 7, house style §2).
+   7, clearer layers: the page a step darker than before, the table box and phone cards lifted
+   with a shadow, and the open "Price history" and "Worth driving here?" panels a step lighter
+   than the card (they used to be darker). 5, colour by state: a station marked "Cheapest" (for
+   either fuel, members-only included) gets a terracotta edge. Dark mode on screen only:
+   light mode, printing and copied charts are unchanged. */
+@media screen {
+  :root[data-theme="dark"] { --color-bg: #24211e; }
+  :root[data-theme="dark"] :is(.card, .table-box, .pcard) { box-shadow: 0 0 0 1px color-mix(in srgb, #e8dfcf 8%, transparent), 0 4px 14px #0009; }
+  :root[data-theme="dark"] .calc { background: #403b35; border-color: transparent; box-shadow: 0 3px 10px #0008; --color-accent: #ea9862; }
+  :root[data-theme="dark"] table.stations tbody td:first-child { padding-left: 14px; }
+  :root[data-theme="dark"] table.stations tbody tr:has(.cheap-tag) > td:first-child { box-shadow: inset 5px 0 0 var(--color-accent); }
+  :root[data-theme="dark"] .pcard:has(.cheap-tag) { box-shadow: inset 5px 0 0 var(--color-accent), 0 0 0 1px color-mix(in srgb, #e8dfcf 8%, transparent), 0 4px 14px #0009; }
+}

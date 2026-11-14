@@ -119,6 +119,17 @@ eight, the ends, the address `#route/RG1/BS1[/via]`), `src/components/Journey.ts
 
 ## Log
 
+### 2026-11-14 — dark mode colours: options 5 and 7 built and live (branch `dark-colours`, merged)
+
+**John:** build 5 and 7 and make them live, with Claude's defaults (the open panels lighter than their card, as on
+Riverwatcher). **What (`global.css`, one block at the end, dark mode on screen only):** the page `#24211e` (was `#2a2723`);
+cards, the table box and phone cards lifted with a shadow; the open "Price history" and "Worth driving here?" panels `#403b35`
+with a soft shadow and no border, their links `#ea9862`; a station holding a "Cheapest" tag (either fuel, members-only included,
+on the main list and the journey list) edged in terracotta, with 6px more room before the station's name in the table. The
+compare page's chips keep the page colour, so they're a step darker. Light mode, printing and copied charts unchanged.
+**Verified:** type-check, lint, checks, build; Chromium, the postcode screen, RG4, RG1 to BS1 and the compare page at 1200px,
+390px and 844×390 with touch, light and dark: no errors, no sideways scroll. **Couldn't check:** a real phone or Mac.
+
 ### 2026-11-14 — dark mode colour review: options 5 and 7 together, mocked up (design only, straight to `main`)
 
 After Riverwatcher's review (its `design/previews/dark-review-2026-11-13/`), John asked to see the same pairing here: option 5, colour
