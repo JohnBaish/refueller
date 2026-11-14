@@ -119,6 +119,14 @@ eight, the ends, the address `#route/RG1/BS1[/via]`), `src/components/Journey.ts
 
 ## Log
 
+### 2026-11-14 — dark mode colour review: options 5 and 7 together, mocked up (design only, straight to `main`)
+
+After Riverwatcher's review (its `design/previews/dark-review-2026-11-13/`), John asked to see the same pairing here: option 5, colour
+tied to each item's state, and option 7, clearer layers (page `#24211e`, raised panels `#403b35`). Mock-ups by adding CSS in the browser
+only to the built site (nothing in the app changed), dark mode, at 1200px and 390px with touch. Here: a station holding a "Cheapest" tag gets a terracotta edge (table and phone cards); option 7 as Riverwatcher's, with the open "Price history" and "Worth driving here?" panels a step lighter rather than darker. A dark band behind the table headings was tried and dropped: it carried no meaning. New edge colours checked
+at least 3:1 against the cards; text unchanged. Pictures (`now.png`, `opt57.png`), CSS and `shot.cjs` in
+`design/previews/dark-review-2026-11-14/`. No errors, no sideways scroll. Waiting for John's choice.
+
 ### 2026-11-09 — the cheapest of the eight merged to `main`
 
 **John:** the drafted wording stands (the button, the 30-day note, the About sentences), plus "Share chart (Copy chart on a computer)"

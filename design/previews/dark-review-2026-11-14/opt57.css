@@ -1,0 +1,8 @@
+/* Refueller: options 5 and 7 together (mock-up, dark mode only) */
+/* 7: clearer layers - page a step darker, open panels a step lighter than the card */
+:root[data-theme="dark"] { --color-bg: #24211e; }
+:root[data-theme="dark"] .card, :root[data-theme="dark"] .table-box, :root[data-theme="dark"] .pcard { box-shadow: 0 0 0 1px color-mix(in srgb, #e8dfcf 8%, transparent), 0 4px 14px #0009; }
+:root[data-theme="dark"] .calc { background: #403b35; border-color: transparent; box-shadow: 0 3px 10px #0008; }
+/* 5: colour by state - a station holding a "Cheapest" tag gets a terracotta edge */
+:root[data-theme="dark"] table.stations tbody tr:has(.cheap-tag) > td:first-child { box-shadow: inset 5px 0 0 var(--color-accent); }
+:root[data-theme="dark"] .pcard:has(.cheap-tag) { box-shadow: inset 5px 0 0 var(--color-accent), 0 0 0 1px color-mix(in srgb, #e8dfcf 8%, transparent), 0 4px 14px #0009; }
