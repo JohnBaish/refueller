@@ -72,7 +72,7 @@ dark and harsh on John's phone and laptop):
 
 | Token | Dark value |
 |---|---|
-| `--color-bg` | `#2a2723` warm dark grey |
+| `--color-bg` | `#24211e` warm dark grey (a step darker than the first `#2a2723`, John, November 14th 2026) |
 | `--color-surface` | `#37332e` |
 | `--color-text` | `#e8dfcf` soft cream |
 | `--color-accent` | `#dd8a56` terracotta, a shade lighter |
@@ -80,7 +80,8 @@ dark and harsh on John's phone and laptop):
 | `--color-neutral-100` / `-700` / `-800` | `#423d36` / `#b0a593` (muted text) / `#e3d9c7` |
 | `--color-accent-100` / `-300` / `-600` / `-700` / `-800` | `#4a2a14` / `#b2622d` / `#e8935d` / `#f2a573` / `#ffc6a5` |
 | `--color-accent-2-100` / `-800` | `#2f3a20` / `#d4e4b8` |
-| shadows | a 1px hairline in text at 6–8%, plus a dark shadow |
+| card shadow | `0 0 0 1px` text at 8%, plus `0 4px 14px #0009`, so cards lift off the page |
+| raised panels | `#403b35` (an opened detail or chosen-day panel inside a card), with links and accents `#ea9862` there (4.7:1) |
 
 Contrast on the background: text 11.2:1, muted text 6.1:1, terracotta
 5.6:1. Don't go lighter than this: a step further brought the small
@@ -119,6 +120,16 @@ terracotta labels below 4.5:1. How it's built (Hindcaster's
   rather than the website, stores your last choices (location and light
   or dark mode), so the page opens the same way next time."
 - Charts: re-check their colours in both themes ("Charts" in §5).
+- **Clearer layers and colour by state** (options 7 and 5 of the November
+  13th–14th review, John chose both for every tool): the page a step
+  darker than its cards, cards lifted with a shadow, panels opened inside
+  a card a step lighter (`#403b35`). Where a tool's items have a state, a
+  coloured edge down their left side (an inset `box-shadow`, with room
+  left so it doesn't touch the words) says it: Riverwatcher's gauges by
+  high or low, Lightreader's times by the light, Refueller's cheapest
+  stations, Hindcaster's year-ago cards by warmer, cooler, wetter or
+  drier. No edge when there's no state; edge colours at least 3:1 against
+  the card; the words still say it too.
 
 ### Reviewing dark mode colours
 

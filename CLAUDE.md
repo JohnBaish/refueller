@@ -2063,3 +2063,8 @@ sideways scroll. Merged to `main` at John's word.
 ### 2026-11-09 — house style and fresh look re-copied (notes only, straight to `main`)
 
 From clockwheel `49cbf9e`: §6 adds "A phone held sideways" (a short screen is `max-height: 500px`; keep the top small; no chart, map or pop-up taller than the screen; draggable things shorter than it; 16px boxes), §10 and §11 check at 844×390 with touch too, and the fresh-look review now does every pass sideways as well (its `SKILL.md` and report template, re-copied); also the November 5th §2 section on reviewing dark mode colours. No app code changed.
+
+### 2026-11-14 — house style re-copied (notes only, straight to `main`)
+
+From clockwheel: §2 now records the darker dark page (`#24211e`), the card shadow, raised panels
+`#403b35` with `#ea9862` accents, and coloured state edges. No app code changed.
