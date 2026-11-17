@@ -12,7 +12,7 @@ Read these first, in this order:
    the numbered open questions).
 2. `PLAN.md`: the staged build. Work one stage at a time, on its branch.
 3. `HOUSE-STYLE.md`: the shared look and ways of working. Copied from
-   `JohnBaish/clockwheel`; last re-copied 2026-11-09 (at clockwheel commit `49cbf9e`; `SEO-HANDOVER.md` at `5c5c145`).
+   `JohnBaish/clockwheel`; last re-copied 2026-11-17 (`HOUSE-STYLE.md` at clockwheel commit `ba9c802`; the rest at `49cbf9e`; `SEO-HANDOVER.md` at `5c5c145`).
    Clockwheel holds the master copy. If it has changed since, re-copy it and
    note that here. The same goes for `SEO-HANDOVER.md` and
    `.claude/skills/fresh-look/` (the `/fresh-look` review).
@@ -119,7 +119,7 @@ eight, the ends, the address `#route/RG1/BS1[/via]`), `src/components/Journey.ts
 
 ## Log
 
-### 2026-11-17 — words with a shared picture (branch `claude/happy-turing-3so1yn`, not merged)
+### 2026-11-17 — words with a shared picture (branch `claude/happy-turing-3so1yn`, merged)
 
 **John** (after testing shares on iPhone and Android, in Lightreader's thread): every Share button sends a sentence, a link
 to the same place (sent separately) and a title ("Refueller: Average prices"). His wording: "Average petrol and diesel
@@ -130,7 +130,8 @@ postcode is cut to its first half in the sentence and the link (`RG4-7HN` → `R
 The compare page's link opens on the page it was opened from, as its own address can't hold its areas. `ShareWords`,
 `shareWords()` and `deliver(…, words)` in `src/lib/shareImage.ts`; `shareNear` on `AveragesSection`. **Checked:** tsc,
 lint, checks, build; in Chromium as an iPhone 13, the share sheet replaced by a recorder: `#RG4-7HN` and `#@Caversham`,
-both buttons, the compare page with one fuel and both; the words and links above; no errors.
+both buttons, the compare page with one fuel and both; the words and links above; no errors. **Live** at John's word;
+`HOUSE-STYLE.md` re-copied (new §17, sharing a picture).
 
 ### 2026-11-14 — dark mode colours: options 5 and 7 built and live (branch `dark-colours`, merged)
 

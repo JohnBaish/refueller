@@ -748,6 +748,8 @@ started this way.
 9. Build dark mode in from the start (§2; John, 2026-10-29, so don't ask):
    the agreed dark colours and switch, following the device's setting, and
    mock-ups in both themes.
+   If the tool will have Share buttons, agree each one's sentence with John
+   as part of the design, alongside its mock-up (§17).
 10. Add the tool to the project tracker (§10): a file in `projects/` and a
     line in `INDEX.md` in `JohnBaish/baish.net-directory`. If it was
     planned in a Claude chat and already has a starter file there,
@@ -767,3 +769,45 @@ in other chats. Before that thread, John adds `baish.net` and its subdomains
 to the environment's Allowed domains, so the screenshots can come from the
 live sites (without them, Claude builds each site from `main` and serves it
 locally, and the PDF says so).
+
+## 17. Sharing a picture
+
+A chart's **Share** button (Copy on a computer) sends the picture with
+words. Agreed with John on 2026-11-17, after testing on an iPhone (WhatsApp,
+Gmail, Messages) and Android (WhatsApp, Gmail). First built in Lightreader,
+Nightreader, Hindcaster, Riverwatcher, Refueller and Roadteller
+(`ShareWords` and `shareWords()` in each site's `src/lib/shareImage.ts`).
+
+**Every share sends three things:**
+
+1. **A sentence:** what the picture shows, where and when, ending "from
+   [Tool]". For example: "The year in light for Caversham (RG4), from
+   Lightreader." It is the caption in WhatsApp and Messages and the body of
+   an email. **Agree each button's sentence with John as part of the
+   tool's design** (§16).
+2. **A link to the same place**, sent separately (not written into the
+   sentence). Apps show it after the sentence, it gives Gmail on an iPhone
+   its subject (the tool's name, from the link-preview tags), and Messages
+   adds the tool's preview card. The cost: on an iPhone "Save Image" moves
+   under "View More" in the share sheet.
+3. **A title**, "[Tool]: [card heading]". Almost no app uses it, but it
+   costs nothing.
+
+**Rules for the words and the link:**
+
+- **No "today", "tonight" or "yesterday":** a message is often read later,
+  so give the date ("on November 17th").
+- **The link opens on the place the picture shows**, so the tool must keep
+  its place in the address after "#" (`#RG4`). Opening a link must not
+  change the place a visitor's own device remembers.
+- **A full postcode is cut to its first half** in both the sentence and the
+  link (RG4 7HN goes out as RG4), so nobody's street is passed round.
+- Where a page's address can't hold what's shown (Refueller's compare
+  page), link to the page it was opened from.
+
+**What the tests found:** every app used the sentence and none the title;
+the picture always arrived; "#RG4" survived; a link with no picture gives
+WhatsApp its own preview card from the link-preview tags (§7). Android's
+Gmail leaves the subject empty whatever is sent. An iPhone can report a
+share as cancelled when it went, so a cancelled share shows nothing rather
+than an error.
