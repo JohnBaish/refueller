@@ -119,6 +119,12 @@ eight, the ends, the address `#route/RG1/BS1[/via]`), `src/components/Journey.ts
 
 ## Log
 
+### 2026-11-17 — the compare mock-up branch deleted (notes only, straight to `main`)
+
+**John:** done with `claude/great-wright-0iia6o` (the design-only mock-ups for "Compare areas over time", rounds 1 and 2, live since
+November 9th). "Delete merged branches" with it named: trial run, then the real run. Kept first as the tag
+`archive/claude/great-wright-0iia6o`. Only `main` is left.
+
 ### 2026-11-17 — "Share chart" on the price history (branch `history-share`, merged)
 
 **John:** yes, with the agreed wording unchanged. **What:** "Share chart" (phone) / "Copy chart" (computer) at the bottom of the
