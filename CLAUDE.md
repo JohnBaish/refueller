@@ -119,7 +119,7 @@ eight, the ends, the address `#route/RG1/BS1[/via]`), `src/components/Journey.ts
 
 ## Log
 
-### 2026-11-17 — "Share chart" on the price history (branch `history-share`, not merged)
+### 2026-11-17 — "Share chart" on the price history (branch `history-share`, merged)
 
 **John:** yes, with the agreed wording unchanged. **What:** "Share chart" (phone) / "Copy chart" (computer) at the bottom of the
 Price history panel, the same `ShareButton`, `makeImage` and `deliver` as "The wider picture". Picture: "Price history: Caversham Esso
@@ -131,7 +131,8 @@ average); link to the list it came from, a full postcode cut to its first half. 
 **Verified:** type-check, lint, `npm run check` (new check of the words), build; `design/mock/history-share-check.cjs` against `vite
 preview` at 390px, 844×390 (touch, share sheet replaced by a recorder) and 1200px (clipboard read back), light and dark, `#RG4-7SS` and
 `#@Caversham`: the words and links above, both fuels, a 2400×1308 picture, hidden in print, no errors, no sideways scroll. Pictures
-`design/previews/history-share/`. **Couldn't check:** a real phone's share sheet.
+`design/previews/history-share/`. **Couldn't check:** a real phone's share sheet. **Merged to `main`** at John's word ("This looks
+really good"), after bringing in `main`'s data commits; checks, lint, type-check and build clean first.
 
 ### 2026-11-17 — words with a shared picture (branch `claude/happy-turing-3so1yn`, merged)
 
