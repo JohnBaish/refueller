@@ -90,11 +90,13 @@ await check('shared price history: the agreed words, all selling, some selling, 
   const base = { fuelWord: 'unleaded', station: 'Caversham Esso Express', near: 'RG4', shown: 8, selling: 8, withAverage: true };
   assert.deepEqual(historyShareWords(base), {
     text: 'Unleaded prices at Caversham Esso Express over the last 14 days, against the average of the eight nearest RG4, from Refueller.',
-    sub: 'Unleaded, the last 14 days, against the average of the eight shown',
+    sub: 'Unleaded, the last 14 days, against the average of eight nearby stations',
+    key: 'Average of eight nearby stations',
   });
   const d = historyShareWords({ ...base, fuelWord: 'diesel', selling: 7, near: 'Caversham' });
   assert.equal(d.text, 'Diesel prices at Caversham Esso Express over the last 14 days, against the average of the seven nearest Caversham that sell diesel, from Refueller.');
-  assert.equal(d.sub, 'Diesel, the last 14 days, against the average of the seven shown that sell diesel');
+  assert.equal(d.sub, 'Diesel, the last 14 days, against the average of seven nearby stations that sell diesel');
+  assert.equal(d.key, 'Average of seven nearby stations that sell diesel');
   assert.equal(historyShareWords({ ...base, withAverage: false }).text, 'Unleaded prices at Caversham Esso Express over the last 14 days, from Refueller.');
 });
 

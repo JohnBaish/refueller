@@ -99,6 +99,8 @@ export function historyShareWords(o: { fuelWord: string; station: string; near: 
     text: o.withAverage
       ? `${Fuel} prices at ${o.station} over the last 14 days, against the average of the ${COUNT[o.selling]} nearest ${o.near}${sell}, from Refueller.`
       : `${Fuel} prices at ${o.station} over the last 14 days, from Refueller.`,
-    sub: o.withAverage ? `${Fuel}, the last 14 days, against the average of the ${COUNT[o.selling]} shown${sell}` : `${Fuel}, the last 14 days`,
+    // The picture's own words name no place, as its readers haven't seen the list (option C, John, November 17th 2026).
+    sub: o.withAverage ? `${Fuel}, the last 14 days, against the average of ${COUNT[o.selling]} nearby stations${sell}` : `${Fuel}, the last 14 days`,
+    key: `Average of ${COUNT[o.selling]} nearby stations${sell}`,
   };
 }

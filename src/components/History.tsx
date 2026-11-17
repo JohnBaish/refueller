@@ -174,7 +174,7 @@ export function HistoryPanel({ row, rows, histories, collected, recordedFrom, sh
       sub: words.sub,
       key: [
         { label: 'This station', colour: LIGHT.eight, style: 'solid' },
-        ...(avg ? [{ label: avgLabel, colour: LIGHT.gb, style: 'dashed' as const }] : []),
+        ...(avg ? [{ label: words.key, colour: LIGHT.gb, style: 'dashed' as const }] : []),
       ],
       panels: [
         {
@@ -182,7 +182,7 @@ export function HistoryPanel({ row, rows, histories, collected, recordedFrom, sh
           from: start,
           to: end,
           lines: [
-            ...(avg ? [{ label: avgLabel, colour: LIGHT.gb, style: 'dashed' as const, step: true, pts: pts(avg.steps, avg.from) }] : []),
+            ...(avg ? [{ label: words.key, colour: LIGHT.gb, style: 'dashed' as const, step: true, pts: pts(avg.steps, avg.from) }] : []),
             { label: 'This station', colour: LIGHT.eight, style: 'solid' as const, step: true, pts: pts(mine, start) },
           ],
         },

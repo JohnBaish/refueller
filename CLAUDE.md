@@ -119,6 +119,15 @@ eight, the ends, the address `#route/RG1/BS1[/via]`), `src/components/Journey.ts
 
 ## Log
 
+### 2026-11-17 — the shared price history picture: "eight nearby stations" (straight to `main`)
+
+**John:** "the eight shown" doesn't help someone who has only seen the picture; option C, no place named; merge straight to `main`.
+The picture's second line is now "Unleaded, the last 14 days, against the average of eight nearby stations" and its key "Average of
+eight nearby stations" ("seven nearby stations that sell diesel" when not all do). `historyShareWords()` gains `key`. Unchanged: the
+sentence sent with it (it names RG4) and the panel on the site ("the eight shown"). **Verified:** type-check, lint, `npm run check`
+(updated), build; `design/mock/history-share-check.cjs` at 390px, 844×390 and 1200px, light and dark: no errors, no sideways scroll.
+Picture `design/previews/history-share/picture-unleaded-nearby.png`.
+
 ### 2026-11-17 — the compare mock-up branch deleted (notes only, straight to `main`)
 
 **John:** done with `claude/great-wright-0iia6o` (the design-only mock-ups for "Compare areas over time", rounds 1 and 2, live since
