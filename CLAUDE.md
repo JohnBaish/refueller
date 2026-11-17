@@ -133,6 +133,7 @@ preview` at 390px, 844×390 (touch, share sheet replaced by a recorder) and 1200
 `#@Caversham`: the words and links above, both fuels, a 2400×1308 picture, hidden in print, no errors, no sideways scroll. Pictures
 `design/previews/history-share/`. **Couldn't check:** a real phone's share sheet. **Merged to `main`** at John's word ("This looks
 really good"), after bringing in `main`'s data commits; checks, lint, type-check and build clean first.
+"Delete merged branches": trial run, then the real run; `history-share` deleted.
 
 ### 2026-11-17 — words with a shared picture (branch `claude/happy-turing-3so1yn`, merged)
 
