@@ -9,8 +9,10 @@ const C = { bg: '#f5ead8', text: '#201e1d', muted: '#645c50', grid: 'rgba(32,30,
 export const LIGHT = { k: ['#c05a14', '#2a64a8', '#3d7a3a', '#8a3f7f', '#8a6a00'], gb: '#5f5a52', eight: '#c05a14' };
 export const CREDIT = 'refueller.baish.net · Prices from the Government’s Fuel Finder service. Contains public sector information licensed under the Open Government Licence v3.0. Unusual prices not included.';
 
-export type ImgLine = { label: string; colour: string; style: 'solid' | 'dotted' | 'dashed'; pts: Point[] };
-export type ImgPanel = { title?: string; lines: ImgLine[]; change: boolean };
+/** `step`: drawn as steps (flat until the price changes, then straight up or down), as the price history is on screen. */
+export type ImgLine = { label: string; colour: string; style: 'solid' | 'dotted' | 'dashed'; pts: Point[]; step?: boolean };
+/** `from` and `to` fix the time axis (the price history's 14 days), where a line may start later. */
+export type ImgPanel = { title?: string; lines: ImgLine[]; change: boolean; from?: number; to?: number };
 export type KeyItem = { label: string; colour: string; style: 'solid' | 'dotted' | 'dashed' };
 
 const W = 1200;
@@ -70,8 +72,8 @@ function drawPanel(ctx: CanvasRenderingContext2D, panel: ImgPanel, x0: number, y
   const ph = h - (top - y0);
   const all = lines.flatMap((l) => l.pts);
   const { lo, hi, step } = scaleFor(all.map((p) => p.p));
-  const t0 = Math.min(...all.map((p) => p.t));
-  const t1 = Math.max(...all.map((p) => p.t));
+  const t0 = panel.from ?? Math.min(...all.map((p) => p.t));
+  const t1 = panel.to ?? Math.max(...all.map((p) => p.t));
   const span = Math.max(t1 - t0, 1);
   const x = (t: number) => x0 + L + ((t - t0) / span) * (w - L - R);
   const y = (p: number) => top + T + ((hi - p) / (hi - lo)) * (ph - T - B);
@@ -102,7 +104,13 @@ function drawPanel(ctx: CanvasRenderingContext2D, panel: ImgPanel, x0: number, y
   for (const l of lines) {
     stroke(ctx, l.style, l.colour);
     ctx.beginPath();
-    l.pts.forEach((p, i) => (i ? ctx.lineTo(x(p.t), y(p.p)) : ctx.moveTo(x(p.t), y(p.p))));
+    l.pts.forEach((p, i) => {
+      if (!i) ctx.moveTo(x(p.t), y(p.p));
+      else if (l.step) {
+        ctx.lineTo(x(p.t), y(l.pts[i - 1].p));
+        ctx.lineTo(x(p.t), y(p.p));
+      } else ctx.lineTo(x(p.t), y(p.p));
+    });
     ctx.stroke();
     ctx.setLineDash([]);
     const last = l.pts[l.pts.length - 1];

@@ -2,7 +2,9 @@ import { useTapAway } from '../lib/tapAway.ts';
 import type { CSSProperties } from 'react';
 import { useRef, useState } from 'react';
 import { fuelWord, loadChoices, saveChoices, type Fuel } from '../lib/calc.ts';
-import { average, axisDate, dateWords, historySentence, steps, trim, windowFor, type Hist, type Step } from '../lib/history.ts';
+import { average, axisDate, dateWords, historySentence, historyShareWords, steps, trim, windowFor, type Hist, type Step } from '../lib/history.ts';
+import { deliver, imageName, LIGHT, makeImage, shareWords } from '../lib/shareImage.ts';
+import { ShareButton } from './ShareButton.tsx';
 import { useIsNarrow } from '../lib/responsive.ts';
 import { tidyName, type Row } from '../lib/search.ts';
 
@@ -143,7 +145,7 @@ function Chart({ mine, avg, start, end, geo, label }: { mine: Step[]; avg: { fro
 }
 
 // "Price history" (PLAN idea 1; John, 31 October): the last 14 days of a station's price, against the average of the stations shown.
-export function HistoryPanel({ row, rows, histories, collected, recordedFrom, onClose }: { row: Row; rows: Row[]; histories: Histories; collected: string; recordedFrom: string; onClose: () => void }) {
+export function HistoryPanel({ row, rows, histories, collected, recordedFrom, shareNear, onClose }: { row: Row; rows: Row[]; histories: Histories; collected: string; recordedFrom: string; shareNear: string; onClose: () => void }) {
   const narrow = useIsNarrow(720);
   const [choices, setChoices] = useState(loadChoices);
   const [fuel, setFuel] = useState<Fuel>(() => (row.prices[choices.fuel] ? choices.fuel : row.prices.e10 ? 'e10' : 'diesel'));
@@ -161,6 +163,34 @@ export function HistoryPanel({ row, rows, histories, collected, recordedFrom, on
     saveChoices(c);
   };
   const stillFilling = Date.parse(recordedFrom) > start;
+  const station = tidyName(row.station.name).replace(/ – .*/, '');
+  // "Share chart" / "Copy chart" (John, November 17th 2026): the same picture, made on the device, with the agreed words. The line is
+  // drawn as steps over the 14 days, from the time each price was set (or the start of the record); "Not recorded" isn't drawn.
+  const share = async () => {
+    const pts = (st: Step[], from: number) => [...st.map((s) => ({ t: Math.max(s.t, from), p: s.p })), { t: end, p: st[st.length - 1].p }];
+    const words = historyShareWords({ fuelWord: word, station, near: shareNear, shown: rows.length, selling: selling.length, withAverage: !!avg });
+    const canvas = makeImage({
+      heading: `Price history: ${station}`,
+      sub: words.sub,
+      key: [
+        { label: 'This station', colour: LIGHT.eight, style: 'solid' },
+        ...(avg ? [{ label: avgLabel, colour: LIGHT.gb, style: 'dashed' as const }] : []),
+      ],
+      panels: [
+        {
+          change: false,
+          from: start,
+          to: end,
+          lines: [
+            ...(avg ? [{ label: avgLabel, colour: LIGHT.gb, style: 'dashed' as const, step: true, pts: pts(avg.steps, avg.from) }] : []),
+            { label: 'This station', colour: LIGHT.eight, style: 'solid' as const, step: true, pts: pts(mine, start) },
+          ],
+        },
+      ],
+      named: false,
+    });
+    return deliver(canvas, imageName(end), shareWords('Price history', words.text, decodeURIComponent(location.hash.slice(1))));
+  };
   return (
     <div className="calc hist" role="region" aria-label="Price history">
       <div className="calc-head">
@@ -170,7 +200,7 @@ export function HistoryPanel({ row, rows, histories, collected, recordedFrom, on
         </button>
       </div>
       <p className="calc-say">
-        The last 14 days at {tidyName(row.station.name).replace(/ – .*/, '')}, against the {avgLabel.slice(0, 1).toLowerCase() + avgLabel.slice(1)}.
+        The last 14 days at {station}, against the {avgLabel.slice(0, 1).toLowerCase() + avgLabel.slice(1)}.
       </p>
       <div className="fuel-btns" role="group" aria-label="Fuel">
         {(['e10', 'diesel'] as const).map((f) => (
@@ -203,6 +233,9 @@ export function HistoryPanel({ row, rows, histories, collected, recordedFrom, on
             {avg && ` The average is of the ${WORDS[selling.length]} stations shown${selling.length < rows.length ? ` that sell ${word}` : ''}`}
             {avg && (avg.from > start ? `, and starts once all their prices are known (from ${dateWords(avg.from, true)}).` : '.')}
           </p>
+          <div className="avg-share">
+            <ShareButton what="chart" make={share} />
+          </div>
         </>
       )}
     </div>

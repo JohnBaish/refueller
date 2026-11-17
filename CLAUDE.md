@@ -119,6 +119,20 @@ eight, the ends, the address `#route/RG1/BS1[/via]`), `src/components/Journey.ts
 
 ## Log
 
+### 2026-11-17 — "Share chart" on the price history (branch `history-share`, not merged)
+
+**John:** yes, with the agreed wording unchanged. **What:** "Share chart" (phone) / "Copy chart" (computer) at the bottom of the
+Price history panel, the same `ShareButton`, `makeImage` and `deliver` as "The wider picture". Picture: "Price history: Caversham Esso
+Express", "Unleaded, the last 14 days, against the average of the eight shown", key, this station and the average drawn as steps over
+the 14 days (`step`, `from`/`to` added to `shareImage.ts`; "Not recorded" not drawn). Words (`historyShareWords()` in
+`src/lib/history.ts`): title "Refueller: Price history"; "Unleaded prices at Caversham Esso Express over the last 14 days, against the
+average of the eight nearest RG4, from Refueller." ("seven nearest RG4 that sell diesel" when not all do; no "against" clause with no
+average); link to the list it came from, a full postcode cut to its first half. `shareNear` now worked out once in `Results.tsx`.
+**Verified:** type-check, lint, `npm run check` (new check of the words), build; `design/mock/history-share-check.cjs` against `vite
+preview` at 390px, 844×390 (touch, share sheet replaced by a recorder) and 1200px (clipboard read back), light and dark, `#RG4-7SS` and
+`#@Caversham`: the words and links above, both fuels, a 2400×1308 picture, hidden in print, no errors, no sideways scroll. Pictures
+`design/previews/history-share/`. **Couldn't check:** a real phone's share sheet.
+
 ### 2026-11-17 — words with a shared picture (branch `claude/happy-turing-3so1yn`, merged)
 
 **John** (after testing shares on iPhone and Android, in Lightreader's thread): every Share button sends a sentence, a link

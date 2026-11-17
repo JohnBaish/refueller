@@ -494,6 +494,8 @@ export function Results({ target }: { target: Target }) {
           }
         : { area: target.kind === 'station' ? target.area : '', key: target.kind === 'station' ? target.id : '', note: `The extra miles are by road from ${found.from}.` };
   // One panel open at a time.
+  // How the place is named in a shared picture's words: the first half of a postcode, or the place's name.
+  const shareNear = target.kind === 'postcode' ? target.outcode : found.heading.replace(/\u00a0/g, ' ').replace(/ \(.*\)$/, '');
   const calc: Calc = {
     open: panel,
     toggle: (id, kind) => setPanel((c) => (c?.id === id && c.kind === kind ? null : { id, kind })),
@@ -506,6 +508,7 @@ export function Results({ target }: { target: Target }) {
           histories={found.histories}
           collected={found.index.collected}
           recordedFrom={found.index.history?.recordedFrom ?? found.index.collected}
+          shareNear={shareNear}
           onClose={() => setPanel(null)}
         />
       ) : (
@@ -535,7 +538,7 @@ export function Results({ target }: { target: Target }) {
       {narrow ? <Cards rows={shown} now={now} centreId={found.centreId} calc={calc} sort={sort} /> : <Table rows={shown} now={now} centreId={found.centreId} calc={calc} sort={sort} />}
       <AveragesSection
         near={found.heading.replace(/\u00a0/g, ' ')}
-        shareNear={target.kind === 'postcode' ? target.outcode : found.heading.replace(/\u00a0/g, ' ').replace(/ \(.*\)$/, '')}
+        shareNear={shareNear}
         index={found.index}
         rows={rows}
         histories={found.histories}

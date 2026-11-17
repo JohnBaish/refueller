@@ -85,3 +85,20 @@ export function historySentence(fuelWord: string, st: Step[], windowStart: numbe
 }
 
 export const windowFor = (collectedMs: number) => ({ start: collectedMs - HISTORY_DAYS * DAY, end: collectedMs });
+
+const COUNT = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight'];
+
+/** The words for a shared price history (John, November 17th 2026, in the pattern of house style §17): the sentence that goes with
+ *  the picture, and the picture's second line. `selling` of `shown` stations sell the fuel; `withAverage` is false when there's no
+ *  average to show. */
+export function historyShareWords(o: { fuelWord: string; station: string; near: string; shown: number; selling: number; withAverage: boolean }) {
+  const Fuel = o.fuelWord[0].toUpperCase() + o.fuelWord.slice(1);
+  const all = o.selling === o.shown;
+  const sell = all ? '' : ` that sell ${o.fuelWord}`;
+  return {
+    text: o.withAverage
+      ? `${Fuel} prices at ${o.station} over the last 14 days, against the average of the ${COUNT[o.selling]} nearest ${o.near}${sell}, from Refueller.`
+      : `${Fuel} prices at ${o.station} over the last 14 days, from Refueller.`,
+    sub: o.withAverage ? `${Fuel}, the last 14 days, against the average of the ${COUNT[o.selling]} shown${sell}` : `${Fuel}, the last 14 days`,
+  };
+}

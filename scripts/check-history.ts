@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { makeHistory } from './build-history.ts';
 import { makePageData } from './lib/pageData.ts';
-import { average, dateWords, historySentence, steps, trim, windowFor, withPrice, type Hist } from '../src/lib/history.ts';
+import { average, dateWords, historySentence, historyShareWords, steps, trim, windowFor, withPrice, type Hist } from '../src/lib/history.ts';
 import type { Station } from '../src/lib/search.ts';
 
 let failures = 0;
@@ -84,6 +84,18 @@ await check('page data: the history rides with each station, with the current pr
   const rows = byArea.get('RG')!;
   assert.deepEqual(rows[0][10], [[[177.9, '2026-10-14T15:30:00.000Z'], [175.9, '2026-10-30T15:07:00.000Z']], 0]);
   assert.equal(rows[1].length, 10, 'no history column when there is nothing to add');
+});
+
+await check('shared price history: the agreed words, all selling, some selling, and no average', () => {
+  const base = { fuelWord: 'unleaded', station: 'Caversham Esso Express', near: 'RG4', shown: 8, selling: 8, withAverage: true };
+  assert.deepEqual(historyShareWords(base), {
+    text: 'Unleaded prices at Caversham Esso Express over the last 14 days, against the average of the eight nearest RG4, from Refueller.',
+    sub: 'Unleaded, the last 14 days, against the average of the eight shown',
+  });
+  const d = historyShareWords({ ...base, fuelWord: 'diesel', selling: 7, near: 'Caversham' });
+  assert.equal(d.text, 'Diesel prices at Caversham Esso Express over the last 14 days, against the average of the seven nearest Caversham that sell diesel, from Refueller.');
+  assert.equal(d.sub, 'Diesel, the last 14 days, against the average of the seven shown that sell diesel');
+  assert.equal(historyShareWords({ ...base, withAverage: false }).text, 'Unleaded prices at Caversham Esso Express over the last 14 days, from Refueller.');
 });
 
 console.log(failures === 0 ? '\nAll history checks passed.' : `\n${failures} history check(s) FAILED.`);
