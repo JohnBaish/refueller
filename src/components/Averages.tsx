@@ -9,7 +9,7 @@ import { loadAverages, loadCouncils } from '../lib/load.ts';
 import type { PageIndex } from '../lib/pageTypes.ts';
 import { useIsNarrow } from '../lib/responsive.ts';
 import { ShareButton } from './ShareButton.tsx';
-import { deliver, imageName, LIGHT, makeImage } from '../lib/shareImage.ts';
+import { deliver, shareWords, imageName, LIGHT, makeImage } from '../lib/shareImage.ts';
 import { membersOnly, postcodeArea, tidyName, type Row } from '../lib/search.ts';
 import { CHEAPEST_KEPT, type CheapStation, type CheapestKept } from '../lib/compare.ts';
 
@@ -137,7 +137,11 @@ function Key({ label, inline }: { label: string; inline?: boolean }) {
   );
 }
 
-export function AveragesSection({ index, rows, histories, where, near }: { index: PageIndex; rows: Row[]; histories: Histories; where: string; near: string }) {
+export function AveragesSection({ index, rows, histories, where, near, shareNear }: {
+  index: PageIndex; rows: Row[]; histories: Histories; where: string; near: string
+  /** For the words sent with the picture: "RG4" for a postcode (never the full one), else the place or station's name. */
+  shareNear: string
+}) {
   const narrow = useIsNarrow(720);
   const [page, setPage] = useState<AveragesPage | null>(null);
   const [lookup, setLookup] = useState<AreaLookup | null>(null);
@@ -217,7 +221,7 @@ export function AveragesSection({ index, rows, histories, where, near }: { index
       panels,
       named: false,
     });
-    return deliver(canvas, imageName(end), 'Average fuel prices');
+    return deliver(canvas, imageName(end), shareWords('Average prices', `Average petrol and diesel prices near ${shareNear} and across Great Britain, from Refueller.`, decodeURIComponent(location.hash.slice(1))));
   };
   return (
     <section className="avg-sec" data-noprint>

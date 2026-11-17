@@ -16,7 +16,7 @@ import { findPlace, placeLabel, suggest, type NamedPlace } from '../lib/places.t
 import { useIsNarrow } from '../lib/responsive.ts';
 import { nearestDistrict, postcodeArea } from '../lib/search.ts';
 import { ShareButton } from './ShareButton.tsx';
-import { deliver, imageName, LIGHT, makeImage, type ImgLine, type KeyItem } from '../lib/shareImage.ts';
+import { deliver, shareWords, imageName, LIGHT, makeImage, type ImgLine, type KeyItem } from '../lib/shareImage.ts';
 import type { AveragesPage } from '../lib/averages.ts';
 
 // "Compare areas over time" (John, November 9th 2026; design/previews/compare/, option A, round 2): chips for up to four areas, each in
@@ -356,7 +356,12 @@ export function ComparePage({ back, fromKey }: { back: Target | null; fromKey: s
     const fuelWords = both ? 'Unleaded and diesel' : FUEL_WORD[fuels[0]][0].toUpperCase() + FUEL_WORD[fuels[0]].slice(1);
     const sub = `${listWords(shown.map(nameOf))}, ${dateWords(from, false)} to ${dateWords(lastMs, false)}${view === 'change' ? `, change since ${dateWords(from, false)}` : ''}`;
     const canvas = makeImage({ heading: `${fuelWords}: average prices`, sub, key, panels: [{ lines: imgLines, change: view === 'change' }], named: true });
-    return deliver(canvas, imageName(lastMs), 'Average fuel prices');
+    // The words sent with it (John, November 17th 2026). The link opens on the page this was opened from, as the compare
+    // page's own address can't hold its areas.
+    const over = period.id === '1m' ? 'month' : period.id === '3m' ? 'three months' : period.id === '6m' ? 'six months' : 'year';
+    const names = listWords(shown.map((k) => (k === CHEAPEST ? 'the cheapest of the eight' : nameOf(k))));
+    const text = `Average ${both ? 'unleaded and diesel' : FUEL_WORD[fuels[0]]} prices in ${names} over the last ${over}, from Refueller.`;
+    return deliver(canvas, imageName(lastMs), shareWords('Compare areas over time', text, fromKey));
   };
 
   return (

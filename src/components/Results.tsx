@@ -535,6 +535,7 @@ export function Results({ target }: { target: Target }) {
       {narrow ? <Cards rows={shown} now={now} centreId={found.centreId} calc={calc} sort={sort} /> : <Table rows={shown} now={now} centreId={found.centreId} calc={calc} sort={sort} />}
       <AveragesSection
         near={found.heading.replace(/\u00a0/g, ' ')}
+        shareNear={target.kind === 'postcode' ? target.outcode : found.heading.replace(/\u00a0/g, ' ').replace(/ \(.*\)$/, '')}
         index={found.index}
         rows={rows}
         histories={found.histories}

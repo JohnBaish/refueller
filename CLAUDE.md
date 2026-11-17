@@ -119,6 +119,19 @@ eight, the ends, the address `#route/RG1/BS1[/via]`), `src/components/Journey.ts
 
 ## Log
 
+### 2026-11-17 — words with a shared picture (branch `claude/happy-turing-3so1yn`, not merged)
+
+**John** (after testing shares on iPhone and Android, in Lightreader's thread): every Share button sends a sentence, a link
+to the same place (sent separately) and a title ("Refueller: Average prices"). His wording: "Average petrol and diesel
+prices near RG4 and across Great Britain, from Refueller." (a place or station by its name); on the compare page
+"Average unleaded prices in Reading, Berkshire, South East England and Great Britain over the last month, from
+Refueller." ("unleaded and diesel" for Both; "three months", "six months", "year"; "the cheapest of the eight"). A full
+postcode is cut to its first half in the sentence and the link (`RG4-7HN` → `RG4`), so nobody's street is passed round.
+The compare page's link opens on the page it was opened from, as its own address can't hold its areas. `ShareWords`,
+`shareWords()` and `deliver(…, words)` in `src/lib/shareImage.ts`; `shareNear` on `AveragesSection`. **Checked:** tsc,
+lint, checks, build; in Chromium as an iPhone 13, the share sheet replaced by a recorder: `#RG4-7HN` and `#@Caversham`,
+both buttons, the compare page with one fuel and both; the words and links above; no errors.
+
 ### 2026-11-14 — dark mode colours: options 5 and 7 built and live (branch `dark-colours`, merged)
 
 **John:** build 5 and 7 and make them live, with Claude's defaults (the open panels lighter than their card, as on

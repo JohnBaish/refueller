@@ -199,14 +199,27 @@ function save(blob: Blob, filename: string) {
 }
 
 /** Hands the picture over: the share sheet on a touch screen, else the clipboard, else a saved file. Call straight from the tap. */
-export async function deliver(canvas: HTMLCanvasElement, filename: string, title: string): Promise<Delivered> {
+/** What goes with a shared picture (John, November 17th 2026, after testing on iPhone and Android): a sentence (the caption
+ *  in WhatsApp and Messages, the body of an email), the link to the same place sent separately (it follows the sentence, and
+ *  gives Gmail its subject), and a title, which hardly any app uses. */
+export type ShareWords = { title: string; text: string; url: string };
+
+/** "Refueller: Average prices", the sentence, and a link opening on the place shown. A full postcode is cut to its first
+ *  half (`RG4-7HN` → `RG4`), so nobody's street is passed round (John, November 17th 2026). */
+export const shareWords = (heading: string, text: string, hash: string | null): ShareWords => ({
+  title: `Refueller: ${heading}`,
+  text,
+  url: `${location.origin}/${hash ? `#${hash.replace(/^([A-Z]{1,2}\d[A-Z\d]?)-\w+$/i, '$1')}` : ''}`,
+});
+
+export async function deliver(canvas: HTMLCanvasElement, filename: string, words: ShareWords): Promise<Delivered> {
   const blob = new Promise<Blob>((res, rej) => canvas.toBlob((b) => (b ? res(b) : rej(new Error('No picture'))), 'image/png'));
   if (touch()) {
     const b = await blob;
     const file = new File([b], filename, { type: 'image/png' });
     if (navigator.canShare?.({ files: [file] })) {
       try {
-        await navigator.share({ files: [file], title });
+        await navigator.share({ files: [file], ...words });
         return 'shared';
       } catch (e) {
         if ((e as Error).name === 'AbortError') return 'cancelled';
