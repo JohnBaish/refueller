@@ -2113,3 +2113,13 @@ From clockwheel `49cbf9e`: §6 adds "A phone held sideways" (a short screen is `
 
 From clockwheel: §2 now records the darker dark page (`#24211e`), the card shadow, raised panels
 `#403b35` with `#ea9862` accents, and coloured state edges. No app code changed.
+
+### 2026-11-24 — compare page: where "Share chart" goes, and the table rows (design only)
+
+**John** (iPhone, HP postcode): in the compare page's table, "Cheapest of the eight: …" ran up into "South East England"; and could
+"Share chart" sit just above the table on the right, or just below it on the left. Mock-ups drawn into the built page in the browser
+only (`design/mock/compare/share-place-mock.cjs`; no app code), HP13, phone and computer, light and dark: **A** above the table on the
+right, **B** below it on the left, both with the rows top-aligned (`.cmp-row` `align-items: start`, the name's swatch by its first line).
+The overlap is probably Safari mis-sizing rows lined up by text baseline; Chromium doesn't show it, so the fix needs checking on a real
+iPhone. Pictures `design/previews/compare-share-place/`. No errors, no sideways scroll. Waiting for John's choice.
+
