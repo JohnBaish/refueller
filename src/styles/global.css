@@ -348,10 +348,11 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
 .share-wrap { display: inline-flex; flex-direction: column; align-items: center; }
 .share-status { min-height: 18px; margin-top: 2px; font-size: 13px; line-height: 18px; color: var(--color-neutral-700); }
 .share-status:empty { visibility: hidden; }
-.cmp-controls .share-wrap { margin-left: auto; }
+.cmp-share-row { display: flex; justify-content: flex-start; margin-top: 14px; }
 .cmp-share:disabled { opacity: .5; cursor: default; }
 .cmp-key { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; margin: 10px 0 0; align-items: center; }
 .cmp-key span { display: inline-flex; gap: 8px; align-items: center; }
+.cmp-n .cmp-sw { margin-top: .62em; }
 .cmp-key .cmp-key-sep { width: 1px; height: 16px; background: var(--color-divider); }
 .cmp-chart { margin-top: 6px; }
 .hist .cmp-line { fill: none; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
@@ -359,17 +360,16 @@ tr.closed td:not(:last-child), .pcard.closed .grid > div:not(.openv) { opacity: 
 .hist .cmp-end { stroke: var(--color-bg); stroke-width: 2; }
 .hist .cmp-zero { stroke: var(--color-neutral-700); stroke-opacity: .6; }
 .cmp-table { background: var(--color-surface); border-radius: 16px; padding: 4px 16px; margin-top: 14px; font-variant-numeric: tabular-nums; }
-.cmp-row { display: grid; grid-template-columns: 1fr 86px 150px; gap: 10px; align-items: baseline; padding: 9px 0; border-top: 1px solid var(--color-divider); font-size: 15px; }
+.cmp-row { display: grid; grid-template-columns: 1fr 86px 150px; gap: 10px; align-items: start; padding: 9px 0; border-top: 1px solid var(--color-divider); font-size: 15px; }
 .cmp-row:first-child { border-top: 0; }
 .cmp-head { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--color-neutral-700); padding-bottom: 2px; }
-.cmp-n { font-weight: 700; display: flex; align-items: center; gap: 8px; min-width: 0; }
+.cmp-n { font-weight: 700; display: flex; align-items: flex-start; gap: 8px; min-width: 0; }
 .cmp-p { text-align: center; font-weight: 700; }
 .cmp-head .cmp-p { font-weight: 400; }
 .cmp-c { text-align: center; color: var(--color-neutral-700); }
 .back-big { display: flex; width: 100%; min-height: 52px; margin: 34px 0 10px; font-size: 17px; }
 @media (max-width: 720px) {
   .cmp-row { grid-template-columns: 1fr 70px 96px; font-size: 14px; }
-  .cmp-controls .share-wrap { margin-left: 0; }
 }
 @media (pointer: coarse) {
   .cmp-pills button, .cmp-share, .cmp-add, .cmp-chip { min-height: 44px; }

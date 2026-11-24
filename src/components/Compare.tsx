@@ -506,7 +506,6 @@ export function ComparePage({ back, fromKey }: { back: Target | null; fromKey: s
                 </button>
               ))}
             </span>
-            <ShareButton what="chart" make={share} disabled={!ready} />
           </div>
           {anyGroup && (
             <p className="cmp-note">
@@ -563,6 +562,9 @@ export function ComparePage({ back, fromKey }: { back: Target | null; fromKey: s
                     <span className="cmp-c">{l.raw.length ? changeWords(l.raw) : l.key === CHEAPEST ? 'not sold by the eight' : 'no average'}</span>
                   </div>
                 ))}
+              </div>
+              <div className="cmp-share-row">
+                <ShareButton what="chart" make={share} />
               </div>
             </>
           )}

@@ -2123,3 +2123,14 @@ right, **B** below it on the left, both with the rows top-aligned (`.cmp-row` `a
 The overlap is probably Safari mis-sizing rows lined up by text baseline; Chromium doesn't show it, so the fix needs checking on a real
 iPhone. Pictures `design/previews/compare-share-place/`. No errors, no sideways scroll. Waiting for John's choice.
 
+
+### 2026-11-24 — compare page: "Share chart" under the table; rows top-aligned (branch `claude/laughing-lovelace-nbm11w`, not merged)
+
+**John:** option B ("A looks too pushy"; better than asking to share a chart not yet seen). **What:** `Compare.tsx`: the
+`ShareButton` leaves the row of fuel and period buttons and sits in `.cmp-share-row` under the table, on the left (shown once the
+averages have loaded, so no longer needs disabling); `global.css`: `.cmp-row` `align-items: start`, `.cmp-n` `flex-start`, the name's
+swatch level with its first line (`.cmp-n .cmp-sw`); the old `margin-left: auto` rules for the button removed. **Verified:** `tsc -b`,
+lint, `npm run check`, build; `design/mock/compare/share-below-check.cjs` against `vite preview` (HP13 with the cheapest added) at
+390px and 844×390 with touch and 1200px, light and dark: button below the table, level with its left edge, none left in the controls,
+no name running past its row, "Copied" on a computer, no errors, no sideways scroll. Pictures
+`design/previews/compare-share-place/built-*.png`. **Couldn't check:** Safari (where the overlap was seen); John to check on his iPhone.
