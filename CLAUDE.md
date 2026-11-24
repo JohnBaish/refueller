@@ -2135,4 +2135,5 @@ lint, `npm run check`, build; `design/mock/compare/share-below-check.cjs` agains
 no name running past its row, "Copied" on a computer, no errors, no sideways scroll. Pictures
 `design/previews/compare-share-place/built-*.png`. **Couldn't check:** Safari (where the overlap was seen); John to check on his iPhone.
 **Merged to `main`** at John's word (November 24th 2026), after he checked the preview on his iPhone: the overlap is fixed in Safari
-and the button is right. Fast-forward; checks, lint, type-check and build clean first.
+and the button is right. Fast-forward; checks, lint, type-check and build clean first. "Delete merged branches": trial run,
+then the real run; `claude/laughing-lovelace-nbm11w` deleted, only `main` left.
