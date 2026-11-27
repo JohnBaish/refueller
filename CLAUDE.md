@@ -119,6 +119,10 @@ eight, the ends, the address `#route/RG1/BS1[/via]`), `src/components/Journey.ts
 
 ## Log
 
+### November 27th 2026: a Home Screen icon, short name and manifest; live (`main`; Claude Code)
+
+A Home Screen icon (`public/apple-touch-icon.png`, drawn from the favicon, John's choice, made in clockwheel's `design/home-icons/`), the short name and a web app manifest (start "/"), so "Add to Home Screen" on an iPhone offers the short name and opens the front page (house style §7; tried first on Trainchecker). Checks and build clean. Not checked: a real iPhone.
+
 ### 2026-11-17 — the shared price history picture: "eight nearby stations" (straight to `main`)
 
 **John:** "the eight shown" doesn't help someone who has only seen the picture; option C, no place named; merge straight to `main`.
